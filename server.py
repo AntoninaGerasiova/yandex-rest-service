@@ -1,5 +1,6 @@
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
+import sqlite3
 
 app = Flask(__name__)
 
@@ -25,7 +26,9 @@ def save_data(request_json):
 def change(import_id, citizen_id):
     print(import_id, citizen_id)
     if request.method == 'PATCH':
-        return fix_data(import_id, citizen_id)
+        res = fix_data(import_id, citizen_id)
+        res = jsonify(res)
+        return res
 
 def fix_data(import_id, citizen_id):
     request_json = request.get_json()
@@ -41,8 +44,6 @@ def fix_data(import_id, citizen_id):
                  "birth_date": "01.02.2000",
                  "gender": "male",
                  "relatives": [2, 28]}}
-    res = jsonify(res)
-
     return res
       
 @app.route('/imports/<int:import_id>/citizens')
