@@ -48,10 +48,19 @@ def get_citizens_birthgays(import_id):
      print(r.status_code, r.reason)
      print(r.text)
     
-    
+
+def get_statistic(import_id):
+        path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
+        addr = full_addr(path)
+        print(addr)
+        r = requests.get(addr)
+        print(r.status_code, r.reason)
+        print(r.text)
+
 if __name__ == "__main__":
     #post_data_set()
     #patch(6, 1)
     #get_citizens_set(1)
-    get_citizens_birthgays(1)
+    #get_citizens_birthgays(1)
+    get_statistic(1)
         

@@ -23,6 +23,7 @@ def save_data(request_json):
 
 @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>',methods=['PATCH'])
 def change(import_id, citizen_id):
+    print(import_id, citizen_id)
     if request.method == 'PATCH':
         return fix_data(import_id, citizen_id)
 
@@ -44,9 +45,9 @@ def fix_data(import_id, citizen_id):
 
     return res
       
-@app.route('/imports/<import_id>/citizens')
+@app.route('/imports/<int:import_id>/citizens')
 def get_citizens(import_id):
-    #print(import_id)
+    print(import_id)
     res = get_citizens_for_import_id(import_id)
     res = jsonify(res)
     return res
@@ -74,7 +75,7 @@ def get_citizens_for_import_id(import_id):
             "gender": "male",
             "relatives": [1]}]
     }
-@app.route('/imports/<import_id>/citizens/birthdays')
+@app.route('/imports/<int:import_id>/citizens/birthdays')
 def get_citizens_birthdays(import_id):
     res = get_citizens_birthdays_for_import_id(import_id)
     res = jsonify(res)
@@ -100,8 +101,27 @@ def get_citizens_birthdays_for_import_id(import_id):
             "presents": 2}]
         }}
 
+@app.route('/imports/<import_id>/towns/stat/percentile/age')
+def get_statistic(import_id):
+    print(import_id)
+    res = get_statistic_for_import_id(import_id)
+    res = jsonify(res)
+    return res
 
-    
+def get_statistic_for_import_id(import_id):
+    return {"data": [{
+        "town": "Москва",
+        "p50": 20,
+        "p75": 45,
+        "p99": 100
+        },{
+        "town": "Санкт-Петербург",
+        "p50": 17,
+        "p75": 35,
+        "p99": 80
+        }]}
+
+
     
  
 #with app.test_request_context('/imports', method='POST'):
