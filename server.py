@@ -74,8 +74,36 @@ def get_citizens_for_import_id(import_id):
             "gender": "male",
             "relatives": [1]}]
     }
+@app.route('/imports/<import_id>/citizens/birthdays')
+def get_citizens_birthdays(import_id):
+    res = get_citizens_birthdays_for_import_id(import_id)
+    res = jsonify(res)
+    return res
+
+def get_citizens_birthdays_for_import_id(import_id):
+    return {"data": {
+        "1": [{
+            "citizen_id": 1,
+            "presents": 20
+            }],
+        "2": [{
+            "citizen_id": 2,
+            "presents": 7
+            }],
+        "3": [],
+        "12": [{
+            "citizen_id": 3,
+            "presents": 4
+            },
+        {
+            "citizen_id": 8,
+            "presents": 2}]
+        }}
 
 
+    
+    
+ 
 #with app.test_request_context('/imports', method='POST'):
 #    assert request.path == '/imports'
 #    assert request.method == 'POST'
