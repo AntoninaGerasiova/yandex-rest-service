@@ -44,8 +44,36 @@ def fix_data(import_id, citizen_id):
 
     return res
       
-@app.route('//imports/$import_id/citizens')
+@app.route('/imports/<import_id>/citizens')
+def get_citizens(import_id):
+    #print(import_id)
+    res = get_citizens_for_import_id(import_id)
+    res = jsonify(res)
+    return res
 
+
+def get_citizens_for_import_id(import_id):
+    return {
+        "data": [{
+            "citizen_id": 1,
+            "town": "Керчь",
+            "street": "Иосифа Бродского",
+            "building": "16к7стр5",
+            "appartement": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "01.02.2000",
+            "gender": "male",
+            "relatives": [2]}, {
+            "citizen_id": 2,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "appartement": 7,
+            "name": "Иванов Иван Петрович",
+            "birth_date": "01.02.2000",
+            "gender": "male",
+            "relatives": [1]}]
+    }
 
 
 #with app.test_request_context('/imports', method='POST'):
