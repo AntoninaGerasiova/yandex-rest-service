@@ -5,6 +5,16 @@ def full_addr(path):
     addr = "http://127.0.0.1:5000"
     return addr + path
 
+"initialize data base"
+def init():
+    path  = "/test"
+    addr = full_addr(path)
+    print(addr)
+    r = requests.post(addr, json = {'action':'init'})
+    print(r.status_code, r.reason)
+    print(r.text)
+    
+
 def post_data_set():
     citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
 
@@ -57,10 +67,13 @@ def get_statistic(import_id):
         print(r.status_code, r.reason)
         print(r.text)
 
+
+
 if __name__ == "__main__":
     #post_data_set()
     #patch(6, 1)
     #get_citizens_set(1)
     #get_citizens_birthgays(1)
-    get_statistic(1)
+    #get_statistic(1)
+    init()
         
