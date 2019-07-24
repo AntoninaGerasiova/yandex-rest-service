@@ -35,9 +35,9 @@ def create_app(test_config=None):
         if request.method == 'POST':
             request_json = request.get_json()
             #print(request_json)
-            import_id = db.insert_citizens_set(request_json)
-            res = jsonify({"data": {"import_id": import_id}})
-            return res , 201
+            response = db.insert_citizens_set(request_json)
+            response = jsonify(response)
+            return response , 201
 
 
     

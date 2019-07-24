@@ -49,26 +49,29 @@ def init_app(app):
     
     
 def insert_citizens_set(request_json):
+    """ insert set of citizens data to db"""
     citizens_data, kinships_data = get_insert_data(request_json)
     print(citizens_data)
     print(kinships_data)
-    sql_get_import_id = '''SELECT max(import_id) as id FROM citizens'''
+    
+    #sql requests
+    sql_imports = '''INSERT INTO imports default values'''
     
     sql_citizens = ''' INSERT INTO citizens(import_id, citizen_id, town, street, building, appartement, name, birth_date, gender)
               VALUES(?,?,?,?,?,?,?,?,?) '''
               
-    sql_kinship = ''' INSERT INTO kinship(import_id, citizen_id, relative_id)
+    sql_kinship = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
     
+    
+    #working with db
+    #TODO:Wrap in transaction
     db = get_db()
+    #add raw into sql_imports table and get unique import_id as responce
+    #should be unique even with interleaving
+    import_id = db.execute(sql_imports).lastrowid
     
-    import_id = db.execute(sql_get_import_id).fetchone()['id']
-    
-    if import_id == None:
-        import_id  = 1
-    else:
-        import_id += 1
-    
+    #insert citizens data into db using import_id that we have got
     for citizen_data in citizens_data:
         citizen_data = [import_id] + citizen_data
         db.execute(sql_citizens,  citizen_data)
@@ -79,7 +82,7 @@ def insert_citizens_set(request_json):
 
     db.commit()
     
-    return 1
+    return {"data": {"import_id": import_id}}
 
 def get_insert_data(request_json):
     
