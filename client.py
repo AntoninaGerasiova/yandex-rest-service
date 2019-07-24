@@ -16,7 +16,7 @@ def init():
     
 
 def post_data_set():
-    citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
+    citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
 
     #citizens_json = json.dumps(citizens_structure, indent = 4)
     #print(citizens_json)
@@ -70,10 +70,12 @@ def get_statistic(import_id):
 
 
 if __name__ == "__main__":
-    #post_data_set()
+    init()
+    post_data_set()
+    post_data_set()
     #patch(6, 1)
     #get_citizens_set(1)
     #get_citizens_birthgays(1)
     #get_statistic(1)
-    init()
+    
         

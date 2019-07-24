@@ -33,19 +33,12 @@ def create_app(test_config=None):
     @app.route('/imports', methods=['POST'])
     def imports():
         if request.method == 'POST':
-            return get_citizens_info()
-
-    
-    def get_citizens_info():
-        request_json = request.get_json()
-        print(request_json)
-    
-        import_id = save_data(request_json)
-        res = jsonify({"data": {"import_id": import_id}})
-        return res , 201
+            request_json = request.get_json()
+            #print(request_json)
+            import_id = db.insert_citizens_set(request_json)
+            res = jsonify({"data": {"import_id": import_id}})
+            return res , 201
 
 
-    def save_data(request_json):
-        return 1
     
     return app
