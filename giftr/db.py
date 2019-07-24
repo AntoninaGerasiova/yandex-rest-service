@@ -63,26 +63,34 @@ def insert_citizens_set(request_json):
     sql_kinship = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
     
+    sql_corrupted = "Not even sql command"
     
     #working with db
-    #TODO:Wrap in transaction
-    db = get_db()
-    #add raw into sql_imports table and get unique import_id as responce
-    #should be unique even with interleaving
-    import_id = db.execute(sql_imports).lastrowid
-    
-    #insert citizens data into db using import_id that we have got
-    for citizen_data in citizens_data:
-        citizen_data = [import_id] + citizen_data
-        db.execute(sql_citizens,  citizen_data)
+    try:
+        db = get_db()
+        db.execute("begin")
+        #add raw into sql_imports table and get unique import_id as responce
+        #should be unique even with interleaving
+        import_id = db.execute(sql_imports).lastrowid
         
-    for kinship_data in kinships_data:
-        kinship_data = [import_id] + kinship_data
-        db.execute(sql_kinship, kinship_data)
-
-    db.commit()
+        #insert citizens data into db using import_id that we have got
+        for citizen_data in citizens_data:
+            citizen_data = [import_id] + citizen_data
+            db.execute(sql_citizens,  citizen_data)
     
-    return {"data": {"import_id": import_id}}
+        #db.execute(sql_corrupted)
+        for kinship_data in kinships_data:
+            kinship_data = [import_id] + kinship_data
+            db.execute(sql_kinship, kinship_data)
+
+
+        db.execute("commit")
+    except db.Error:
+        print("failed!")
+        db.execute("rollback")
+        import_id = None
+    
+    return import_id
 
 def get_insert_data(request_json):
     

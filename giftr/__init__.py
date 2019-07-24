@@ -35,8 +35,11 @@ def create_app(test_config=None):
         if request.method == 'POST':
             request_json = request.get_json()
             #print(request_json)
-            response = db.insert_citizens_set(request_json)
-            response = jsonify(response)
+            import_id = db.insert_citizens_set(request_json)
+            if import_id is None:
+                return "Insertion failed", 400
+            
+            response = jsonify({"data": {"import_id": import_id}})
             return response , 201
 
 
