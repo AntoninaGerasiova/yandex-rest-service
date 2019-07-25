@@ -3,7 +3,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
-
+#bd settings and open/close/initialization function
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -48,6 +48,21 @@ def init_app(app):
     app.cli.add_command(init_db_command) #adds a new command that can be called with the flask command
     
     
+#help functions
+def date_to_bd_format(date):
+    """ get data in format suitable for bad format"""
+    return  "-".join(reversed(date.split(".")))
+    
+    
+def date_to_output_format(date):
+    """get data in format suitable for output"""
+    month = date.month if date.month >= 10 else "0" + str(date.month)
+    day = date.day if date.day >= 10 else "0" + str(date.day)
+    return "{}.{}.{}".format(day, month, date.year)
+
+
+
+#work with bd
 def insert_citizens_set(request_json):
     """ insert set of citizens data to db"""
     citizens_data, kinships_data = get_insert_data(request_json)
@@ -69,7 +84,7 @@ def insert_citizens_set(request_json):
     try:
         db = get_db()
         db.execute("begin")
-        #add raw into sql_imports table and get unique import_id as responce
+        #add row into sql_imports table and get unique import_id as responce
         #should be unique even with interleaving
         import_id = db.execute(sql_imports).lastrowid
         
@@ -92,8 +107,10 @@ def insert_citizens_set(request_json):
     
     return import_id
 
+
+
 def get_insert_data(request_json):
-    
+    """Unpack data from request_json structure"""
     citizens = request_json["citizens"]
     citizens_data = list()
     kinships_data = list()
@@ -104,7 +121,7 @@ def get_insert_data(request_json):
         building = citizen['building']
         appartement = citizen['appartement']
         name = citizen['name']
-        birth_date = citizen['birth_date']
+        birth_date = date_to_bd_format(citizen['birth_date'])
         gender = citizen['gender']
         relatives = citizen['relatives']
         citizens_data.append([citizen_id, town, street, building, appartement, name, birth_date, gender])
@@ -112,6 +129,47 @@ def get_insert_data(request_json):
             kinships_data.append([citizen_id, relative])
     return citizens_data, kinships_data
         
+
+def get_citizens_set(import_id):
+    #sql requests
+    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, town,street, building, appartement, name, birth_date, gender, relative_id 
+    FROM citizens, kinships  
+    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?'''
+    
+    sql_get_citizens = '''SELECT * 
+    FROM  citizens
+    WHERE import_id = ?
+    '''
+    
+    sql_get_kins = '''SELECT citizen_id, relative_id 
+    FROM  kinships
+    WHERE import_id = ?
+    ORDER by citizen_id
+    '''
+    
+    db = get_db()
+    cur = db.execute(sql_get_citizens, (import_id,))
+    
+    citizens_dict = dict()
+    for row in cur:
+        citizen_id = row["citizen_id"]
+        citizens_dict[citizen_id] = {"citizen_id": citizen_id,
+                                     "town": row["town"],
+                                     "street": row["street"],
+                                     "building": row["building"],
+                                     "appartement": row["appartement"],
+                                     "name": row["name"],
+                                     "birth_date": date_to_output_format(row["birth_date"]),
+                                     "gender": row["gender"],
+                                     "relatives": list()}
+    
+    cur_kins = db.execute(sql_get_kins, (import_id,))
+    for row in cur_kins:
+        #print(row.keys())
+        citizen_id = row["citizen_id"]
+        relative_id = row["relative_id"]
+        citizens_dict[citizen_id]["relatives"].append(relative_id)
+    return ({"data":list(citizens_dict.values())})
         
     
     

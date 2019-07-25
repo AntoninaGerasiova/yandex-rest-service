@@ -43,5 +43,11 @@ def create_app(test_config=None):
             return response , 201
 
 
-    
+    @app.route('/imports/<int:import_id>/citizens')
+    def get_citizens(import_id):
+        #print(import_id)
+        res = db.get_citizens_set(import_id)
+        res = jsonify(res)
+        return res
+                
     return app
