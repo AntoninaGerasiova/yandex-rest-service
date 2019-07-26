@@ -53,7 +53,8 @@ def post_data_set():
 
 def patch(import_id, citizen_id):
     patch_structure = {"town": "Керчь",
-                       "street": "Иосифа Бродского"}
+                       "street": "Иосифа Бродского",
+                       "relatives": [2, 27]}
 
     path =  "/imports/{}/citizens/{}".format(import_id, citizen_id)
     addr = full_addr(path)
@@ -71,7 +72,7 @@ def get_citizens_set(import_id):
     print(r.status_code, r.reason)
     print(r.text)
 
-def get_citizens_birthgays(import_id):
+def get_citizens_birthdays(import_id):
      path =  "/imports/{}/citizens/birthdays".format(import_id)
      addr = full_addr(path)
      print(addr)
@@ -79,9 +80,6 @@ def get_citizens_birthgays(import_id):
      print(r.status_code, r.reason)
      print(r.text)
     
-
-
-
 
 def get_statistic(import_id):
         path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
@@ -98,10 +96,10 @@ if __name__ == "__main__":
     init()
     post_data_set()
     post_data_set()
-    #patch(6, 1)
+    patch(1, 1)
     get_citizens_set(1)
-    #get_citizens_set(2)
-    #get_citizens_birthgays(1)
+    get_citizens_set(2)
+    get_citizens_birthdays(1)
     #get_statistic(1)
     
         

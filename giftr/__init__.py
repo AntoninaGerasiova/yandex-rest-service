@@ -50,4 +50,18 @@ def create_app(test_config=None):
         res = jsonify(res)
         return res
                 
+    @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>',methods=['PATCH'])
+    def change(import_id, citizen_id):
+        if request.method == 'PATCH':
+            request_json = request.get_json()
+            res = db.fix_data(import_id, citizen_id, request_json)
+            if type(res) == str:
+                return res, 400
+            res = jsonify(res)
+            return res
+
+
+    
     return app
+
+    

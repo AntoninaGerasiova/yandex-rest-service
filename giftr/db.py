@@ -66,8 +66,8 @@ def date_to_output_format(date):
 def insert_citizens_set(request_json):
     """ insert set of citizens data to db"""
     citizens_data, kinships_data = get_insert_data(request_json)
-    print(citizens_data)
-    print(kinships_data)
+    #print(citizens_data)
+    #print(kinships_data)
     
     #sql requests
     sql_imports = '''INSERT INTO imports default values'''
@@ -80,7 +80,7 @@ def insert_citizens_set(request_json):
     
     sql_corrupted = "Not even sql command"
     
-    #working with db
+    #work with db
     try:
         db = get_db()
         db.execute("begin")
@@ -111,6 +111,8 @@ def insert_citizens_set(request_json):
 
 def get_insert_data(request_json):
     """Unpack data from request_json structure"""
+    ##TODO:check that relative citizen also is in the set - sort list
+    ##TODO:check that realtions are mutual
     citizens = request_json["citizens"]
     citizens_data = list()
     kinships_data = list()
@@ -171,5 +173,116 @@ def get_citizens_set(import_id):
         citizens_dict[citizen_id]["relatives"].append(relative_id)
     return ({"data":list(citizens_dict.values())})
         
+
+def fix_data(import_id, citizen_id, request_json):
+    print(import_id, citizen_id)
+    print(request_json)
+    #form all necesary requests
+    update_relatives = False
+    if "relatives" in request_json:
+        update_relatives = True
+        sql_delete_kins = '''DELETE FROM kinships WHERE import_id = {} and citizen_id = {}'''.format(import_id, citizen_id)
+        kinships_data = get_new_relatives(import_id, citizen_id, request_json)
+        sql_insert_relatives = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
+              VALUES(?,?,?) '''
+        
+    sql_update_citizen = form_request(import_id, citizen_id, request_json)
+    sql_get_citizen_by_id = '''SELECT town, street, building, appartement, name, birth_date, gender 
+    FROM  citizens
+    WHERE import_id = ? and citizen_id = ?
+    '''
+    sql_get_kins_by_id = '''SELECT relative_id 
+    FROM  kinships
+    WHERE import_id = ? and citizen_id = ?
+    ORDER by citizen_id
+    '''
+    
+    
+    #work with bd
+    try:
+        db = get_db()
+        db.execute("begin")
+        if update_relatives:
+            db.execute(sql_delete_kins)
+            db.executemany(sql_insert_relatives, kinships_data)
+        db.execute(sql_update_citizen)
+        db.execute("commit")
+    except db.Error:
+        print("failed!")
+        db.execute("rollback")
+        return "Can't update data"
+        
+    
+    row = db.execute(sql_get_citizen_by_id, (import_id, citizen_id)).fetchone()
+    res = {
+            "data": {"citizen_id": citizen_id,
+                    "town": row["town"],
+                    "street": row["street"],
+                    "building": row["building"],
+                    "appartement": row["appartement"],
+                    "name": row["name"],
+                    "birth_date": date_to_output_format(row["birth_date"]),
+                    "gender": row["gender"],
+                    "relatives": list()}}
+    cur_kins = db.execute(sql_get_kins_by_id, (import_id, citizen_id))
+    for row in cur_kins:
+        res["data"]["relatives"].append(row["relative_id"])
+    return res
+
+
+def get_new_relatives(import_id, citizen_id, request_json):
+    ##TODO: check that we have that relative
+    ##TODO: if I add record (citizen, relative) shoulI also add record (relative, citizen) or i have to prhibit such a change
+    ##TODO:if I delete  record (citizen, relative) should I also get rid of record   (relative, citizen) or let it go
+    
+    kinships_data = list()
+    for relative in request_json['relatives']:
+            kinships_data.append([import_id, citizen_id, relative])
+            
+    return kinships_data
+
+
+def form_request(import_id, citizen_id, request_json):
+    """
+    Make update request to update information about citizen with distinct citizen_id and request_id(except relative field)
+    """
+    
+    #make request to update information (except relative field)
+    sql_update_citizen = "UPDATE citizens SET "
+    
+    #go through keys explicitly
+    #TODO: is it bad if there are some other keys, should I answer bad request
+    if "town" in request_json:
+        town = request_json['town']
+        sql_update_citizen += "town = '{}', ".format(town)
+        
+    if "street" in request_json:
+        street = request_json['street']
+        sql_update_citizen += "street = '{}', ".format(street)
+    
+    if "building" in request_json:
+        building = request_json['building']
+        sql_update_citizen += "building = '{}', ".format(building)
+        
+    if "appartement" in request_json:
+        appartement = request_json['appartement']
+        sql_update_citizen += "appartement = {}, ".format(appartement)
+        
+    if "name" in request_json:
+        name = request_json['name']
+        sql_update_citizen += "name = '{}', ".format(name)
+    
+    if "birth_date" in request_json:
+        birth_date = date_to_bd_format(request_json['birth_date'])
+        sql_update_citizen += "birth_date = {}, ".format(birth_date)
+        
+    if "gender" in request_json:
+        gender = request_json['gender']
+        sql_update_citizen += "gender = '{}', ".format(gender)
+        
+    sql_update_citizen = sql_update_citizen[:-2] + " WHERE import_id = {} and citizen_id = {}".format(import_id, citizen_id)
+    return sql_update_citizen
+    
+
     
     
