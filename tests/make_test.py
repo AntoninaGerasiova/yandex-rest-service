@@ -8,6 +8,10 @@ MAX_BUILDING = 60
 MAX_CORPUS = 10
 MAX_STROENIE = 10
 MAX_APPARTMENT = 150
+
+MIX_RELATIVE_TO_MESS = 20
+MAX_RELATIVE_TO_MESS = 20
+
 def get_titles_from_file(file_name):
     with open(file_name,"r") as f:
         content = f.readlines()
@@ -37,11 +41,16 @@ def make_relative_pairs(citizens_num, num_pairs):
     random.shuffle(pairs)
     return pairs[:num_pairs]
     
-    
+def write_data_set_to_file(data_set, output_file): 
+    with open(output_file, 'w') as f:
+        json.dump(data_set, f, indent = 4)
 
-def make_good_set(citizens_num, relatives_pairs, output_file):
+def make_good_set(citizens_num, relatives_pairs):
     """
     Make good data set
+    Args:
+        citizens_num (int): Number of citizens in set
+        relatives_pairs (int): Number of relatives pair of citizens
     """
     men_num = int(citizens_num*0.5)
     women_num = citizens_num - men_num
@@ -78,16 +87,55 @@ def make_good_set(citizens_num, relatives_pairs, output_file):
         citizens_data[i]['relatives'].append(pair[1])
         citizens_data[j]['relatives'].append(pair[0])
     citizens_structure = {'citizens':citizens_data}
-    with open(output_file, 'w') as f:
-        json_structure = json.dump(citizens_structure, f, indent = 4)
+    return citizens_structure
     
+
+def make_set_with_inconsistant_relatives(citizens_num, relatives_pairs):
+    """
+        Generate test data with not mutual kinship - server should reject it
+    """
+    citizens_structure = make_good_set(citizens_num, relatives_pairs)
+    citizens_data = citizens_structure['citizens']
+    relatives_to_mess = random.randint(MIX_RELATIVE_TO_MESS, MAX_RELATIVE_TO_MESS) 
+    #just add some random relative to rendom citizens - they are not likely to be mutual
+    for _ in range(relatives_to_mess):
+        i = random.randint(1, citizens_num)
+        j = random.randint(1, citizens_num)
+        #it can be situation when i == j, and that's valid to be relative to self, but it's not very likely
+        #and we have several tryals to mess data set anyway
+        citizens_data[i - 1]['relatives'].append(j)
+    return citizens_structure
+            
+            
+
+def make_set_with_absent_realtives(citizens_num, relatives_pairs):
+    """ Generate data set  where relatives includes non existant citizens - server should reject it"""
+    citizens_structure = make_good_set(citizens_num, relatives_pairs)
+    citizens_data = citizens_structure['citizens']
+    citizen_whose_relative_to_delete = random.randint(0, citizens_num)
+    #delete relative of some citizens
+    for relative in   citizens_data[citizen_whose_relative_to_delete]['relatives']:
+        citizens_data.pop(relative - 1)
+    return citizens_structure
+        
+    
+        
 men = get_titles_from_file("men.txt")
 women = get_titles_from_file("women.txt")
 towns = get_titles_from_file("towns.txt")
 streets = get_titles_from_file("streets.txt")
 
 
-make_good_set(99, 200, 'good_data_set1')
+#good_data_set = make_good_set(99, 200)
+#write_data_set_to_file(good_data_set, 'good_data_set1')
+data_set_with_inconsistant_relatives = make_set_with_inconsistant_relatives(99, 200)
+write_data_set_to_file(data_set_with_inconsistant_relatives, 'data_set_with_inconsistant_relatives1')
+data_set_with_absent_realtives = make_set_with_absent_realtives(99, 200)
+write_data_set_to_file(data_set_with_absent_realtives, 'data_set_with_absent_realtives1')
+
+
+
+
 
 
 
