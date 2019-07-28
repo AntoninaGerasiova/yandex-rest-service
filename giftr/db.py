@@ -50,7 +50,7 @@ def init_app(app):
     
 #help functions
 def date_to_bd_format(date):
-    """ get data in format suitable for bad format"""
+    """ get data in format suitable for bd format"""
     return  "-".join(reversed(date.split(".")))
     
     
@@ -62,10 +62,23 @@ def date_to_output_format(date):
 
 
 
-#work with bd
+#Functions to work with bd
 def insert_citizens_set(request_json):
-    """ insert set of citizens data to db"""
-    citizens_data, kinships_data = get_insert_data(request_json)
+    """ insert set of citizens data to db
+    Args:
+        crequest_json (dict): data about citizens to insert
+    
+    Returns:
+        int:  import_id if insert is completed
+        string: error if something gets wrong
+        
+    """
+    try:
+        citizens_data, kinships_data = get_insert_data(request_json)
+    except Exception as exc:
+        print(exc.args)
+        raise
+    
     #print(citizens_data)
     #print(kinships_data)
     
@@ -77,8 +90,8 @@ def insert_citizens_set(request_json):
               
     sql_kinship = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
+              
     
-    sql_corrupted = "Not even sql command"
     
     #work with db
     try:
@@ -110,12 +123,20 @@ def insert_citizens_set(request_json):
 
 
 def get_insert_data(request_json):
-    """Unpack data from request_json structure"""
-    ##TODO:check that relative citizen also is in the set - sort list
-    ##TODO:check that realtions are mutual
+    """Unpack data from request_json structure
+    Args:
+        crequest_json (dict): citizens set in dict format
+    Returns:
+        citizens_data (list) : data about citizens formed for inserting in db (without information about kinship)
+        kinships_data (list) : data about kinshps formed for inserting in db
+        
+    Raises:
+    Exception: if relatives links are inconsistant
+    """
     citizens = request_json["citizens"]
     citizens_data = list()
     kinships_data = list()
+    kinship_set = set()
     for citizen in citizens:
         citizen_id = citizen['citizen_id']
         town = citizen['town']
@@ -127,8 +148,20 @@ def get_insert_data(request_json):
         gender = citizen['gender']
         relatives = citizen['relatives']
         citizens_data.append([citizen_id, town, street, building, appartement, name, birth_date, gender])
-        for relative in relatives:
+        #Generate pairs of relatives for this citizen
+        #For now just eliminate duplicates, but maybe we'd better should reject the whole request
+        for relative in set(relatives):
             kinships_data.append([citizen_id, relative])
+            #keep track of pairs of relatives - every one should has pair
+            if citizen_id != relative:
+                pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
+                if pair_in_order not in kinship_set:
+                    kinship_set.add(pair_in_order)
+                else: 
+                    kinship_set.remove(pair_in_order)
+    if  len(kinship_set) != 0:
+        print ("Informationt about relatives inconsistant")
+        raise Exception("Inconsistant data")
     return citizens_data, kinships_data
         
 
@@ -198,7 +231,7 @@ def fix_data(import_id, citizen_id, request_json):
     '''
     
     
-    #work with bd
+    #work with db
     try:
         db = get_db()
         db.execute("begin")

@@ -1,6 +1,11 @@
 import os
 from flask import Flask, request, jsonify
 
+def trace():
+    from inspect import currentframe, getframeinfo
+    cf = currentframe()
+    print('>>>>> TRACE: {}:{}'.format(getframeinfo(cf).filename, cf.f_back.f_lineno))
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -33,14 +38,25 @@ def create_app(test_config=None):
     @app.route('/imports', methods=['POST'])
     def imports():
         if request.method == 'POST':
+            #print(request.get_data())
             request_json = request.get_json()
             #print(request_json)
-            import_id = db.insert_citizens_set(request_json)
-            if import_id is None:
-                return "Insertion failed", 400
+            try:
+                import_id = db.insert_citizens_set(request_json)
             
-            response = jsonify({"data": {"import_id": import_id}})
-            return response , 201
+                if import_id is None:
+                    return "Insertion failed", 400
+            
+                response = jsonify({"data": {"import_id": import_id}})
+                return response , 201
+            except Exception as exc:
+                trace()
+                import traceback
+                traceback.print_exc()
+                print(exc)
+                return_str = "Insertion failed: {}".format(str(exc))
+                return return_str, 400
+                
 
 
     @app.route('/imports/<int:import_id>/citizens')
