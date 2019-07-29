@@ -3,6 +3,8 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
+from giftr import help_data
+
 #bd settings and open/close/initialization function
 def get_db():
     """Connect to the application's configured database. The connection
@@ -74,7 +76,7 @@ def insert_citizens_set(request_json):
         
     """
     try:
-        citizens_data, kinships_data = get_insert_data(request_json)
+        citizens_data, kinships_data = help_data.get_insert_data(request_json)
     except Exception as exc:
         print(exc.args)
         raise
