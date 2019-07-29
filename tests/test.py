@@ -16,18 +16,12 @@ def init():
     
 def post_data_set(data_set_file):
     with open(data_set_file,'r') as json_file:
-        #citizens_structure = json.load(json_file)
         citizens_structure = json_file.read()
     
-    print(repr(citizens_structure))
+    #print(repr(citizens_structure))
     path = "/imports"
     addr = full_addr(path)
-    #print(addr)
     return requests.post(addr, data=citizens_structure, headers={'content-type': 'application/json'})
-
-    print(r.status_code, r.reason)
-    print(r.text)
-    
 
 
 def test_good_input():
@@ -60,9 +54,31 @@ def test_input_with_wrong_date_format():
     r = post_data_set('simple_set_with_wrong_date_format')
     assert r.status_code == 400
     
+def test_input_with_tricky_wrong_date_format1():
+    init()
+    r = post_data_set('simple_set_with_tricky_wrong_date_format1')
+    assert r.status_code == 400
+    
+def test_input_with_tricky_wrong_date_format2():
+    init()
+    r = post_data_set('simple_set_with_tricky_wrong_date_format2')
+    assert r.status_code == 400
+    
+def test_input_with_trickier_wrong_date_format():
+    init()
+    r = post_data_set('simple_set_with_trickier_wrong_date_format')
+    assert r.status_code == 400
+
+def test_input_with_the_trickiest_wrong_date_format():
+    init()
+    r = post_data_set('simple_set_with_the_trickiest_wrong_date_format')
+    assert r.status_code == 201
+
 def test_input_with_wrong_geneder_format():
     init()
     r = post_data_set('simple_set_with_wrong_geneder_format')
+    #print(r.status_code, r.reason)
+    #print(r.text)
     assert r.status_code == 400
     
 def test_input_with_absent_key():
@@ -85,3 +101,7 @@ def test_input_without_json_structure():
     r = post_data_set( 'simle_set_without_json_structure')
     assert r.status_code == 400
     
+    
+'simple_set_with_non_unique_citizen_id'
+
+#TODO тест с вставкой нескольких сетов

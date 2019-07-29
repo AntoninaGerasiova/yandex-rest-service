@@ -2,7 +2,7 @@
 parsing json,  validation
 """
 import jsonschema
-
+from dateutil.parser import parse
 schema_input = {
     "type": "object",
     "properties":{
@@ -37,7 +37,9 @@ def date_to_bd_format(date):
     d,m,y = date.split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
         raise Exception("Bad data format")
-    return  "-".join((y, m, d))
+    bd_date = "-".join((y, m, d))
+    parse(bd_date)
+    return  bd_date
     
     
 def date_to_output_format(date):
