@@ -59,13 +59,19 @@ def insert_citizens_set(request_json):
     
     Returns:
         int:  import_id if insert is completed
-        string: error if something gets wrong
+    
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
+        db.Error: if something went wrong during insertion in db
         
     """
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
     
-    #print(citizens_data)
-    #print(kinships_data)
+    citizen_len = len(citizens_data)
+    kinship_len = len(kinships_data)
     
     #sql requests
     sql_imports = '''INSERT INTO imports default values'''
@@ -83,18 +89,11 @@ def insert_citizens_set(request_json):
         #add row into sql_imports table and get unique import_id as responce
         #should be unique even with interleaving
         import_id = db.execute(sql_imports).lastrowid
-        
         #insert citizens data into db using import_id that we have got
-        for citizen_data in citizens_data:
-            citizen_data = [import_id] + citizen_data
-            db.execute(sql_citizens,  citizen_data)
-    
-        #db.execute(sql_corrupted)
-        for kinship_data in kinships_data:
-            kinship_data = [import_id] + kinship_data
-            db.execute(sql_kinship, kinship_data)
-
-
+        citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
+        kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
+        db.executemany(sql_citizens, citizen_data_with_import_id)
+        db.executemany(sql_kinship, kinship_data_with_import_id)
         db.execute("commit")
     except db.Error:
         db.execute("rollback")

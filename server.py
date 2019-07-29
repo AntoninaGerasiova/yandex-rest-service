@@ -1,8 +1,11 @@
 import json
 from flask import Flask, request, jsonify, g
+from flask.cli import with_appcontext
 import sqlite3
 
 app = Flask(__name__)
+
+#Rules
 
 @app.route('/imports', methods=['POST'])
 def imports():
@@ -123,13 +126,8 @@ def get_statistic_for_import_id(import_id):
         }]}
 
 
-    
- 
-#with app.test_request_context('/imports', method='POST'):
-#    assert request.path == '/imports'
-#    assert request.method == 'POST'
-#    print("we are here")
-#    print(request.form)
+
+
     
 
 
