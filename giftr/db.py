@@ -50,19 +50,6 @@ def init_app(app):
     app.cli.add_command(init_db_command) #adds a new command that can be called with the flask command
     
     
-#help functions
-def date_to_bd_format(date):
-    """ get data in format suitable for bd format"""
-    return  "-".join(reversed(date.split(".")))
-    
-    
-def date_to_output_format(date):
-    """get data in format suitable for output"""
-    month = date.month if date.month >= 10 else "0" + str(date.month)
-    day = date.day if date.day >= 10 else "0" + str(date.day)
-    return "{}.{}.{}".format(day, month, date.year)
-
-
 
 #Functions to work with bd
 def insert_citizens_set(request_json):
@@ -75,11 +62,7 @@ def insert_citizens_set(request_json):
         string: error if something gets wrong
         
     """
-    try:
-        citizens_data, kinships_data = help_data.get_insert_data(request_json)
-    except Exception as exc:
-        print(exc.args)
-        raise
+    citizens_data, kinships_data = help_data.get_insert_data(request_json)
     
     #print(citizens_data)
     #print(kinships_data)
@@ -93,8 +76,6 @@ def insert_citizens_set(request_json):
     sql_kinship = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
               
-    
-    
     #work with db
     try:
         db = get_db()
@@ -116,56 +97,10 @@ def insert_citizens_set(request_json):
 
         db.execute("commit")
     except db.Error:
-        print("failed!")
         db.execute("rollback")
-        import_id = None
-    
+        raise
     return import_id
 
-
-
-def get_insert_data(request_json):
-    """Unpack data from request_json structure
-    Args:
-        crequest_json (dict): citizens set in dict format
-    Returns:
-        citizens_data (list) : data about citizens formed for inserting in db (without information about kinship)
-        kinships_data (list) : data about kinshps formed for inserting in db
-        
-    Raises:
-    Exception: if relatives links are inconsistant
-    """
-    citizens = request_json["citizens"]
-    citizens_data = list()
-    kinships_data = list()
-    kinship_set = set()
-    for citizen in citizens:
-        citizen_id = citizen['citizen_id']
-        town = citizen['town']
-        street = citizen['street']
-        building = citizen['building']
-        appartement = citizen['appartement']
-        name = citizen['name']
-        birth_date = date_to_bd_format(citizen['birth_date'])
-        gender = citizen['gender']
-        relatives = citizen['relatives']
-        citizens_data.append([citizen_id, town, street, building, appartement, name, birth_date, gender])
-        #Generate pairs of relatives for this citizen
-        #For now just eliminate duplicates, but maybe we'd better should reject the whole request
-        for relative in set(relatives):
-            kinships_data.append([citizen_id, relative])
-            #keep track of pairs of relatives - every one should has pair
-            if citizen_id != relative:
-                pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
-                if pair_in_order not in kinship_set:
-                    kinship_set.add(pair_in_order)
-                else: 
-                    kinship_set.remove(pair_in_order)
-    if  len(kinship_set) != 0:
-        print ("Informationt about relatives inconsistant")
-        raise Exception("Inconsistant data")
-    return citizens_data, kinships_data
-        
 
 def get_citizens_set(import_id):
     #sql requests

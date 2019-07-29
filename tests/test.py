@@ -9,7 +9,7 @@ def full_addr(path):
 def init():
     path  = "/test"
     addr = full_addr(path)
-    print(addr)
+    #print(addr)
     r = requests.post(addr, json = {'action':'init'})
     print(r.status_code, r.reason)
     print(r.text)
@@ -101,7 +101,11 @@ def test_input_without_json_structure():
     r = post_data_set( 'simle_set_without_json_structure')
     assert r.status_code == 400
     
+def test_input_with_non_unique_citizen_id():
+    init()
+    r = post_data_set('simple_set_with_non_unique_citizen_id')
+    assert r.status_code == 400
     
-'simple_set_with_non_unique_citizen_id'
+
 
 #TODO тест с вставкой нескольких сетов

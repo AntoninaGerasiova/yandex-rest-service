@@ -43,21 +43,15 @@ def create_app(test_config=None):
             #print(request_json)
             try:
                 import_id = db.insert_citizens_set(request_json)
-            
-                if import_id is None:
-                    return "Insertion failed", 400
-            
                 response = jsonify({"data": {"import_id": import_id}})
                 return response , 201
             except Exception as exc:
                 trace()
                 import traceback
                 traceback.print_exc()
-                print(exc)
                 return_str = "Insertion failed: {}".format(str(exc))
                 return return_str, 400
                 
-
 
     @app.route('/imports/<int:import_id>/citizens')
     def get_citizens(import_id):

@@ -57,7 +57,10 @@ def get_insert_data(request_json):
         kinships_data (list) : data about kinshps formed for inserting in db
         
     Raises:
-    Exception: if relatives links are inconsistant
+    jsonschema.exceptions.ValidationError: if request_json is not valid json
+    json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+    ValueError: in case of wrong date 
+    Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
     #validate schema before parse it
     jsonschema.validate(request_json, schema_input)
