@@ -11,8 +11,8 @@ def init():
     addr = full_addr(path)
     #print(addr)
     r = requests.post(addr, json = {'action':'init'})
-    print(r.status_code, r.reason)
-    print(r.text)
+    #print(r.status_code, r.reason)
+    #print(r.text)
     
 def post_data_set(data_set_file):
     with open(data_set_file,'r') as json_file:
@@ -106,6 +106,20 @@ def test_input_with_non_unique_citizen_id():
     r = post_data_set('simple_set_with_non_unique_citizen_id')
     assert r.status_code == 400
     
+def test_input_several_sets():
+    init()
+    r = post_data_set('simple_good_data_set')
+    import_id1 = json.loads(r.text)["data"]["import_id"]
+    
+    r = post_data_set('simple_good_data_set')
+    import_id2 = json.loads(r.text)["data"]["import_id"]
+    
+    assert import_id1 + 1 == import_id2
+    #try to insert set for with insertion begins but should be rolled back
+    r = post_data_set('simple_set_with_non_unique_citizen_id')
+    r = post_data_set('simple_good_data_set')
+    import_id3 = json.loads(r.text)["data"]["import_id"]
+    assert import_id2 + 1 == import_id3
+    
+    
 
-
-#TODO тест с вставкой нескольких сетов
