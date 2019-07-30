@@ -7,7 +7,7 @@ import requests
                 "town": "Керчь",
                 "street": "Иосифа Бродского",
                 "building": "16к7стр5",
-                "appartement": 7,
+                "apartment": 7,
                 "name": "Иванов Иван Иванович",
                 "birth_date": "01.02.2000",
                 "gender": "male",
@@ -16,7 +16,7 @@ import requests
                 "town": "Москва",
                 "street": "Льва Толстого",
                 "building": "16к7стр5",
-                "appartement": 7,
+                "apartment": 7,
                 "name": "Иванов Иван Петрович",
                 "birth_date": "01.02.2000",
                 "gender": "male",
@@ -37,7 +37,7 @@ def init():
     
 
 def post_data_set():
-    citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
+    citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
 
     #citizens_json = json.dumps(citizens_structure, indent = 4)
     #print(citizens_json)
@@ -82,12 +82,12 @@ def get_citizens_birthdays(import_id):
     
 
 def get_statistic(import_id):
-        path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
-        addr = full_addr(path)
-        print(addr)
-        r = requests.get(addr)
-        print(r.status_code, r.reason)
-        print(r.text)
+    path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
+    addr = full_addr(path)
+    print(addr)
+    r = requests.get(addr)
+    print(r.status_code, r.reason)
+    print(r.text)
 
 
 

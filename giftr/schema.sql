@@ -7,7 +7,7 @@ CREATE TABLE citizens (
     town TEXT NOT NULL,
     street TEXT NOT NULL,
     building TEXT NOT NULL,
-    appartement int NOT NULL,
+    apartment int NOT NULL,
     name TEXT NOT NULL,
     birth_date DATE NOT NULL,
     gender TEXT NOT NULL,

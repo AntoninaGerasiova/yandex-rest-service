@@ -8,13 +8,13 @@ schema_input = {
     "properties":{
         "citizens": {"type": "array",
                     "items": {"type":"object",
-                              "required": ["citizen_id", "town", "street", "building", "appartement", "name", "birth_date", "gender", "relatives"],
+                              "required": ["citizen_id", "town", "street", "building", "apartment", "name", "birth_date", "gender", "relatives"],
                               "properties":{
                                   "citizen_id":{"type": "integer"},
                                   "town":{"type": "string"},
                                   "street":{"type": "string"},
                                   "building":{"type": "string"},
-                                  "appartement":{"type": "integer"},
+                                  "apartment":{"type": "integer"},
                                   "name":{"type": "string"},
                                   "birth_date":{"type": "string"},
                                   "gender":{"type": "string", "enum": ["male", "female"]},
@@ -34,9 +34,9 @@ schema_input = {
 def date_to_bd_format(date):
     """ get data in format suitable for bd format"""
     #Validate date format
-    d,m,y = date.split(".")
+    d,m,y = date.strip().split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
-        raise Exception("Bad data format")
+        raise Exception("Bad date format")
     bd_date = "-".join((y, m, d))
     parse(bd_date)
     return  bd_date
@@ -57,10 +57,10 @@ def get_insert_data(request_json):
         kinships_data (list) : data about kinshps formed for inserting in db
         
     Raises:
-    jsonschema.exceptions.ValidationError: if request_json is not valid json
-    json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
-    ValueError: in case of wrong date 
-    Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
     #validate schema before parse it
     jsonschema.validate(request_json, schema_input)
@@ -74,12 +74,12 @@ def get_insert_data(request_json):
         town = citizen['town']
         street = citizen['street']
         building = citizen['building']
-        appartement = citizen['appartement']
+        apartment = citizen['apartment']
         name = citizen['name']
         birth_date = date_to_bd_format(citizen['birth_date'])
         gender = citizen['gender']
         relatives = citizen['relatives']
-        citizens_data.append([citizen_id, town, street, building, appartement, name, birth_date, gender])
+        citizens_data.append([citizen_id, town, street, building, apartment, name, birth_date, gender])
         #Generate pairs of relatives for this citizen
         #For now just eliminate duplicates, but maybe we'd better should reject the whole request
         for relative in set(relatives):
@@ -95,6 +95,59 @@ def get_insert_data(request_json):
         print ("Informationt about relatives inconsistant")
         raise Exception("Inconsistant relatives data")
     return citizens_data, kinships_data
+
+def get_new_relatives(import_id, citizen_id, request_json):
+    ##TODO: check that we have that relative
+    ##TODO: if I add record (citizen, relative) shoulI also add record (relative, citizen) or i have to prhibit such a change
+    ##TODO:if I delete  record (citizen, relative) should I also get rid of record   (relative, citizen) or let it go
+    
+    kinships_data = list()
+    for relative in request_json['relatives']:
+            kinships_data.append([import_id, citizen_id, relative])
+            
+    return kinships_data
+
+
+def form_request(import_id, citizen_id, request_json):
+    """
+    Make update request to update information about citizen with distinct citizen_id and request_id(except relative field)
+    """
+    
+    #make request to update information (except relative field)
+    sql_update_citizen = "UPDATE citizens SET "
+    
+    #go through keys explicitly
+    #TODO: is it bad if there are some other keys, should I answer bad request
+    if "town" in request_json:
+        town = request_json['town']
+        sql_update_citizen += "town = '{}', ".format(town)
+        
+    if "street" in request_json:
+        street = request_json['street']
+        sql_update_citizen += "street = '{}', ".format(street)
+    
+    if "building" in request_json:
+        building = request_json['building']
+        sql_update_citizen += "building = '{}', ".format(building)
+        
+    if "apartment" in request_json:
+        apartment = request_json['apartment']
+        sql_update_citizen += "apartment = {}, ".format(apartment)
+        
+    if "name" in request_json:
+        name = request_json['name']
+        sql_update_citizen += "name = '{}', ".format(name)
+    
+    if "birth_date" in request_json:
+        birth_date = date_to_bd_format(request_json['birth_date'])
+        sql_update_citizen += "birth_date = {}, ".format(birth_date)
+        
+    if "gender" in request_json:
+        gender = request_json['gender']
+        sql_update_citizen += "gender = '{}', ".format(gender)
+        
+    sql_update_citizen = sql_update_citizen[:-2] + " WHERE import_id = {} and citizen_id = {}".format(import_id, citizen_id)
+    return sql_update_citizen
 
 
 

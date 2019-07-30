@@ -76,7 +76,7 @@ def insert_citizens_set(request_json):
     #sql requests
     sql_imports = '''INSERT INTO imports default values'''
     
-    sql_citizens = ''' INSERT INTO citizens(import_id, citizen_id, town, street, building, appartement, name, birth_date, gender)
+    sql_citizens = ''' INSERT INTO citizens(import_id, citizen_id, town, street, building, apartment, name, birth_date, gender)
               VALUES(?,?,?,?,?,?,?,?,?) '''
               
     sql_kinship = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
@@ -103,7 +103,7 @@ def insert_citizens_set(request_json):
 
 def get_citizens_set(import_id):
     #sql requests
-    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, town,street, building, appartement, name, birth_date, gender, relative_id 
+    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, town,street, building, apartment, name, birth_date, gender, relative_id 
     FROM citizens, kinships  
     WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?'''
     
@@ -128,9 +128,9 @@ def get_citizens_set(import_id):
                                      "town": row["town"],
                                      "street": row["street"],
                                      "building": row["building"],
-                                     "appartement": row["appartement"],
+                                     "apartment": row["apartment"],
                                      "name": row["name"],
-                                     "birth_date": date_to_output_format(row["birth_date"]),
+                                     "birth_date": help_data.date_to_output_format(row["birth_date"]),
                                      "gender": row["gender"],
                                      "relatives": list()}
     
@@ -144,6 +144,8 @@ def get_citizens_set(import_id):
         
 
 def fix_data(import_id, citizen_id, request_json):
+    """
+    """
     print(import_id, citizen_id)
     print(request_json)
     #form all necesary requests
@@ -151,12 +153,12 @@ def fix_data(import_id, citizen_id, request_json):
     if "relatives" in request_json:
         update_relatives = True
         sql_delete_kins = '''DELETE FROM kinships WHERE import_id = {} and citizen_id = {}'''.format(import_id, citizen_id)
-        kinships_data = get_new_relatives(import_id, citizen_id, request_json)
+        kinships_data = help_data.get_new_relatives(import_id, citizen_id, request_json)
         sql_insert_relatives = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
         
-    sql_update_citizen = form_request(import_id, citizen_id, request_json)
-    sql_get_citizen_by_id = '''SELECT town, street, building, appartement, name, birth_date, gender 
+    sql_update_citizen = help_data.form_request(import_id, citizen_id, request_json)
+    sql_get_citizen_by_id = '''SELECT town, street, building, apartment, name, birth_date, gender 
     FROM  citizens
     WHERE import_id = ? and citizen_id = ?
     '''
@@ -188,9 +190,9 @@ def fix_data(import_id, citizen_id, request_json):
                     "town": row["town"],
                     "street": row["street"],
                     "building": row["building"],
-                    "appartement": row["appartement"],
+                    "apartment": row["apartment"],
                     "name": row["name"],
-                    "birth_date": date_to_output_format(row["birth_date"]),
+                    "birth_date": help_data.date_to_output_format(row["birth_date"]),
                     "gender": row["gender"],
                     "relatives": list()}}
     cur_kins = db.execute(sql_get_kins_by_id, (import_id, citizen_id))
@@ -233,9 +235,9 @@ def form_request(import_id, citizen_id, request_json):
         building = request_json['building']
         sql_update_citizen += "building = '{}', ".format(building)
         
-    if "appartement" in request_json:
-        appartement = request_json['appartement']
-        sql_update_citizen += "appartement = {}, ".format(appartement)
+    if "apartment" in request_json:
+        apartment = request_json['apartment']
+        sql_update_citizen += "apartment = {}, ".format(apartment)
         
     if "name" in request_json:
         name = request_json['name']
