@@ -55,11 +55,17 @@ def create_app(test_config=None):
 
     @app.route('/imports/<int:import_id>/citizens')
     def get_citizens(import_id):
-        #print(import_id)
-        res = db.get_citizens_set(import_id)
-        res = jsonify(res)
-        return res
-                
+        try:
+            res = db.get_citizens_set(import_id)
+            res = jsonify(res)
+            return res
+        except Exception as exc:
+                trace()
+                import traceback
+                traceback.print_exc()
+                return_str = "Get failed: {}".format(str(exc))
+                return return_str, 400
+        
     @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>',methods=['PATCH'])
     def change(import_id, citizen_id):
         if request.method == 'PATCH':
@@ -77,7 +83,6 @@ def create_app(test_config=None):
                 return return_str, 400
 
 
-    
     return app
 
     

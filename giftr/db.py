@@ -53,7 +53,8 @@ def init_app(app):
 
 #Functions to work with bd
 def insert_citizens_set(request_json):
-    """ insert set of citizens data to db
+    """ 
+    insert set of citizens data to db
     Args:
         crequest_json (dict): data about citizens to insert
     
@@ -106,7 +107,19 @@ def insert_citizens_set(request_json):
 
 
 def get_citizens_set(import_id):
-    #sql requests
+    """
+    get set of citizens for set with certain import_id
+    
+    Args:
+        import_id (int): import id of set to get
+    
+    Returns:
+        dict: information about citizens of set with import_id
+        
+    Raises:
+        Exception: when there is no set with given import_id in db
+    """
+    #generate sql requests
     sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, town,street, building, apartment, name, birth_date, gender, relative_id 
     FROM citizens, kinships  
     WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?'''
@@ -122,11 +135,17 @@ def get_citizens_set(import_id):
     ORDER by citizen_id
     '''
     
+    #start work with db
     db = get_db()
     cur = db.execute(sql_get_citizens, (import_id,))
     
+    #TODO compeled to use fetchall to check if curasor is empty for sqlite. Very annoying. Change this when leave sqlite for good
+    rows = cur.fetchall()
+    if not rows: 
+        raise Exception("import with import_id = {} does not exist".format(import_id))
+    #first get all data except relatives connections   - fill in structure  
     citizens_dict = dict()
-    for row in cur:
+    for row in rows:
         citizen_id = row["citizen_id"]
         citizens_dict[citizen_id] = {"citizen_id": citizen_id,
                                      "town": row["town"],
@@ -138,13 +157,13 @@ def get_citizens_set(import_id):
                                      "gender": row["gender"],
                                      "relatives": list()}
     
+    #now get information about relative connections - fill information about relatives
     cur_kins = db.execute(sql_get_kins, (import_id,))
     for row in cur_kins:
-        #print(row.keys())
         citizen_id = row["citizen_id"]
         relative_id = row["relative_id"]
         citizens_dict[citizen_id]["relatives"].append(relative_id)
-    return ({"data":list(citizens_dict.values())})
+    return {"data":list(citizens_dict.values())}
         
 
 def fix_data(import_id, citizen_id, request_json):
@@ -152,7 +171,7 @@ def fix_data(import_id, citizen_id, request_json):
     Updete information about citizen with given import_id and citizen_id
         
     Args:
-        import_id (int): import id were to find citizen
+        import_id (int): import id  of set  where citizen is
         citizen_id (int):citizen id whose information to change
         request_json (dict): data to change
     
