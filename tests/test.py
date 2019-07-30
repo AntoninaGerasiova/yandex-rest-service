@@ -205,8 +205,25 @@ def test_patch_wrong_relative():
     r = patch(1, 3, 'patch_wrong_relative.test')
     assert r.status_code == 200
 
-#test_good_patch()
-test_good_patch()
+#==========================
+def get_citizens_set(import_id):
+    path =  "/imports/{}/citizens".format(import_id)
+    addr = full_addr(path)
+    #print(addr)
+    return requests.get(addr)
+
+def test_get_citizens_valid_import_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+
+def test_get_citizens_invalid_import_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = get_citizens_set(2)
+    assert r.status_code == 400
+    
 #after I can get data
 #TODO:Make test that add relative and check that mutual connection was added
 #TODO:Make test that delete relative and check that the mutual connection was deleted 
