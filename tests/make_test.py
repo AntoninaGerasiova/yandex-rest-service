@@ -7,7 +7,7 @@ STREETS_NUM_FOR_SET = 40
 MAX_BUILDING = 60
 MAX_CORPUS = 10
 MAX_STROENIE = 10
-MAX_APPARTMENT = 150
+MAX_APARTMENT = 150
 
 MIX_RELATIVE_TO_MESS = 20
 MAX_RELATIVE_TO_MESS = 20
@@ -73,7 +73,7 @@ def make_good_set(citizens_num, relatives_pairs):
         citizen_dict['town'] = random.choice(towns_list) 
         citizen_dict['street'] = random.choice(streets_list)
         citizen_dict[ 'building'] = generate_building()
-        citizen_dict[ 'appartement'] = random.randint(1, MAX_APPARTMENT)
+        citizen_dict[ 'apartment'] = random.randint(1, MAX_APARTMENT)
         citizen_dict['name'] =citizens_names[i][0]
         citizen_dict['birth_date'] =  generate_data()
         citizen_dict['gender'] = citizens_names[i][1]
@@ -119,13 +119,14 @@ def make_set_with_absent_realtives(citizens_num, relatives_pairs):
     return citizens_structure
         
     
-        
+      
 men = get_titles_from_file("men.txt")
 women = get_titles_from_file("women.txt")
 towns = get_titles_from_file("towns.txt")
 streets = get_titles_from_file("streets.txt")
 
-
+#====================================================
+#insertion tests
 #good_data_set = make_good_set(99, 200)
 #write_data_set_to_file(good_data_set, 'good_data_set1')
 #data_set_with_inconsistant_relatives = make_set_with_inconsistant_relatives(99, 200)
@@ -134,41 +135,72 @@ streets = get_titles_from_file("streets.txt")
 #write_data_set_to_file(data_set_with_absent_realtives, 'data_set_with_absent_realtives1')
 
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_good_data_set')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_good_data_set')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1, 2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_good_data_set_with_relative_connection_to_self')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1, 2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_good_data_set_with_relative_connection_to_self')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': []}]},'simple_inconsistant_relatives_set')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': []}]},'simple_inconsistant_relatives_set')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_absent_realtives_set')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_absent_realtives_set')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': 'rubish', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_rubbish_in_place_of_date')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': 'rubish', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_rubbish_in_place_of_date')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '2000.01.03', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_wrong_date_format')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '2000.01.03', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_wrong_date_format')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '61.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_tricky_wrong_date_format1')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '61.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_tricky_wrong_date_format1')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.32.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_tricky_wrong_date_format2')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.32.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_tricky_wrong_date_format2')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '31.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_trickier_wrong_date_format')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '31.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_trickier_wrong_date_format')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '29.02.2016', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_the_trickiest_wrong_date_format')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '29.02.2016', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_the_trickiest_wrong_date_format')
 
 #very exclusive test
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'not known', 'relatives': [1]}]}, 'simple_set_with_wrong_geneder_format')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'not known', 'relatives': [1]}]}, 'simple_set_with_wrong_geneder_format')
 
 
-write_data_set_to_file({'citizens': [{'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_absent_key')
+write_data_set_to_file({'citizens': [{'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'simple_set_with_absent_key')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'wage': '2000USD', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_extra_key')
-
-
-write_data_set_to_file([{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}], 'simple_set_wrong_structure')
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'wage': '2000USD', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_extra_key')
 
 
-citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
+write_data_set_to_file([{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}], 'simple_set_wrong_structure')
 
-write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}, {'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'appartement': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_non_unique_citizen_id')
+
+citizens_structure = {'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}
+
+write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}, {'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'simple_set_with_non_unique_citizen_id')
+
+#====================
+#patch tests
+
+test_insert_for_patch = {"citizens": [
+    {"citizen_id": 1, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Иван Иванович", "birth_date": " 26.12.1986", "gender": "male", "relatives": [2] },
+    {"citizen_id": 2,"town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Сергей Иванович", "birth_date": "17.04.1997","gender": "male","relatives": [1] },
+    {"citizen_id": 3, "town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": []}]
+}
+
+write_data_set_to_file(test_insert_for_patch, 'data_set_to_patch_it.test')
+
+write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [1]}, 'good_patch.test')
+
+write_data_set_to_file({}, 'patch_no_keys.test')
+
+write_data_set_to_file({"citizen_id": 3, "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [1]}, 'patch_extra_key.test')
+
+write_data_set_to_file({"citizens":[{ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [1]}]}, 'patch_wrong_structure.test')
+
+write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [3]}, 'patch_relative_to_self.test')
+
+write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [6]}, 'patch_wrong_relative.test')
+
+
+
+
+
+
+
+
 
 
 

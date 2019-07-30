@@ -18,6 +18,7 @@ simple_set_with_the_trickiest_wrong_date_format
 simple_set_with_trickier_wrong_date_format
 simple_set_with_tricky_wrong_date_format1
 simple_set_with_tricky_wrong_date_format2
+*.test
 streets.txt
 towns.txt
 women.txt

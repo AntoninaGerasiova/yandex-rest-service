@@ -13,7 +13,8 @@ def init():
     r = requests.post(addr, json = {'action':'init'})
     #print(r.status_code, r.reason)
     #print(r.text)
-    
+
+#insertion tests    
 def post_data_set(data_set_file):
     with open(data_set_file,'r') as json_file:
         citizens_structure = json_file.read()
@@ -120,6 +121,82 @@ def test_input_several_sets():
     r = post_data_set('simple_good_data_set')
     import_id3 = json.loads(r.text)["data"]["import_id"]
     assert import_id2 + 1 == import_id3
+    
+#=========================================================    
+#tests for patch
+def patch(import_id, citizen_id, data_file):
+    with open(data_file,'r') as json_file:
+        patch_structure = json_file.read()
+    print(patch_structure)
+
+    path =  "/imports/{}/citizens/{}".format(import_id, citizen_id)
+    addr = full_addr(path)
+    
+    return requests.patch(addr, data=patch_structure, headers={'content-type': 'application/json'})
+    #print(r.status_code, r.reason)
+    #print(r.text)
+    
+def test_good_patch():
+    init()
+    r = post_data_set('data_set_to_patch_it.test')
+    #print(r.status_code, r.reason)
+    #print(r.text)
+    r = patch(1, 3, 'good_patch.test')
+    assert r.status_code == 200
+    #print(r.status_code, r.reason)
+    #print(r.text)
+
+def test_patch_bad_import_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(2, 3, 'good_patch.test')
+    assert r.status_code == 400
+    
+def test_patch_bad_citizen_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 4, 'good_patch.test')
+    assert r.status_code == 400
+    
+def test_patch_bad_both_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(2, 4, 'good_patch.test')
+    assert r.status_code == 400
+    
+def test_patch_no_keys():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_no_keys.test')
+    assert r.status_code == 400
+    
+def test_patch_extra_key():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_extra_key.test')
+    assert r.status_code == 400
+    
+def test_patch_wrong_structure():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_wrong_structure.test')
+    assert r.status_code == 400
+    
+def test_patch_relative_to_self():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_relative_to_self.test')
+    assert r.status_code == 200
+    
+def test_patch_wrong_relative():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_wrong_relative.test')
+    assert r.status_code == 200
+
+
+
+
     
     
 
