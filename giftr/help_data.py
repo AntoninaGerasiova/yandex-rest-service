@@ -3,6 +3,7 @@ parsing json,  validation
 """
 import jsonschema
 from dateutil.parser import parse
+#Json schemas
 schema_input = {
     "type": "object",
     "properties":{
@@ -30,6 +31,29 @@ schema_input = {
     "additionalProperties": False
 }
                               
+schema_patch = {"type": "object",
+                "anyOf":[
+                    {"required": ["town"]},
+                    {"required": ["street"]},
+                    {"required": ["building"]},
+                    {"required": ["apartment"]},
+                    {"required": ["name"]},
+                    {"required": ["birth_date"]},
+                    {"required": ["gender"]},
+                    {"required": ["relatives"]}],
+                "properties":{
+                    "town":{"type": "string"},
+                    "street":{"type": "string"},
+                    "building":{"type": "string"},
+                    "apartment":{"type": "integer"},
+                    "name":{"type": "string"},
+                    "birth_date":{"type": "string"},
+                    "gender":{"type": "string", "enum": ["male", "female"]},
+                    "relatives":{"type": "array", "items":{"type": "integer"}}
+                    },
+                "additionalProperties": False}
+                              
+
 #help functions
 def date_to_bd_format(date):
     """ get data in format suitable for bd format"""
@@ -96,6 +120,18 @@ def get_insert_data(request_json):
         raise Exception("Inconsistant relatives data")
     return citizens_data, kinships_data
 
+
+def validate_patch_json(request_json):
+    """validate patch json
+    
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+    """
+    jsonschema.validate(request_json, schema_patch)
+    
+    
+    
 def get_new_relatives(import_id, citizen_id, request_json):
     ##TODO: check that we have that relative
     ##TODO: if I add record (citizen, relative) shoulI also add record (relative, citizen) or i have to prhibit such a change

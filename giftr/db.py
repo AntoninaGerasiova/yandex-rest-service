@@ -146,8 +146,9 @@ def get_citizens_set(import_id):
 def fix_data(import_id, citizen_id, request_json):
     """
     """
-    print(import_id, citizen_id)
-    print(request_json)
+    #print(import_id, citizen_id)
+    #print(request_json)
+    help_data.validate_patch_json(request_json)
     #form all necesary requests
     update_relatives = False
     if "relatives" in request_json:
