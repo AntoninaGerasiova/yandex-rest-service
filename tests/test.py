@@ -217,6 +217,11 @@ def test_get_citizens_valid_import_id():
     post_data_set('data_set_to_patch_it.test')
     r = get_citizens_set(1)
     assert r.status_code == 200
+    inserted_data = get_test_file_as_structure('data_set_to_patch_it.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    assert len(inserted_data) == len(got_data)
+    for i in range(len(inserted_data)):
+        assert inserted_data[i] == got_data[i]
 
 def test_get_citizens_invalid_import_id():
     init()
@@ -224,6 +229,7 @@ def test_get_citizens_invalid_import_id():
     r = get_citizens_set(2)
     assert r.status_code == 400
     
+
 #after I can get data
 #TODO:Make test that add relative and check that mutual connection was added
 #TODO:Make test that delete relative and check that the mutual connection was deleted 
