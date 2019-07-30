@@ -68,6 +68,10 @@ def insert_citizens_set(request_json):
         db.Error: if something went wrong during insertion in db
         
     """
+    #validate json before parse it
+    help_data.validate_insert_json(request_json)
+    
+    #parse json
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
     
     citizen_len = len(citizens_data)
@@ -145,20 +149,38 @@ def get_citizens_set(import_id):
 
 def fix_data(import_id, citizen_id, request_json):
     """
+    Updete information about citizen with given import_id and citizen_id
+        
+    Args:
+        import_id (int): import id were to find citizen
+        citizen_id (int):citizen id whose information to change
+        request_json (dict): data to change
+    
+    Returns:
+        res(dict):    Updated information about citizen
+    
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format or if citizen with  given import_id, citizen_id not in base
     """
-    #print(import_id, citizen_id)
-    #print(request_json)
+
+    #validate request_json
     help_data.validate_patch_json(request_json)
+    
     #form all necesary requests
     update_relatives = False
     if "relatives" in request_json:
         update_relatives = True
-        sql_delete_kins = '''DELETE FROM kinships WHERE import_id = {} and citizen_id = {}'''.format(import_id, citizen_id)
+        sql_delete_kins_for_citizen = '''DELETE FROM kinships WHERE import_id = {} and citizen_id = {}'''.format(import_id, citizen_id)
+        sql_delete_mutual_kins = '''DELETE FROM kinships WHERE import_id = {} and relative_id = {}'''.format(import_id, citizen_id)
         kinships_data = help_data.get_new_relatives(import_id, citizen_id, request_json)
         sql_insert_relatives = ''' INSERT INTO kinships(import_id, citizen_id, relative_id)
               VALUES(?,?,?) '''
         
     sql_update_citizen = help_data.form_request(import_id, citizen_id, request_json)
+    
     sql_get_citizen_by_id = '''SELECT town, street, building, apartment, name, birth_date, gender 
     FROM  citizens
     WHERE import_id = ? and citizen_id = ?
@@ -170,21 +192,30 @@ def fix_data(import_id, citizen_id, request_json):
     '''
     
     
-    #work with db
+    #start work with db
     try:
         db = get_db()
+        #check if the requered citizen' record  is in the db - for sqlite only
+        #TODO:remove this check when use mysql or postgress cause they throw the proper exeption when update non-existant row
+        row = db.execute(sql_get_citizen_by_id, (import_id, citizen_id)).fetchone()
+        if row is None:
+            raise Exception("citizen's record doesn't exist")
+        
+        #update citizen data
         db.execute("begin")
-        if update_relatives:
-            db.execute(sql_delete_kins)
-            db.executemany(sql_insert_relatives, kinships_data)
         db.execute(sql_update_citizen)
+        if update_relatives:
+            db.execute(sql_delete_kins_for_citizen)
+            db.execute(sql_delete_mutual_kins)
+            db.executemany(sql_insert_relatives, kinships_data)
         db.execute("commit")
     except db.Error:
-        print("failed!")
+        print("Patch failed!")
         db.execute("rollback")
-        return "Can't update data"
+        raise
         
-    
+    #Get patched information about citizen back, to return to user
+    #TODO:Consider making this request under trunsaction (if it's possible), cause data can be changed during parallel requests - it will be consistant, but not the same that we put in db. On other hand it can be desired behavior as this data will be fresh. 
     row = db.execute(sql_get_citizen_by_id, (import_id, citizen_id)).fetchone()
     res = {
             "data": {"citizen_id": citizen_id,
@@ -202,58 +233,10 @@ def fix_data(import_id, citizen_id, request_json):
     return res
 
 
-def get_new_relatives(import_id, citizen_id, request_json):
-    ##TODO: check that we have that relative
-    ##TODO: if I add record (citizen, relative) shoulI also add record (relative, citizen) or i have to prhibit such a change
-    ##TODO:if I delete  record (citizen, relative) should I also get rid of record   (relative, citizen) or let it go
-    
-    kinships_data = list()
-    for relative in request_json['relatives']:
-            kinships_data.append([import_id, citizen_id, relative])
-            
-    return kinships_data
 
 
-def form_request(import_id, citizen_id, request_json):
-    """
-    Make update request to update information about citizen with distinct citizen_id and request_id(except relative field)
-    """
-    
-    #make request to update information (except relative field)
-    sql_update_citizen = "UPDATE citizens SET "
-    
-    #go through keys explicitly
-    #TODO: is it bad if there are some other keys, should I answer bad request
-    if "town" in request_json:
-        town = request_json['town']
-        sql_update_citizen += "town = '{}', ".format(town)
-        
-    if "street" in request_json:
-        street = request_json['street']
-        sql_update_citizen += "street = '{}', ".format(street)
-    
-    if "building" in request_json:
-        building = request_json['building']
-        sql_update_citizen += "building = '{}', ".format(building)
-        
-    if "apartment" in request_json:
-        apartment = request_json['apartment']
-        sql_update_citizen += "apartment = {}, ".format(apartment)
-        
-    if "name" in request_json:
-        name = request_json['name']
-        sql_update_citizen += "name = '{}', ".format(name)
-    
-    if "birth_date" in request_json:
-        birth_date = date_to_bd_format(request_json['birth_date'])
-        sql_update_citizen += "birth_date = {}, ".format(birth_date)
-        
-    if "gender" in request_json:
-        gender = request_json['gender']
-        sql_update_citizen += "gender = '{}', ".format(gender)
-        
-    sql_update_citizen = sql_update_citizen[:-2] + " WHERE import_id = {} and citizen_id = {}".format(import_id, citizen_id)
-    return sql_update_citizen
+
+
     
 
     

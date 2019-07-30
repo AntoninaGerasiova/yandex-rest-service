@@ -66,8 +66,6 @@ def create_app(test_config=None):
             request_json = request.get_json()
             try:
                 res = db.fix_data(import_id, citizen_id, request_json)
-                if type(res) == str:
-                    return res, 400
                 res = jsonify(res)
                 return res
             

@@ -56,7 +56,17 @@ schema_patch = {"type": "object",
 
 #help functions
 def date_to_bd_format(date):
-    """ get data in format suitable for bd format"""
+    """ 
+    Change date format to suitable for bd one
+    
+    Args: date(str): date in original format that sould be "ДД.ММ.ГГГГ"
+    
+    Returns: date(str): date suitable for db "YYYY-MM-DD"
+        
+    Raises:
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
+    """
     #Validate date format
     d,m,y = date.strip().split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
@@ -71,24 +81,33 @@ def date_to_output_format(date):
     month = date.month if date.month >= 10 else "0" + str(date.month)
     day = date.day if date.day >= 10 else "0" + str(date.day)
     return "{}.{}.{}".format(day, month, date.year)
+
+
+def validate_insert_json(request_json):
+    """
+    Validate insert data format
+    Args:
+        request_json (dict): citizens set in dict format
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types    
+    
+    """
+    jsonschema.validate(request_json, schema_input)
     
 def get_insert_data(request_json):
     """Unpack data from request_json structure
     Args:
-        crequest_json (dict): citizens set in dict format
+        request_json (dict): citizens set in dict format
     Returns:
         citizens_data (list) : data about citizens formed for inserting in db (without information about kinship)
         kinships_data (list) : data about kinshps formed for inserting in db
         
     Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
         ValueError: in case of wrong date 
         Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
-    #validate schema before parse it
-    jsonschema.validate(request_json, schema_input)
-    
+   
     citizens = request_json["citizens"]
     citizens_data = list()
     kinships_data = list()
@@ -121,9 +140,12 @@ def get_insert_data(request_json):
     return citizens_data, kinships_data
 
 
+
 def validate_patch_json(request_json):
-    """validate patch json
-    
+    """
+    Validate patch data
+    Args:
+        request_json (dict): data to change
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
         json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
@@ -133,27 +155,51 @@ def validate_patch_json(request_json):
     
     
 def get_new_relatives(import_id, citizen_id, request_json):
-    ##TODO: check that we have that relative
-    ##TODO: if I add record (citizen, relative) shoulI also add record (relative, citizen) or i have to prhibit such a change
-    ##TODO:if I delete  record (citizen, relative) should I also get rid of record   (relative, citizen) or let it go
+    """
+    Make pairs of relatives to add to kinships table
+    
+    Args:
+        import_id (int): import id were to find citizen
+        citizen_id (int):citizen id whose information to change
+        request_json (dict): data to change
+    
+    Returns: 
+        kinships_data (list): pairs of citizens' kinships to insert into table
+    """
+    
+    #TODO:check that we have that relative
+    #TODO:if I delete  record (citizen, relative) also get rid of record (relative, citizen) 
     
     kinships_data = list()
+    
     for relative in request_json['relatives']:
             kinships_data.append([import_id, citizen_id, relative])
-            
+            if citizen_id != relative:
+                kinships_data.append([import_id, relative, citizen_id])
+                
     return kinships_data
 
 
 def form_request(import_id, citizen_id, request_json):
     """
-    Make update request to update information about citizen with distinct citizen_id and request_id(except relative field)
+    Make update request to update information about citizen with distinct citizen_id and request_id (except relative field)
+    
+    Args:
+        import_id (int): import id were to find citizen
+        citizen_id (int):citizen id whose information to change
+        request_json (dict): data to change
+    
+    Returns: 
+        sql_update_citizen (str) :sql-request ready to use to update bd (may be not very safe??? but provided the json structure was checkced it will do)
+    
+    Raises:
+        ValueError: in case of wrong date
     """
     
     #make request to update information (except relative field)
     sql_update_citizen = "UPDATE citizens SET "
     
     #go through keys explicitly
-    #TODO: is it bad if there are some other keys, should I answer bad request
     if "town" in request_json:
         town = request_json['town']
         sql_update_citizen += "town = '{}', ".format(town)
