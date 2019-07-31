@@ -189,6 +189,7 @@ def fix_data(import_id, citizen_id, request_json):
     help_data.validate_patch_json(request_json)
     
     #form all necesary requests
+    
     update_relatives = False
     if "relatives" in request_json:
         update_relatives = True
@@ -222,7 +223,9 @@ def fix_data(import_id, citizen_id, request_json):
         
         #update citizen data
         db.execute("begin")
-        db.execute(sql_update_citizen)
+        if sql_update_citizen:
+            db.execute(sql_update_citizen)
+        
         if update_relatives:
             db.execute(sql_delete_kins_for_citizen)
             db.execute(sql_delete_mutual_kins)

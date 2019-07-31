@@ -231,22 +231,21 @@ def test_get_citizens_invalid_import_id():
     assert r.status_code == 400
     
 #================================
-#patch and get tests
+#patch and get test
 def test_patch_add_remove_relative():
     init()
     post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_add_relative.test')
-    print(r.status_code, r.reason)
+    patch(1, 3, 'patch_add_relative.test')
     r = get_citizens_set(1)
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == [1]
     assert sorted(got_data[0]['relatives']) == [2, 3]
     patch(1, 3, 'patch_remove_relative.test')
+    r = get_citizens_set(1)
+    got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == []
     assert sorted(got_data[0]['relatives']) == [2]
-    
-    
-test_patch_add_remove_relative()
+
 
 
     

@@ -166,10 +166,7 @@ def get_new_relatives(import_id, citizen_id, request_json):
     Returns: 
         kinships_data (list): pairs of citizens' kinships to insert into table
     """
-    
-    #TODO:check that we have that relative
-    #TODO:if I delete  record (citizen, relative) also get rid of record (relative, citizen) 
-    
+
     kinships_data = list()
     
     for relative in request_json['relatives']:
@@ -193,9 +190,14 @@ def form_request(import_id, citizen_id, request_json):
         sql_update_citizen (str) :sql-request ready to use to update bd (may be not very safe??? but provided the json structure was checkced it will do)
     
     Raises:
-        ValueError: in case of wrong date
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
     
+    key_list = list(request_json.keys())
+    key_list.remove('relatives')
+    if not key_list:
+        return
     #make request to update information (except relative field)
     sql_update_citizen = "UPDATE citizens SET "
     
