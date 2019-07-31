@@ -144,8 +144,6 @@ def patch(import_id, citizen_id, data_file):
     addr = full_addr(path)
     
     return requests.patch(addr, data=patch_structure, headers={'content-type': 'application/json'})
-    #print(r.status_code, r.reason)
-    #print(r.text)
     
 
 def test_good_patch():
@@ -261,6 +259,9 @@ def get_citizens_birthdays(import_id):
 def get_birthdays_valid_import_id():
     init()
     post_data_set('data_set_to_patch_it.test')
+    patch(1, 3, 'good_patch.test')
+    r = get_citizens_set(1)
+    print(r.text)
     r = get_citizens_birthdays(1)
     #print(r.status_code, r.reason)
     #print(r.text)
@@ -273,6 +274,10 @@ def get_birthdays_valid_import_id():
     assert got_data == expected_data
 
 get_birthdays_valid_import_id()
+
+
+#TODO тест на групировку, когда несколько родственников одного чувака имеют др в одном месяце
+#TODO тест день рождений с несколькими наборами,
     
     
 

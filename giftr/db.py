@@ -256,7 +256,37 @@ def fix_data(import_id, citizen_id, request_json):
     return res
 
 def get_citizens_birthdays_for_import_id(import_id):
-    return {
+    #generate sql requests
+    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, name, strftime("%m",birth_date) as "birth_month", relative_id 
+    FROM citizens, kinships  
+    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?
+    '''
+    
+    sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
+    strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = relative_id and citizens.import_id = ?)) as birth_month,
+    count(citizens.citizen_id) as presents
+    FROM citizens, kinships  
+    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?
+    GROUP BY citizens.citizen_id, birth_month
+    ORDER BY birth_month
+    '''
+    
+    db = get_db()
+    cur = db.execute(sql_get_kins_birtmonth, (import_id, import_id))
+    citizens = list()
+    for row in cur:
+        citizens.append({"citizen_id": row["citizen_id"],
+                        "birth_month": row["birth_month"],
+                        "presents": row["presents"]
+                                     })
+    
+    for citizen in citizens:
+        print(citizen)
+    return None
+    
+    
+    
+    """return {
     "data": {
         "1": [],
         "2": [],
@@ -293,7 +323,7 @@ def get_citizens_birthdays_for_import_id(import_id):
                 }
             ]
     }
-}
+}"""
 
 
 
