@@ -81,7 +81,12 @@ def create_app(test_config=None):
                 traceback.print_exc()
                 return_str = "Patch failed: {}".format(str(exc))
                 return return_str, 400
-
+    
+    @app.route('/imports/<int:import_id>/citizens/birthdays')
+    def get_citizens_birthdays(import_id):
+        res = db.get_citizens_birthdays_for_import_id(import_id)
+        res = jsonify(res)
+        return res
 
     return app
 

@@ -13,6 +13,16 @@ def init():
     r = requests.post(addr, json = {'action':'init'})
     #print(r.status_code, r.reason)
     #print(r.text)
+    
+def get_test_file_as_structure(data_file):
+    """
+    Read structure from test file, which is used mostly to check returned values against
+    file (str): input file to read
+    patch_structure (dict or list): json structure as dic or list
+    """
+    with open(data_file,'r') as json_file:
+        patch_structure = json.load(json_file)
+    return patch_structure
 
 #insertion tests    
 def post_data_set(data_set_file):
@@ -137,12 +147,7 @@ def patch(import_id, citizen_id, data_file):
     #print(r.status_code, r.reason)
     #print(r.text)
     
-def get_test_file_as_structure(data_file):
-    with open(data_file,'r') as json_file:
-        patch_structure = json.load(json_file)
-    return patch_structure
-    
-    
+
 def test_good_patch():
     init()
     post_data_set('data_set_to_patch_it.test')
@@ -205,8 +210,8 @@ def test_patch_wrong_relative():
     r = patch(1, 3, 'patch_wrong_relative.test')
     assert r.status_code == 200
 
-#============================
-#get tests
+#================================
+#get citizens tests
 def get_citizens_set(import_id):
     path =  "/imports/{}/citizens".format(import_id)
     addr = full_addr(path)
@@ -230,7 +235,7 @@ def test_get_citizens_invalid_import_id():
     r = get_citizens_set(2)
     assert r.status_code == 400
     
-#================================
+#====================================
 #patch and get test
 def test_patch_add_remove_relative():
     init()
@@ -245,6 +250,32 @@ def test_patch_add_remove_relative():
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == []
     assert sorted(got_data[0]['relatives']) == [2]
+#=======================================
+#get presents test
+def get_citizens_birthdays(import_id):
+     path =  "/imports/{}/citizens/birthdays".format(import_id)
+     addr = full_addr(path)
+     return requests.get(addr)
+     
+
+def get_birthdays_valid_import_id():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = get_citizens_birthdays(1)
+    #print(r.status_code, r.reason)
+    #print(r.text)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert len(got_data) == 12
+    print(got_data)
+    expected_data = get_test_file_as_structure("birthdays_answer.test")["data"]
+    print(expected_data)
+    assert got_data == expected_data
+
+get_birthdays_valid_import_id()
+    
+    
+
 
 
 

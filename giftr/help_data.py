@@ -194,6 +194,7 @@ def form_request(import_id, citizen_id, request_json):
         Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
     
+    #check if there are keys except relatives and if there are no just return - nothing to patch in citizens table
     key_list = list(request_json.keys())
     key_list.remove('relatives')
     if not key_list:

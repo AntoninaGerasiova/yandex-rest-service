@@ -223,6 +223,7 @@ def fix_data(import_id, citizen_id, request_json):
         
         #update citizen data
         db.execute("begin")
+        #if there are keys except relatives
         if sql_update_citizen:
             db.execute(sql_update_citizen)
         
@@ -254,7 +255,45 @@ def fix_data(import_id, citizen_id, request_json):
         res["data"]["relatives"].append(row["relative_id"])
     return res
 
-
+def get_citizens_birthdays_for_import_id(import_id):
+    return {
+    "data": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": 
+            [
+                {
+                    "citizen_id":1,
+                    "presents": 1,
+                }
+            ],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [],
+        "10": [],
+        "11": 
+            [
+                {
+                    "citizen_id": 1,
+                    "presents": 1
+                }
+            ],
+        "12": 
+            [
+                {
+                    "citizen_id": 2,
+                    "presents": 1
+                },
+                {
+                    "citizen_id": 3,
+                    "presents": 1
+                }
+            ]
+    }
+}
 
 
 
