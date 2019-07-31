@@ -256,74 +256,36 @@ def fix_data(import_id, citizen_id, request_json):
     return res
 
 def get_citizens_birthdays_for_import_id(import_id):
-    #generate sql requests
-    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, name, strftime("%m",birth_date) as "birth_month", relative_id 
-    FROM citizens, kinships  
-    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?
-    '''
-    
+    """
+    Get information about relatives' birthdays grouped by mothes
+    Args:
+        import_id (int): import_id for which get such information
+    Returns:
+        (dict):    information about relatives' birthdays grouped by mothes formed as requaired structure 
+    """
+    #generate sql-requests
     sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
     strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = relative_id and citizens.import_id = ?)) as birth_month,
     count(citizens.citizen_id) as presents
     FROM citizens, kinships  
     WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?
     GROUP BY citizens.citizen_id, birth_month
-    ORDER BY birth_month
     '''
     
+    #start work with bd
     db = get_db()
+    result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     cur = db.execute(sql_get_kins_birtmonth, (import_id, import_id))
-    citizens = list()
     for row in cur:
-        citizens.append({"citizen_id": row["citizen_id"],
-                        "birth_month": row["birth_month"],
-                        "presents": row["presents"]
-                                     })
-    
-    for citizen in citizens:
-        print(citizen)
-    return None
+        key = str(int(row["birth_month"]))
+        result_dict[key].append({
+            "citizen_id": row["citizen_id"],
+            "presents": row["presents"]
+            })
+    return {"data":result_dict}
     
     
-    
-    """return {
-    "data": {
-        "1": [],
-        "2": [],
-        "3": [],
-        "4": 
-            [
-                {
-                    "citizen_id":1,
-                    "presents": 1,
-                }
-            ],
-        "5": [],
-        "6": [],
-        "7": [],
-        "8": [],
-        "9": [],
-        "10": [],
-        "11": 
-            [
-                {
-                    "citizen_id": 1,
-                    "presents": 1
-                }
-            ],
-        "12": 
-            [
-                {
-                    "citizen_id": 2,
-                    "presents": 1
-                },
-                {
-                    "citizen_id": 3,
-                    "presents": 1
-                }
-            ]
-    }
-}"""
+  
 
 
 
