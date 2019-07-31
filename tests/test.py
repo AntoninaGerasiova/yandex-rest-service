@@ -205,7 +205,8 @@ def test_patch_wrong_relative():
     r = patch(1, 3, 'patch_wrong_relative.test')
     assert r.status_code == 200
 
-#==========================
+#============================
+#get tests
 def get_citizens_set(import_id):
     path =  "/imports/{}/citizens".format(import_id)
     addr = full_addr(path)
@@ -229,10 +230,24 @@ def test_get_citizens_invalid_import_id():
     r = get_citizens_set(2)
     assert r.status_code == 400
     
+#================================
+#patch and get tests
+def test_patch_add_remove_relative():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    r = patch(1, 3, 'patch_add_relative.test')
+    print(r.status_code, r.reason)
+    r = get_citizens_set(1)
+    got_data = json.loads(r.text)["data"]
+    assert got_data[2]['relatives'] == [1]
+    assert sorted(got_data[0]['relatives']) == [2, 3]
+    patch(1, 3, 'patch_remove_relative.test')
+    assert got_data[2]['relatives'] == []
+    assert sorted(got_data[0]['relatives']) == [2]
+    
+    
+test_patch_add_remove_relative()
 
-#after I can get data
-#TODO:Make test that add relative and check that mutual connection was added
-#TODO:Make test that delete relative and check that the mutual connection was deleted 
 
     
     
