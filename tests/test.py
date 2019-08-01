@@ -256,28 +256,52 @@ def get_citizens_birthdays(import_id):
      return requests.get(addr)
      
 
-def get_birthdays_valid_import_id():
+def test_get_birthdays_valid_import_id():
     init()
     post_data_set('data_set_to_patch_it.test')
     patch(1, 3, 'good_patch.test')
-    r = get_citizens_set(1)
-    print(r.text)
     r = get_citizens_birthdays(1)
-    #print(r.status_code, r.reason)
-    #print(r.text)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    print(got_data)
     expected_data = get_test_file_as_structure("birthdays_answer.test")["data"]
-    print(expected_data)
     assert got_data == expected_data
 
-get_birthdays_valid_import_id()
+def test_get_birthdays_valid_import_id_several_imports():
+    init()
+    post_data_set('data_set_to_patch_it.test')
+    post_data_set('data_set_to_patch_it.test')
+    patch(2, 3, 'good_patch.test')
+    r = get_citizens_birthdays(2)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert len(got_data) == 12
+    expected_data = get_test_file_as_structure("birthdays_answer.test")["data"]
+    assert got_data == expected_data
+    
+def test_multiple_birtdays_in_one_month():
+    init()
+    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    r = get_citizens_birthdays(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert len(got_data) == 12
+    expected_data = get_test_file_as_structure("birthdays_answer_multiple.test")["data"]
+    assert got_data == expected_data
+    #print(r.status_code, r.reason)
+    #print(r.text)
+    
+def test_birtdays_invalid_import_id():
+    init()
+    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    r = get_citizens_birthdays(2)
+    assert r.status_code == 400
+    
 
 
-#TODO тест на групировку, когда несколько родственников одного чувака имеют др в одном месяце
-#TODO тест день рождений с несколькими наборами,
+
+
+
     
     
 

@@ -197,8 +197,7 @@ write_data_set_to_file({ "name": "Иванова Мария Леонидовна
 write_data_set_to_file({"relatives": [1]}, 'patch_add_relative.test')
 write_data_set_to_file({"relatives": []}, 'patch_remove_relative.test')
 #============================
-
-
+#tests for bertdays request
 birthdays_answer  = {
     "data": {
         "1": [],
@@ -240,8 +239,74 @@ birthdays_answer  = {
                 
 write_data_set_to_file(birthdays_answer, "birthdays_answer.test")
 
+#test for several relatives with birthsday in one month
+#we have there twins with birthdays in one month who are both brothers to "Иванов Иван Иванович" who compeled to buy two presents in April
+#in case you wondering why twins have different day of birth well...it was long labor in the night
+test_insert_for_patch = {"citizens": [
+    {"citizen_id": 1, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Иван Иванович", "birth_date": "26.12.1986", "gender": "male", "relatives": [2,3,4]},
+    {"citizen_id": 2,"town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Сергей Иванович", "birth_date": "17.04.1997","gender": "male","relatives": [1,4] },
+    {"citizen_id": 3, "town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": [1]},
+     {"citizen_id": 4, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Артём Иванович", "birth_date": "18.04.1997", "gender": "male", "relatives": [1,2] },
+    ]
+}
 
+write_data_set_to_file(test_insert_for_patch, "data_set_for_multiple_birtdays_in_one_month.test")
 
+#answer for multiple birthdays
+birthdays_answer_multiple  = {
+    "data": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": 
+            [
+                {
+                    "citizen_id":1,
+                    "presents": 2,
+                },
+                {
+                    "citizen_id":2,
+                    "presents": 1,
+                },
+                {
+                    "citizen_id":4,
+                    "presents": 1,
+                }
+                
+                
+            ],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [],
+        "10": [],
+        "11": 
+            [
+                {
+                    "citizen_id": 1,
+                    "presents": 1
+                }
+            ],
+        "12": 
+            [
+                {
+                    "citizen_id": 2,
+                    "presents": 1
+                },
+                {
+                    "citizen_id": 3,
+                    "presents": 1
+                },
+                {
+                    "citizen_id": 4,
+                    "presents": 1
+                }
+            ]
+    }
+}
+                
+write_data_set_to_file(birthdays_answer_multiple, "birthdays_answer_multiple.test")
 
 
 
