@@ -3,6 +3,7 @@ parsing json,  validation
 """
 import jsonschema
 from dateutil.parser import parse
+import datetime
 #Json schemas
 schema_input = {
     "type": "object",
@@ -83,6 +84,10 @@ def date_to_output_format(date):
     return "{}.{}.{}".format(day, month, date.year)
 
 
+def get_age(date):
+    today = datetime.date.today()
+    return today.year - date.year - ((today.month, today.day) < (date.month, date.day))
+    
 def validate_insert_json(request_json):
     """
     Validate insert data format

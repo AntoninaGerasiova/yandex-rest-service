@@ -1,4 +1,5 @@
 import sqlite3
+from  numpy import percentile
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
@@ -274,12 +275,12 @@ def get_citizens_birthdays_for_import_id(import_id):
     
     #start work with bd
     db = get_db()
-    result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     cur = db.execute(sql_get_kins_birtmonth, (import_id, import_id))
     #TODO: change this check when work with postgress
     rows = cur.fetchall()
     if not rows: 
         raise Exception("import with import_id = {} does not exist".format(import_id))
+    result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     for row in rows:
         key = str(int(row["birth_month"]))
         result_dict[key].append({
@@ -289,7 +290,45 @@ def get_citizens_birthdays_for_import_id(import_id):
     return {"data":result_dict}
 
 def get_statistic_for_import_id(import_id):
-    return {"data": [{
+    """
+        Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns for given import_id (particular import)
+        
+        Args:
+            import_id (int): import_id for which get such information
+        
+        Returns:
+            (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
+    """
+    #sql-requests
+    sql_get_citizens = '''SELECT town, birth_date
+    FROM  citizens
+    WHERE import_id = ?
+    '''
+    
+    #start work with bd
+    db = get_db()
+    cur = db.execute(sql_get_citizens, (import_id,))
+    #TODO: change this check when work with postgress
+    rows = cur.fetchall()
+    if not rows: 
+        raise Exception("import with import_id = {} does not exist".format(import_id))
+    age_dict = dict()
+    for row in rows:
+        key = row["town"]
+        if key not in age_dict:
+            age_dict[key] = [help_data.get_age(row["birth_date"])]
+        else:
+            age_dict[key].append(help_data.get_age(row["birth_date"]))
+    print(age_dict)
+    data = list()
+    for town in age_dict:
+        ages = age_dict[town]
+        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
+        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
+        
+    #print(data)
+    return {"data": data}
+    """return {"data": [{
             "town": "Москва",
             "p50": 20,
             "p75": 45,
@@ -300,6 +339,7 @@ def get_statistic_for_import_id(import_id):
             "p75": 35,
             "p99": 80
             }]}
+        """
     
   
 
