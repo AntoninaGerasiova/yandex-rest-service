@@ -341,23 +341,41 @@ def test_statistic_valid_import_id1():
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     expected_data = get_test_file_as_structure('answer_for_percentile1.test')["data"]
-    print(got_data)
-    print(expected_data)
-    
+    assert len(got_data) == len(expected_data)
+    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure
+
+def test_statistic_valid_import_id1():
+    init()
+    post_data_set('data_set_for_percentile1.test')
+    r = get_statistic(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    expected_data = get_test_file_as_structure('answer_for_percentile1.test')["data"]
+    assert len(got_data) == len(expected_data)
+    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure    
     
 def test_statistic_valid_import_id2():
+    #big test with automaticaly generated answer to compare with
     original_structure_for_percentile = get_test_file_as_structure('data_set_for_percentile2.test')
     init()
     post_data_set('data_set_for_percentile2.test')
     r = get_statistic(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
-    expected_data = get_percentile(original_structure_for_percentile)
-    print(got_data)
-    print(expected_data)
+    expected_data = get_percentile(original_structure_for_percentile)["data"]
+    assert len(got_data) == len(expected_data)
+    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure
+    
+def test_statistic_invalid_import_id():
+    init()
+    post_data_set('data_set_for_percentile1.test')
+    r = get_statistic(2)
+    assert r.status_code == 400
 
-test_statistic_valid_import_id1()
-test_statistic_valid_import_id2()
+
+
+
+
 
 
 
