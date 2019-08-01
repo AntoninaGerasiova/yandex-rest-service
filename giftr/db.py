@@ -287,7 +287,19 @@ def get_citizens_birthdays_for_import_id(import_id):
             "presents": row["presents"]
             })
     return {"data":result_dict}
-    
+
+def get_statistic_for_import_id(import_id):
+    return {"data": [{
+            "town": "Москва",
+            "p50": 20,
+            "p75": 45,
+            "p99": 100
+            },{
+            "town": "Санкт-Петербург",
+            "p50": 17,
+            "p75": 35,
+            "p99": 80
+            }]}
     
   
 

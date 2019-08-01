@@ -249,7 +249,7 @@ def test_patch_add_remove_relative():
     assert got_data[2]['relatives'] == []
     assert sorted(got_data[0]['relatives']) == [2]
 #=======================================
-#get presents test
+#birthdays (presents) test
 def get_citizens_birthdays(import_id):
      path =  "/imports/{}/citizens/birthdays".format(import_id)
      addr = full_addr(path)
@@ -297,8 +297,22 @@ def test_birtdays_invalid_import_id():
     r = get_citizens_birthdays(2)
     assert r.status_code == 400
     
+#================================================
+#test percentile requests
+def get_statistic(import_id):
+    path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
+    addr = full_addr(path)
+    return requests.get(addr)
+    
+def test_statistic_valid_import_id():
+    init()
+    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    r = get_statistic(1)
+    assert r.status_code == 200
+    print(r.status_code, r.reason)
+    print(r.text)
 
-
+test_statistic_valid_import_id()
 
 
 

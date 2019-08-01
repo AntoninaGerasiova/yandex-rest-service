@@ -94,6 +94,25 @@ def create_app(test_config=None):
             traceback.print_exc()
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
+    @app.route('/imports/<import_id>/towns/stat/percentile/age')
+    def get_statistic(import_id):
+        print(import_id)
+        res = db.get_statistic_for_import_id(import_id)
+        res = jsonify(res)
+        return res
+
+    def get_statistic_for_import_id(import_id):
+        return {"data": [{
+            "town": "Москва",
+            "p50": 20,
+            "p75": 45,
+            "p99": 100
+            },{
+            "town": "Санкт-Петербург",
+            "p50": 17,
+            "p75": 35,
+            "p99": 80
+            }]}
 
     return app
 
