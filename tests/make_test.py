@@ -2,6 +2,8 @@ import random
 import datetime
 import itertools
 import json
+
+
 TOWNS_NUM_FOR_SET = 3
 STREETS_NUM_FOR_SET = 40
 MAX_BUILDING = 60
@@ -45,13 +47,16 @@ def write_data_set_to_file(data_set, output_file):
     with open(output_file, 'w') as f:
         json.dump(data_set, f, indent = 4)
 
-def make_good_set(citizens_num, relatives_pairs):
+def make_good_set(citizens_num, relatives_pairs, seed=None):
     """
     Make good data set
     Args:
         citizens_num (int): Number of citizens in set
         relatives_pairs (int): Number of relatives pair of citizens
+        seed (int) : seed to fix process of randomization to get the same data set every time (default None)
     """
+    if seed is not None:
+        random.seed(seed)
     men_num = int(citizens_num*0.5)
     women_num = citizens_num - men_num
     men_idx = random.sample(range(len(men)), men_num)
@@ -242,15 +247,15 @@ write_data_set_to_file(birthdays_answer, "birthdays_answer.test")
 #test for several relatives with birthsday in one month
 #we have there twins with birthdays in one month who are both brothers to "Иванов Иван Иванович" who compeled to buy two presents in April
 #in case you wondering why twins have different day of birth well...it was long labor in the night
-test_insert_for_patch = {"citizens": [
+test_insert_multiple_birthdays = {"citizens": [
     {"citizen_id": 1, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Иван Иванович", "birth_date": "26.12.1986", "gender": "male", "relatives": [2,3,4]},
     {"citizen_id": 2,"town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Сергей Иванович", "birth_date": "17.04.1997","gender": "male","relatives": [1,4] },
     {"citizen_id": 3, "town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": [1]},
-     {"citizen_id": 4, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Артём Иванович", "birth_date": "18.04.1997", "gender": "male", "relatives": [1,2] },
+    {"citizen_id": 4, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Артём Иванович", "birth_date": "18.04.1997", "gender": "male", "relatives": [1,2] },
     ]
 }
 
-write_data_set_to_file(test_insert_for_patch, "data_set_for_multiple_birtdays_in_one_month.test")
+write_data_set_to_file(test_insert_multiple_birthdays, "data_set_for_multiple_birtdays_in_one_month.test")
 
 #answer for multiple birthdays
 birthdays_answer_multiple  = {
@@ -307,6 +312,34 @@ birthdays_answer_multiple  = {
 }
                 
 write_data_set_to_file(birthdays_answer_multiple, "birthdays_answer_multiple.test")
+#============================================================
+#percentile tests
+write_data_set_to_file(test_insert_multiple_birthdays, 'data_set_for_percentile1.test')
+
+#!!! Not sure about such direct testing with existing answer as this information inevitably will be staled 
+#it won't happen during the  August though, so only this small test will do, others answers are created in process of testing
+percentile_answer = { 
+    "data": [
+        {
+            "town": "Москва",
+            "p50": 22.,
+            "p75": 27.,
+            "p99": 31.8
+        },
+        {
+            "town": "Керчь",
+            "p50": 32.,
+            "p75": 32.,
+            "p99": 32.
+        }
+    ]
+}
+
+write_data_set_to_file(percentile_answer, 'answer_for_percentile1.test')
+
+citizen_structure = make_good_set(99, 200, seed=3)
+write_data_set_to_file(citizen_structure, 'data_set_for_percentile2.test')
+
 
 
 

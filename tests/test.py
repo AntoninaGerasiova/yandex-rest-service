@@ -1,5 +1,7 @@
 import json
 import requests
+import datetime
+from  numpy import percentile
 
 def full_addr(path):
     addr = "http://127.0.0.1:5000"
@@ -299,20 +301,63 @@ def test_birtdays_invalid_import_id():
     
 #================================================
 #test percentile requests
+def get_percentile(citizen_structure):
+    """
+    Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns
+    
+    Args:
+        citizen_structure (dict): citizens data_set
+    
+    Returns:
+        (dict): percentiles for  50%, 75% and 99%  for age for citizens grouped by towns 
+    """
+    citizens_list = citizen_structure["citizens"]
+    age_dict = dict()
+    today = datetime.date.today()
+    for citizen in citizens_list:
+        date = citizen['birth_date']
+        born = datetime.datetime.strptime(date, "%d.%m.%Y").date()
+        age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        if citizen['town'] not in age_dict:
+            age_dict[citizen['town']] = [age]
+        else:
+            age_dict[citizen['town']].append(age)
+    data = list()
+    for town in age_dict:
+        ages = age_dict[town]
+        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
+        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
+    return {"data": data}
+
 def get_statistic(import_id):
     path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
     addr = full_addr(path)
     return requests.get(addr)
     
-def test_statistic_valid_import_id():
+def test_statistic_valid_import_id1():
     init()
-    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    post_data_set('data_set_for_percentile1.test')
     r = get_statistic(1)
     assert r.status_code == 200
-    print(r.status_code, r.reason)
-    print(r.text)
+    got_data = json.loads(r.text)["data"]
+    expected_data = get_test_file_as_structure('answer_for_percentile1.test')["data"]
+    print(got_data)
+    print(expected_data)
+    
+    
+def test_statistic_valid_import_id2():
+    original_structure_for_percentile = get_test_file_as_structure('data_set_for_percentile2.test')
+    init()
+    post_data_set('data_set_for_percentile2.test')
+    r = get_statistic(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    expected_data = get_percentile(original_structure_for_percentile)
+    print(got_data)
+    print(expected_data)
 
-test_statistic_valid_import_id()
+test_statistic_valid_import_id1()
+test_statistic_valid_import_id2()
 
 
 
