@@ -276,7 +276,11 @@ def get_citizens_birthdays_for_import_id(import_id):
     db = get_db()
     result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     cur = db.execute(sql_get_kins_birtmonth, (import_id, import_id))
-    for row in cur:
+    #TODO: change this check when work with postgress
+    rows = cur.fetchall()
+    if not rows: 
+        raise Exception("import with import_id = {} does not exist".format(import_id))
+    for row in rows:
         key = str(int(row["birth_month"]))
         result_dict[key].append({
             "citizen_id": row["citizen_id"],
