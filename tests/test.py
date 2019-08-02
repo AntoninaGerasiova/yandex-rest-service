@@ -39,99 +39,97 @@ def post_data_set(data_set_file):
 
 def test_good_input():
     init()
-    r = post_data_set('simple_good_data_set')
+    r = post_data_set('test_files/simple_good_data_set.test')
     assert r.status_code == 201
 
 def test_good_input_with_connection_to_self():
     init()
-    r = post_data_set('simple_good_data_set_with_relative_connection_to_self')
+    r = post_data_set('test_files/simple_good_data_set_with_relative_connection_to_self.test')
     assert r.status_code == 201    
 
 def test_input_with_inconsistant_relatives():
     init()
-    r = post_data_set('simple_inconsistant_relatives_set')
+    r = post_data_set('test_files/simple_inconsistant_relatives_set.test')
     assert r.status_code == 400
     
 def test_input_with_absent_relatives():
     init()
-    r = post_data_set('simple_absent_realtives_set')
+    r = post_data_set('test_files/simple_absent_realtives_set.test')
     assert r.status_code == 400
     
 def test_input_with_rubbish_in_place_of_date():
     init()
-    r = post_data_set('simple_set_with_rubbish_in_place_of_date')
+    r = post_data_set('test_files/simple_set_with_rubbish_in_place_of_date.test')
     assert r.status_code == 400
     
 def test_input_with_wrong_date_format():
     init()
-    r = post_data_set('simple_set_with_wrong_date_format')
+    r = post_data_set('test_files/simple_set_with_wrong_date_format.test')
     assert r.status_code == 400
     
 def test_input_with_tricky_wrong_date_format1():
     init()
-    r = post_data_set('simple_set_with_tricky_wrong_date_format1')
+    r = post_data_set('test_files/simple_set_with_tricky_wrong_date_format1.test')
     assert r.status_code == 400
     
 def test_input_with_tricky_wrong_date_format2():
     init()
-    r = post_data_set('simple_set_with_tricky_wrong_date_format2')
+    r = post_data_set('test_files/simple_set_with_tricky_wrong_date_format2.test')
     assert r.status_code == 400
     
 def test_input_with_trickier_wrong_date_format():
     init()
-    r = post_data_set('simple_set_with_trickier_wrong_date_format')
+    r = post_data_set('test_files/simple_set_with_trickier_wrong_date_format.test')
     assert r.status_code == 400
 
 def test_input_with_the_trickiest_wrong_date_format():
     init()
-    r = post_data_set('simple_set_with_the_trickiest_wrong_date_format')
+    r = post_data_set('test_files/simple_set_with_the_trickiest_wrong_date_format.test')
     assert r.status_code == 201
 
 def test_input_with_wrong_geneder_format():
     init()
-    r = post_data_set('simple_set_with_wrong_geneder_format')
-    #print(r.status_code, r.reason)
-    #print(r.text)
+    r = post_data_set('test_files/simple_set_with_wrong_geneder_format.test')
     assert r.status_code == 400
     
 def test_input_with_absent_key():
     init()
-    r = post_data_set('simple_set_with_absent_key')
+    r = post_data_set('test_files/simple_set_with_absent_key.test')
     assert r.status_code == 400
 
 def test_input_with_extra_key():
     init()
-    r = post_data_set('simple_set_with_extra_key')
+    r = post_data_set('test_files/simple_set_with_extra_key.test')
     assert r.status_code == 400
     
 def test_input_wrong_structure():
     init()
-    r = post_data_set( 'simple_set_wrong_structure')
+    r = post_data_set( 'test_files/simple_set_wrong_structure.test')
     assert r.status_code == 400
     
 def test_input_without_json_structure():
     init()
-    r = post_data_set( 'simle_set_without_json_structure')
+    r = post_data_set( 'test_files/simple_set_without_json_structure.test')
     assert r.status_code == 400
     
 def test_input_with_non_unique_citizen_id():
     init()
-    r = post_data_set('simple_set_with_non_unique_citizen_id')
+    r = post_data_set('test_files/simple_set_with_non_unique_citizen_id.test')
     assert r.status_code == 400
 
 #Not shure this test always will pass in case of parallel work    
 def test_input_several_sets():
     init()
-    r = post_data_set('simple_good_data_set')
+    r = post_data_set('test_files/simple_good_data_set.test')
     import_id1 = json.loads(r.text)["data"]["import_id"]
     
-    r = post_data_set('simple_good_data_set')
+    r = post_data_set('test_files/simple_good_data_set.test')
     import_id2 = json.loads(r.text)["data"]["import_id"]
     
     assert import_id1 + 1 == import_id2
     #try to insert set for with insertion begins but should be rolled back
-    r = post_data_set('simple_set_with_non_unique_citizen_id')
-    r = post_data_set('simple_good_data_set')
+    r = post_data_set('test_files/simple_set_with_non_unique_citizen_id.test')
+    r = post_data_set('test_files/simple_good_data_set.test')
     import_id3 = json.loads(r.text)["data"]["import_id"]
     assert import_id2 + 1 == import_id3
     
@@ -150,10 +148,10 @@ def patch(import_id, citizen_id, data_file):
 
 def test_good_patch():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/good_patch.test')
     assert r.status_code == 200
-    patch_data = get_test_file_as_structure('good_patch.test')
+    patch_data = get_test_file_as_structure('test_files/good_patch.test')
     got_data = json.loads(r.text)["data"]
     #test that data for citizen was updated
     for key in patch_data:
@@ -162,52 +160,52 @@ def test_good_patch():
 
 def test_patch_bad_import_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(2, 3, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(2, 3, 'test_files/good_patch.test')
     #print(r.status_code, r.reason)
     #print(r.text)
     assert r.status_code == 400
     
 def test_patch_bad_citizen_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 4, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 4, 'test_files/good_patch.test')
     assert r.status_code == 400
     
 def test_patch_bad_both_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(2, 4, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(2, 4, 'test_files/good_patch.test')
     assert r.status_code == 400
     
 def test_patch_no_keys():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_no_keys.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_no_keys.test')
     assert r.status_code == 400
     
 def test_patch_extra_key():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_extra_key.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_extra_key.test')
     assert r.status_code == 400
     
 def test_patch_wrong_structure():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_wrong_structure.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_wrong_structure.test')
     assert r.status_code == 400
     
 def test_patch_relative_to_self():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_relative_to_self.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_relative_to_self.test')
     assert r.status_code == 200
     
 def test_patch_wrong_relative():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    r = patch(1, 3, 'patch_wrong_relative.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_wrong_relative.test')
     assert r.status_code == 200
 
 #================================
@@ -220,10 +218,10 @@ def get_citizens_set(import_id):
 
 def test_get_citizens_valid_import_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
     r = get_citizens_set(1)
     assert r.status_code == 200
-    inserted_data = get_test_file_as_structure('data_set_to_patch_it.test')["citizens"]
+    inserted_data = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
     got_data = json.loads(r.text)["data"]
     assert len(inserted_data) == len(got_data)
     for i in range(len(inserted_data)):
@@ -231,7 +229,7 @@ def test_get_citizens_valid_import_id():
 
 def test_get_citizens_invalid_import_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
     r = get_citizens_set(2)
     assert r.status_code == 400
     
@@ -239,13 +237,13 @@ def test_get_citizens_invalid_import_id():
 #patch and get test
 def test_patch_add_remove_relative():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    patch(1, 3, 'patch_add_relative.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    patch(1, 3, 'test_files/patch_add_relative.test')
     r = get_citizens_set(1)
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == [1]
     assert sorted(got_data[0]['relatives']) == [2, 3]
-    patch(1, 3, 'patch_remove_relative.test')
+    patch(1, 3, 'test_files/patch_remove_relative.test')
     r = get_citizens_set(1)
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == []
@@ -260,42 +258,42 @@ def get_citizens_birthdays(import_id):
 
 def test_get_birthdays_valid_import_id():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    patch(1, 3, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    patch(1, 3, 'test_files/good_patch.test')
     r = get_citizens_birthdays(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("birthdays_answer.test")["data"]
+    expected_data = get_test_file_as_structure("test_files/birthdays_answer.test")["data"]
     assert got_data == expected_data
 
 def test_get_birthdays_valid_import_id_several_imports():
     init()
-    post_data_set('data_set_to_patch_it.test')
-    post_data_set('data_set_to_patch_it.test')
-    patch(2, 3, 'good_patch.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    patch(2, 3, 'test_files/good_patch.test')
     r = get_citizens_birthdays(2)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("birthdays_answer.test")["data"]
+    expected_data = get_test_file_as_structure("test_files/birthdays_answer.test")["data"]
     assert got_data == expected_data
     
 def test_multiple_birtdays_in_one_month():
     init()
-    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
     r = get_citizens_birthdays(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("birthdays_answer_multiple.test")["data"]
+    expected_data = get_test_file_as_structure("test_files/birthdays_answer_multiple.test")["data"]
     assert got_data == expected_data
     #print(r.status_code, r.reason)
     #print(r.text)
     
 def test_birtdays_invalid_import_id():
     init()
-    post_data_set("data_set_for_multiple_birtdays_in_one_month.test")
+    post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
     r = get_citizens_birthdays(2)
     assert r.status_code == 400
     
@@ -336,29 +334,29 @@ def get_statistic(import_id):
     
 def test_statistic_valid_import_id1():
     init()
-    post_data_set('data_set_for_percentile1.test')
+    post_data_set('test_files/data_set_for_percentile1.test')
     r = get_statistic(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
-    expected_data = get_test_file_as_structure('answer_for_percentile1.test')["data"]
+    expected_data = get_test_file_as_structure('test_files/answer_for_percentile1.test')["data"]
     assert len(got_data) == len(expected_data)
     assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure
 
 def test_statistic_valid_import_id1():
     init()
-    post_data_set('data_set_for_percentile1.test')
+    post_data_set('test_files/data_set_for_percentile1.test')
     r = get_statistic(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
-    expected_data = get_test_file_as_structure('answer_for_percentile1.test')["data"]
+    expected_data = get_test_file_as_structure('test_files/answer_for_percentile1.test')["data"]
     assert len(got_data) == len(expected_data)
     assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure    
     
 def test_statistic_valid_import_id2():
     #big test with automaticaly generated answer to compare with
-    original_structure_for_percentile = get_test_file_as_structure('data_set_for_percentile2.test')
+    original_structure_for_percentile = get_test_file_as_structure('test_files/data_set_for_percentile2.test')
     init()
-    post_data_set('data_set_for_percentile2.test')
+    post_data_set('test_files/data_set_for_percentile2.test')
     r = get_statistic(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -368,9 +366,12 @@ def test_statistic_valid_import_id2():
     
 def test_statistic_invalid_import_id():
     init()
-    post_data_set('data_set_for_percentile1.test')
+    post_data_set('test_files/data_set_for_percentile1.test')
     r = get_statistic(2)
     assert r.status_code == 400
+    
+    
+#TODO: test with big set (abou 10000) - can we insert data in one transaction
 
 
 
