@@ -1,12 +1,16 @@
 import sqlite3
 from  numpy import percentile
+
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
 from giftr import help_data
 
-#bd settings and open/close/initialization function
+"""
+Explicitly works with bd
+"""
+#bd settings and open/close/initialization functions
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -55,12 +59,13 @@ def init_app(app):
 #Functions to work with bd
 def insert_citizens_set(request_json):
     """ 
-    insert set of citizens data to db
+    Insert set of citizens data to db
+    
     Args:
         crequest_json (dict): data about citizens to insert
     
     Returns:
-        int:  import_id if insert is completed
+        import_id (int):  import_id if insert is succesively completed
     
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
@@ -73,13 +78,13 @@ def insert_citizens_set(request_json):
     #validate json before parse it
     help_data.validate_insert_json(request_json)
     
-    #parse json
+    #parse json and get data to insert to db
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
     
     citizen_len = len(citizens_data)
     kinship_len = len(kinships_data)
     
-    #sql requests
+    #sql-requests
     sql_imports = '''INSERT INTO imports default values'''
     
     sql_citizens = ''' INSERT INTO citizens(import_id, citizen_id, town, street, building, apartment, name, birth_date, gender)
@@ -109,7 +114,7 @@ def insert_citizens_set(request_json):
 
 def get_citizens_set(import_id):
     """
-    get set of citizens for set with certain import_id
+    Get set of citizens with certain import_id
     
     Args:
         import_id (int): import id of set to get
@@ -120,11 +125,7 @@ def get_citizens_set(import_id):
     Raises:
         Exception: when there is no set with given import_id in db
     """
-    #generate sql requests
-    sql_get_citizens_and_kins = '''SELECT citizens.citizen_id as citizen_id, town,street, building, apartment, name, birth_date, gender, relative_id 
-    FROM citizens, kinships  
-    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = ?'''
-    
+    #generate sql requests    
     sql_get_citizens = '''SELECT * 
     FROM  citizens
     WHERE import_id = ?
@@ -140,7 +141,7 @@ def get_citizens_set(import_id):
     db = get_db()
     cur = db.execute(sql_get_citizens, (import_id,))
     
-    #TODO compeled to use fetchall to check if curasor is empty for sqlite. Very annoying. Change this when leave sqlite for good
+    #TODO compeled to use fetchall to check if cursor is empty for sqlite. Very annoying. Change this when leave sqlite for good
     rows = cur.fetchall()
     if not rows: 
         raise Exception("import with import_id = {} does not exist".format(import_id))
@@ -174,7 +175,7 @@ def fix_data(import_id, citizen_id, request_json):
     Args:
         import_id (int): import id  of set  where citizen is
         citizen_id (int):citizen id whose information to change
-        request_json (dict): data to change
+        request_json (dict): data to update
     
     Returns:
         res(dict):    Updated information about citizen
@@ -190,7 +191,6 @@ def fix_data(import_id, citizen_id, request_json):
     help_data.validate_patch_json(request_json)
     
     #form all necesary requests
-    
     update_relatives = False
     if "relatives" in request_json:
         update_relatives = True
@@ -239,7 +239,7 @@ def fix_data(import_id, citizen_id, request_json):
         raise
         
     #Get patched information about citizen back, to return to user
-    #TODO:Consider making this request under trunsaction (if it's possible), cause data can be changed during parallel requests - it will be consistant, but not the same that we put in db. On other hand it can be desired behavior as this data will be fresh. 
+    #TODO: Find out should it exectly be the same as we updated in case of interleaving
     row = db.execute(sql_get_citizen_by_id, (import_id, citizen_id)).fetchone()
     res = {
             "data": {"citizen_id": citizen_id,
@@ -259,10 +259,15 @@ def fix_data(import_id, citizen_id, request_json):
 def get_citizens_birthdays_for_import_id(import_id):
     """
     Get information about relatives' birthdays grouped by mothes
+    
     Args:
         import_id (int): import_id for which get such information
+    
     Returns:
-        (dict):    information about relatives' birthdays grouped by mothes formed as requaired structure 
+        (dict):    information about relatives' birthdays grouped by monthes
+        
+    Raises:
+        Exception:  if set with import_id doesn't exist in db
     """
     #generate sql-requests
     sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
@@ -298,6 +303,9 @@ def get_statistic_for_import_id(import_id):
         
         Returns:
             (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
+            
+        Raises:
+            Exception:  if set with import_id doesn't exist in db
     """
     #sql-requests
     sql_get_citizens = '''SELECT town, birth_date
@@ -319,27 +327,12 @@ def get_statistic_for_import_id(import_id):
             age_dict[key] = [help_data.get_age(row["birth_date"])]
         else:
             age_dict[key].append(help_data.get_age(row["birth_date"]))
-    print(age_dict)
     data = list()
     for town in age_dict:
         ages = age_dict[town]
         perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
         data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
-        
-    #print(data)
     return {"data": data}
-    """return {"data": [{
-            "town": "Москва",
-            "p50": 20,
-            "p75": 45,
-            "p99": 100
-            },{
-            "town": "Санкт-Петербург",
-            "p50": 17,
-            "p75": 35,
-            "p99": 80
-            }]}
-        """
     
   
 

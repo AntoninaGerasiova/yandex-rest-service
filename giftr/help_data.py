@@ -1,10 +1,12 @@
-"""help functions to work with data
-parsing json,  validation
+"""
+Help functions to work with data, convert formats, parsing json, validation
+
 """
 import jsonschema
 from dateutil.parser import parse
 import datetime
 #Json schemas
+#json-schema to check input data json
 schema_input = {
     "type": "object",
     "properties":{
@@ -31,7 +33,7 @@ schema_input = {
     "required": ["citizens"],
     "additionalProperties": False
 }
-                              
+#json-schema to check patch data json                              
 schema_patch = {"type": "object",
                 "anyOf":[
                     {"required": ["town"]},
@@ -58,11 +60,13 @@ schema_patch = {"type": "object",
 #help functions
 def date_to_bd_format(date):
     """ 
-    Change date format to suitable for bd one
+    Convert date format to suitable for bd one
     
-    Args: date(str): date in original format that sould be "ДД.ММ.ГГГГ"
+    Args: 
+        date(str): date in original format that sould be "ДД.ММ.ГГГГ"
     
-    Returns: date(str): date suitable for db "YYYY-MM-DD"
+    Returns: 
+        date(str): date suitable for db "YYYY-MM-DD"
         
     Raises:
         ValueError: in case of wrong date 
@@ -78,21 +82,40 @@ def date_to_bd_format(date):
     
     
 def date_to_output_format(date):
-    """get data in format suitable for output"""
+    """
+    Convert data in format suitable for output
+    
+    Args: 
+        date(str): date in format sutable for db "YYYY-MM-DD"
+    
+    Returns: 
+        date(str): date in format "ДД.ММ.ГГГГ"
+    """
     month = date.month if date.month >= 10 else "0" + str(date.month)
     day = date.day if date.day >= 10 else "0" + str(date.day)
     return "{}.{}.{}".format(day, month, date.year)
 
 
 def get_age(date):
+    """
+    Convert date to age regarding current day
+    
+    Args: 
+        date(str): date in format sutable for db "YYYY-MM-DD"
+        
+    Returns:
+        (int): age
+    """
     today = datetime.date.today()
     return today.year - date.year - ((today.month, today.day) < (date.month, date.day))
     
 def validate_insert_json(request_json):
     """
     Validate insert data format
+    
     Args:
         request_json (dict): citizens set in dict format
+    
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
         json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types    
@@ -101,9 +124,12 @@ def validate_insert_json(request_json):
     jsonschema.validate(request_json, schema_input)
     
 def get_insert_data(request_json):
-    """Unpack data from request_json structure
+    """
+    Unpack data from request_json structure
+    
     Args:
         request_json (dict): citizens set in dict format
+    
     Returns:
         citizens_data (list) : data about citizens formed for inserting in db (without information about kinship)
         kinships_data (list) : data about kinshps formed for inserting in db
@@ -149,8 +175,10 @@ def get_insert_data(request_json):
 def validate_patch_json(request_json):
     """
     Validate patch data
+    
     Args:
         request_json (dict): data to change
+    
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
         json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
