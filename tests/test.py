@@ -3,6 +3,12 @@ import requests
 import datetime
 from  numpy import percentile
 
+"""
+TODO: input bad data then try to read anyway
+TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
+TODO: bad patch - test that nothing have been done
+TODO: test more extensively cituation with relative connection to themself
+"""
 def full_addr(path):
     addr = "http://127.0.0.1:5000"
     return addr + path
@@ -19,34 +25,141 @@ def init():
 def get_test_file_as_structure(data_file):
     """
     Read structure from test file, which is used mostly to check returned values against
-    file (str): input file to read
-    patch_structure (dict or list): json structure as dic or list
+    Args:
+        file (str): input file to read
+    
+    Returns:
+        patch_structure (dict or list): json structure as dict or list
     """
     with open(data_file,'r') as json_file:
         patch_structure = json.load(json_file)
     return patch_structure
 
-#insertion tests    
+  
 def post_data_set(data_set_file):
+    """
+    Request to insert data to db
+    
+    Args:
+        data_set_file (str): file name that contains citizen set data as json
+    
+    Returns:
+        (requests.Response): server’s response to a post request
+    """
     with open(data_set_file,'r') as json_file:
         citizens_structure = json_file.read()
     
-    #print(repr(citizens_structure))
     path = "/imports"
     addr = full_addr(path)
     return requests.post(addr, data=citizens_structure, headers={'content-type': 'application/json'})
 
+def patch(import_id, citizen_id, data_file):
+    """
+    Request to patch data in db
+    
+    Args:
+        import_id (int): id of set of citiziens 
+        citizen_id (int): id of citizen in set
+        data_set_file (str): file name that contains citizen's data as json
+    
+    Returns:
+        (requests.Response): server’s response to a patch request
+        
+    """
+    with open(data_file,'r') as json_file:
+        patch_structure = json_file.read()
+    
+    path =  "/imports/{}/citizens/{}".format(import_id, citizen_id)
+    addr = full_addr(path)
+    return requests.patch(addr, data=patch_structure, headers={'content-type': 'application/json'})
 
+#get citizens tests
+def get_citizens_set(import_id):
+    """
+    Request to get data set of citizens with id import_id
+    
+    Args:
+        import_id (int): id of set of citiziens
+    
+    Returns:
+        (requests.Response): server’s response to a get request
+    """
+    path =  "/imports/{}/citizens".format(import_id)
+    addr = full_addr(path)
+    return requests.get(addr)
+
+def get_citizens_birthdays(import_id):
+    """
+    Request to get information about citizens' relatives' birthdays grouped by month in data set with id import_id
+    
+    Args:
+        import_id (int): id of set of citiziens
+        
+    Returns:
+        (requests.Response): server’s response to a get request
+    """
+    path =  "/imports/{}/citizens/birthdays".format(import_id)
+    addr = full_addr(path)
+    return requests.get(addr)
+
+def get_percentile(citizen_structure):
+    """
+    Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns
+    Args:
+        citizen_structure (dict): citizens data_set
+    
+    Returns:
+        (dict): percentiles for  50%, 75% and 99%  for age for citizens grouped by towns 
+    """
+    citizens_list = citizen_structure["citizens"]
+    age_dict = dict()
+    today = datetime.date.today()
+    for citizen in citizens_list:
+        date = citizen['birth_date']
+        born = datetime.datetime.strptime(date, "%d.%m.%Y").date()
+        age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        if citizen['town'] not in age_dict:
+            age_dict[citizen['town']] = [age]
+        else:
+            age_dict[citizen['town']].append(age)
+    data = list()
+    for town in age_dict:
+        ages = age_dict[town]
+        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
+        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
+    return {"data": data}
+
+def get_statistic(import_id):
+    """
+    Request to get percentiles for  50%, 75% and 99%  for age for citizens in set with import_id grouped by towns
+    
+    Args:
+        import_id (int): id of set of citiziens
+        
+    Returns:
+        (requests.Response): server’s response to a get request
+    """
+    path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
+    addr = full_addr(path)
+    return requests.get(addr)
+#=================================================================================================
+#insertion tests
 def test_good_input():
     init()
     r = post_data_set('test_files/simple_good_data_set.test')
     assert r.status_code == 201
+    r = get_citizens_set(1)
+    data_for_insertion = get_test_file_as_structure('test_files/simple_good_data_set.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    assert len(data_for_insertion) == len(got_data)
+    for i in range(len(data_for_insertion)):
+        assert data_for_insertion[i] == got_data[i]
 
 def test_good_input_with_connection_to_self():
     init()
     r = post_data_set('test_files/simple_good_data_set_with_relative_connection_to_self.test')
-    assert r.status_code == 201    
-
+    assert r.status_code == 201
+    
 def test_input_with_inconsistant_relatives():
     init()
     r = post_data_set('test_files/simple_inconsistant_relatives_set.test')
@@ -56,33 +169,51 @@ def test_input_with_absent_relatives():
     init()
     r = post_data_set('test_files/simple_absent_realtives_set.test')
     assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
     
 def test_input_with_rubbish_in_place_of_date():
     init()
     r = post_data_set('test_files/simple_set_with_rubbish_in_place_of_date.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
     assert r.status_code == 400
     
 def test_input_with_wrong_date_format():
     init()
     r = post_data_set('test_files/simple_set_with_wrong_date_format.test')
     assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
     
 def test_input_with_tricky_wrong_date_format1():
     init()
     r = post_data_set('test_files/simple_set_with_tricky_wrong_date_format1.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
     assert r.status_code == 400
     
 def test_input_with_tricky_wrong_date_format2():
     init()
     r = post_data_set('test_files/simple_set_with_tricky_wrong_date_format2.test')
     assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
     
 def test_input_with_trickier_wrong_date_format():
     init()
     r = post_data_set('test_files/simple_set_with_trickier_wrong_date_format.test')
     assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
 
-def test_input_with_the_trickiest_wrong_date_format():
+def test_input_with_the_trickiest_wrong_date_format(): #it's not actually wrong, just 29.02 of some leap year
     init()
     r = post_data_set('test_files/simple_set_with_the_trickiest_wrong_date_format.test')
     assert r.status_code == 201
@@ -91,20 +222,32 @@ def test_input_with_wrong_geneder_format():
     init()
     r = post_data_set('test_files/simple_set_with_wrong_geneder_format.test')
     assert r.status_code == 400
+        #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
     
 def test_input_with_absent_key():
     init()
     r = post_data_set('test_files/simple_set_with_absent_key.test')
+    assert r.status_code == 400
+        #Test that nothing was inserted
+    r = get_citizens_set(1)
     assert r.status_code == 400
 
 def test_input_with_extra_key():
     init()
     r = post_data_set('test_files/simple_set_with_extra_key.test')
     assert r.status_code == 400
+        #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
     
 def test_input_wrong_structure():
     init()
     r = post_data_set( 'test_files/simple_set_wrong_structure.test')
+    assert r.status_code == 400
+        #Test that nothing was inserted
+    r = get_citizens_set(1)
     assert r.status_code == 400
     
 def test_input_without_json_structure():
@@ -115,6 +258,9 @@ def test_input_without_json_structure():
 def test_input_with_non_unique_citizen_id():
     init()
     r = post_data_set('test_files/simple_set_with_non_unique_citizen_id.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
     assert r.status_code == 400
 
 #Not shure this test always will pass in case of parallel work    
@@ -133,19 +279,36 @@ def test_input_several_sets():
     import_id3 = json.loads(r.text)["data"]["import_id"]
     assert import_id2 + 1 == import_id3
     
+#bigger insert tests
+def test_good_bigger_input():
+    init()
+    r = post_data_set('test_files/good_data_set1.test')
+    assert r.status_code == 201
+    
+def test_good_bigger_input():
+    init()
+    r = post_data_set('test_files/data_set_with_inconsistant_relatives1.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
+    
+def test_good_bigger_input():
+    init()
+    r = post_data_set('test_files/data_set_with_absent_realtives1.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 400
+    
+def test_good_and_big_input():
+    init()
+    r = post_data_set('test_files/good_and_big_set.test')
+    assert r.status_code == 201
+
+
 #=========================================================    
 #tests for patch
-def patch(import_id, citizen_id, data_file):
-    with open(data_file,'r') as json_file:
-        patch_structure = json_file.read()
-    #print(patch_structure)
-
-    path =  "/imports/{}/citizens/{}".format(import_id, citizen_id)
-    addr = full_addr(path)
-    
-    return requests.patch(addr, data=patch_structure, headers={'content-type': 'application/json'})
-    
-
 def test_good_patch():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -209,13 +372,6 @@ def test_patch_wrong_relative():
     assert r.status_code == 200
 
 #================================
-#get citizens tests
-def get_citizens_set(import_id):
-    path =  "/imports/{}/citizens".format(import_id)
-    addr = full_addr(path)
-    #print(addr)
-    return requests.get(addr)
-
 def test_get_citizens_valid_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -250,12 +406,6 @@ def test_patch_add_remove_relative():
     assert sorted(got_data[0]['relatives']) == [2]
 #=======================================
 #birthdays (presents) test
-def get_citizens_birthdays(import_id):
-     path =  "/imports/{}/citizens/birthdays".format(import_id)
-     addr = full_addr(path)
-     return requests.get(addr)
-     
-
 def test_get_birthdays_valid_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -299,39 +449,6 @@ def test_birtdays_invalid_import_id():
     
 #================================================
 #test percentile requests
-def get_percentile(citizen_structure):
-    """
-    Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns
-    
-    Args:
-        citizen_structure (dict): citizens data_set
-    
-    Returns:
-        (dict): percentiles for  50%, 75% and 99%  for age for citizens grouped by towns 
-    """
-    citizens_list = citizen_structure["citizens"]
-    age_dict = dict()
-    today = datetime.date.today()
-    for citizen in citizens_list:
-        date = citizen['birth_date']
-        born = datetime.datetime.strptime(date, "%d.%m.%Y").date()
-        age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        if citizen['town'] not in age_dict:
-            age_dict[citizen['town']] = [age]
-        else:
-            age_dict[citizen['town']].append(age)
-    data = list()
-    for town in age_dict:
-        ages = age_dict[town]
-        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
-        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
-    return {"data": data}
-
-def get_statistic(import_id):
-    path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
-    addr = full_addr(path)
-    return requests.get(addr)
-    
 def test_statistic_valid_import_id1():
     init()
     post_data_set('test_files/data_set_for_percentile1.test')
@@ -370,9 +487,6 @@ def test_statistic_invalid_import_id():
     r = get_statistic(2)
     assert r.status_code == 400
     
-    
-#TODO: test with big set (abou 10000) - can we insert data in one transaction
-
 
 
 
