@@ -5,7 +5,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
-from giftr import help_data
+from . import help_data
 
 """
 Explicitly works with bd

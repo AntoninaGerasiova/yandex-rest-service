@@ -4,10 +4,10 @@ import datetime
 from  numpy import percentile
 
 """
-TODO: input bad data then try to read anyway
 TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
 TODO: bad patch - test that nothing have been done
-TODO: test more extensively cituation with relative connection to themself
+TODO: test more extensively situation with relative connection to themself
+TODO: get import_id after insert from responese not from the head!!!!!!
 """
 def full_addr(path):
     addr = "http://127.0.0.1:5000"
@@ -300,7 +300,8 @@ def test_good_bigger_input():
     #Test that nothing was inserted
     r = get_citizens_set(1)
     assert r.status_code == 400
-    
+
+#try ti insert the bigest set for this time    
 def test_good_and_big_input():
     init()
     r = post_data_set('test_files/good_and_big_set.test')
@@ -325,15 +326,19 @@ def test_patch_bad_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 3, 'test_files/good_patch.test')
-    #print(r.status_code, r.reason)
-    #print(r.text)
     assert r.status_code == 400
+    
     
 def test_patch_bad_citizen_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
+    r = get_citizens_set(1)
+    got_data1 = json.loads(r.text)["data"]
     r = patch(1, 4, 'test_files/good_patch.test')
     assert r.status_code == 400
+    r = get_citizens_set(1)
+    got_data2 = json.loads(r.text)["data"]
+    assert got_data1 == got_data2 #data set sould stay the same
     
 def test_patch_bad_both_id():
     init()
