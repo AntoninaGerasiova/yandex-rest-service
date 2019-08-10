@@ -78,7 +78,7 @@ def date_to_bd_format(date):
         raise Exception("Bad date format")
     bd_date = "-".join((y, m, d))
     parse(bd_date)
-    return  bd_date
+    return  datetime.datetime(int(y), int(m), int(d))
     
     
 def date_to_output_format(date):

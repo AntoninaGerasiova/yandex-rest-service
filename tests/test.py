@@ -13,14 +13,17 @@ def full_addr(path):
     addr = "http://127.0.0.1:5000"
     return addr + path
 
-"initialize data base"
-def init():
+#tell server to initialise database
+def post_init():
     path  = "/test"
     addr = full_addr(path)
     #print(addr)
     r = requests.post(addr, json = {'action':'init'})
     #print(r.status_code, r.reason)
     #print(r.text)
+    
+def init():
+    post_init()
     
 def get_test_file_as_structure(data_file):
     """
@@ -491,6 +494,10 @@ def test_statistic_invalid_import_id():
     post_data_set('test_files/data_set_for_percentile1.test')
     r = get_statistic(2)
     assert r.status_code == 400
+ 
+ 
+if __name__ == '__main__':
+    test_input_with_absent_relatives()
     
 
 
