@@ -141,7 +141,7 @@ def get_insert_data(request_json):
    
     citizens = request_json["citizens"]
     citizens_data = list()
-    kinships_data = list()
+    kinships_data = set()
     kinship_set = set()
     for citizen in citizens:
         citizen_id = citizen['citizen_id']
@@ -157,10 +157,10 @@ def get_insert_data(request_json):
         #Generate pairs of relatives for this citizen
         #For now just eliminate duplicates, but maybe we'd better should reject the whole request
         for relative in set(relatives):
-            kinships_data.append([citizen_id, relative])
+            pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
+            kinships_data.add(pair_in_order)
             #keep track of pairs of relatives - every one should has pair
             if citizen_id != relative:
-                pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
                 if pair_in_order not in kinship_set:
                     kinship_set.add(pair_in_order)
                 else: 
@@ -168,7 +168,7 @@ def get_insert_data(request_json):
     if  len(kinship_set) != 0:
         print ("Informationt about relatives inconsistant")
         raise Exception("Inconsistant relatives data")
-    return citizens_data, kinships_data
+    return citizens_data, list(map(list, kinships_data))
 
 
 

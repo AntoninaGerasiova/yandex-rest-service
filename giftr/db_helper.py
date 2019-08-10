@@ -80,6 +80,8 @@ def get_citizens_set(import_id_):
             citizen_id = kinship.citizen_id
             relative_id = kinship.relative_id
             citizens_dict[citizen_id]["relatives"].append(relative_id)
+            if citizen_id != relative_id:
+                citizens_dict[relative_id]["relatives"].append(citizen_id)
         print(citizens_dict)
         
     except Exception as e:
