@@ -6,6 +6,24 @@ from . import help_data
 
 
 def insert_citizens_set(request_json):
+    """ 
+    Insert set of citizens data to db
+    
+    Args:
+        crequest_json (dict): data about citizens to insert
+    
+    Returns:
+        import_id (int):  import_id if insert is succesively completed
+    
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types
+        ValueError: in case of wrong date 
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
+        db.Error: if something went wrong during insertion in db
+        
+    """
+    
     #validate json before parse it
     help_data.validate_insert_json(request_json)
     
@@ -15,10 +33,7 @@ def insert_citizens_set(request_json):
     citizen_len = len(citizens_data)
     kinship_len = len(kinships_data)
     
-    
     import_obj = Imports()
-    
-    current_app.logger.info(import_obj.import_id)
     
     db.session.add(import_obj)
     db.session.commit()
@@ -56,6 +71,9 @@ def get_citizens_set(import_id_):
     """
     try:
         citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
+        current_app.logger.info(citizens_responce)
+        if not citizens_responce:
+            raise Exception("import with import_id = {} does not exist".format(import_id_))
         citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
         kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
         for kinship in kinships_responce:
