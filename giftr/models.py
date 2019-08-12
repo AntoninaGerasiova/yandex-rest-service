@@ -45,11 +45,7 @@ class Citizens(db.Model):
         self.birth_date = birth_date
         self.gender = gender
     
-    @staticmethod
-    def get_output_date(date):
-        month = date.month if date.month >= 10 else "0" + str(date.month)
-        day = date.day if date.day >= 10 else "0" + str(date.day)
-        return "{}.{}.{}".format(day, month, date.year)
+
     
     def serialize(self):
         return {
@@ -63,7 +59,33 @@ class Citizens(db.Model):
             'gender':self.gender,
             'relatives':list()}
     
+    def patch(self, town=None, 
+                 street=None, 
+                 building=None, 
+                 apartment=None, 
+                 name=None, 
+                 birth_date=None, 
+                 gender=None):
+        if town is not None:
+            self.town = town
+        if street is not None:
+            self.street = street
+        if building is not None:
+            self.building = building
+        if apartment is not None:
+            self.apartment = apartment
+        if name is not None:
+            self.name = name
+        if birth_date is not None:
+            self.birth_date = birth_date
+        if gender is not None:
+            self.gender = gender
     
+    @staticmethod
+    def get_output_date(date):
+        month = date.month if date.month >= 10 else "0" + str(date.month)
+        day = date.day if date.day >= 10 else "0" + str(date.day)
+        return "{}.{}.{}".format(day, month, date.year)
     
     @staticmethod
     def get_keys():

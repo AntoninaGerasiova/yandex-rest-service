@@ -187,7 +187,7 @@ def validate_patch_json(request_json):
     
     
     
-def get_new_relatives(import_id, citizen_id, request_json):
+def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     """
     Make pairs of relatives to add to kinships table
     
@@ -200,14 +200,15 @@ def get_new_relatives(import_id, citizen_id, request_json):
         kinships_data (list): pairs of citizens' kinships to insert into table
     """
 
-    kinships_data = list()
+    kinships_data = set()
     
     for relative in request_json['relatives']:
-            kinships_data.append([import_id, citizen_id, relative])
-            if citizen_id != relative:
-                kinships_data.append([import_id, relative, citizen_id])
+        if relative not in citizen_ids:
+            raise Exception("Can't be relative to non-existant citizen")
+        pair_in_order = (import_id, citizen_id, relative) if citizen_id < relative else (import_id, relative, citizen_id)
+        kinships_data.add(pair_in_order)
                 
-    return kinships_data
+    return list(kinships_data)
 
 
 def form_request(import_id, citizen_id, request_json):

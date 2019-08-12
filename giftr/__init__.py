@@ -15,13 +15,13 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    
-    #db path for sqlite
-    #db_path  = os.path.join(app.instance_path, 'gifts.sqlite')
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(db_path)
-    
-    #db path for postgres
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
+    if True: #True for sqlite, False for postgres
+        #db path for sqlite
+        db_path  = os.path.join(app.instance_path, 'gifts.sqlite')
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(db_path)
+    else:
+        #db path for postgres
+        app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
