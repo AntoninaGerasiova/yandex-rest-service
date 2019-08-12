@@ -8,6 +8,7 @@ TODO: test with really big set (abou 10000) - can we insert data in one transact
 TODO: bad patch - test that nothing have been done
 TODO: test more extensively situation with relative connection to themself
 TODO: get import_id after insert from responese not from the head!!!!!!
+TODO: test ptch for severel imports
 """
 def full_addr(path):
     addr = "http://127.0.0.1:5000"
@@ -330,14 +331,34 @@ def test_good_patch():
     #test that data for citizen was updated
     for key in patch_data:
         assert patch_data[key] == got_data[key]
-
+        
+def test_good_patch_for_second_import():
+    """
+    Test that patch for 2-d import doesn't mess up with 1-t import
+    """
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(2, 3, 'test_files/good_patch.test')
+    assert r.status_code == 200
+    patch_data = get_test_file_as_structure('test_files/good_patch.test')
+    got_data = json.loads(r.text)["data"]
+    #test that data for citizen 3 in 2-d import was updated
+    for key in patch_data:
+        assert patch_data[key] == got_data[key]
+   
+    #test that data for citizen 3 in 1-st import was not(!) updated
+    insert_data = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert got_data == insert_data
 
 def test_patch_bad_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 3, 'test_files/good_patch.test')
     assert r.status_code == 400
-    
     
 def test_patch_bad_citizen_id():
     init()
@@ -379,12 +400,22 @@ def test_patch_relative_to_self():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_relative_to_self.test')
     assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_patch = get_test_file_as_structure('test_files/patch_relative_to_self.test')
+    for key in data_for_patch:
+        assert  got_data[key] == data_for_patch[key]
+        
     
 def test_patch_wrong_relative():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_relative.test')
+    assert r.status_code == 400
+    r = get_citizens_set(1)
     assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
 
 #================================
 def test_get_citizens_valid_import_id():
@@ -404,18 +435,27 @@ def test_get_citizens_invalid_import_id():
     r = get_citizens_set(2)
     assert r.status_code == 400
     
+    
 #====================================
 #patch and get test
 def test_patch_add_remove_relative():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
-    patch(1, 3, 'test_files/patch_add_relative.test')
+    #add relative 1 for 3-d citizen
+    r = patch(1, 3, 'test_files/patch_add_relative.test')
+    assert r.status_code == 200
+    #get data from bd for 3-d citizen and check thst she has 1-relative
     r = get_citizens_set(1)
+    assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == [1]
+    #also check that first relative has new realtive 3
     assert sorted(got_data[0]['relatives']) == [2, 3]
-    patch(1, 3, 'test_files/patch_remove_relative.test')
+    #remove relative 1 for 3-d citizen
+    r = patch(1, 3, 'test_files/patch_remove_relative.test')
+    assert r.status_code == 200
     r = get_citizens_set(1)
+    assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert got_data[2]['relatives'] == []
     assert sorted(got_data[0]['relatives']) == [2]
@@ -504,7 +544,7 @@ def test_statistic_invalid_import_id():
  
  
 if __name__ == '__main__':
-    test_good_input()
+    test_good_patch_for_second_import()
     
 
 
