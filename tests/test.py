@@ -469,7 +469,12 @@ def test_get_birthdays_valid_import_id():
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("test_files/birthdays_answer.test")["data"]
+    expected_data = get_test_file_as_structure('test_files/birthdays_answer.test')["data"]
+    for key in got_data:
+        print(key)
+        print(got_data[key])
+        print(expected_data[key])
+        print()
     assert got_data == expected_data
 
 def test_get_birthdays_valid_import_id_several_imports():
@@ -481,20 +486,30 @@ def test_get_birthdays_valid_import_id_several_imports():
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("test_files/birthdays_answer.test")["data"]
+    expected_data = get_test_file_as_structure('test_files/birthdays_answer.test')["data"]
     assert got_data == expected_data
     
 def test_multiple_birtdays_in_one_month():
     init()
-    post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
+    post_data_set('test_files/data_set_for_multiple_birtdays_in_one_month.test')
     r = get_citizens_birthdays(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
-    expected_data = get_test_file_as_structure("test_files/birthdays_answer_multiple.test")["data"]
+    expected_data = get_test_file_as_structure('test_files/birthdays_answer_multiple.test')["data"]
     assert got_data == expected_data
-    #print(r.status_code, r.reason)
-    #print(r.text)
+    
+    
+    
+def test_get_birthdays_present_to_self():
+    init()
+    post_data_set('test_files/simple_good_data_set_with_relative_connection_to_self.test')
+    r = get_citizens_birthdays(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    expected_data = get_test_file_as_structure('test_files/birthdays_answer_to_self.test')["data"]
+    assert got_data == expected_data
+    
     
 def test_birtdays_invalid_import_id():
     init()
@@ -512,17 +527,7 @@ def test_statistic_valid_import_id1():
     got_data = json.loads(r.text)["data"]
     expected_data = get_test_file_as_structure('test_files/answer_for_percentile1.test')["data"]
     assert len(got_data) == len(expected_data)
-    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure
-
-def test_statistic_valid_import_id1():
-    init()
-    post_data_set('test_files/data_set_for_percentile1.test')
-    r = get_statistic(1)
-    assert r.status_code == 200
-    got_data = json.loads(r.text)["data"]
-    expected_data = get_test_file_as_structure('test_files/answer_for_percentile1.test')["data"]
-    assert len(got_data) == len(expected_data)
-    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure    
+    assert got_data == expected_data #this one maybe works only if orders of lists are the same with is not for sure  
     
 def test_statistic_valid_import_id2():
     #big test with automaticaly generated answer to compare with
@@ -544,7 +549,8 @@ def test_statistic_invalid_import_id():
  
  
 if __name__ == '__main__':
-    test_good_patch_for_second_import()
+    
+    test_get_birthdays_present_to_self()
     
 
 

@@ -238,6 +238,36 @@ write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', '
 
 write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1, 2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'test_files/simple_good_data_set_with_relative_connection_to_self.test')
 
+birthdays_answer_connection_to_self  = {
+    "data": {
+        "1": [],
+        "2": [
+                {
+                    "citizen_id":1,
+                    "presents": 2,
+                },
+                {
+                    "citizen_id":2,
+                    "presents": 1,
+                }
+            ],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [],
+        "10": [],
+        "11": [],
+        "12": []
+        }
+    }
+                
+write_data_set_to_file(birthdays_answer_connection_to_self , "test_files/birthdays_answer_to_self.test")
+
+
+
 write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': []}]},'test_files/simple_inconsistant_relatives_set.test')
 
 write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2, 28]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]},'test_files/simple_absent_realtives_set.test')
