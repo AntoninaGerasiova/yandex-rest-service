@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import current_app
 
+from  numpy import percentile
+
 from .models import db, Citizens, Imports, Kinships
 from . import help_data
 
@@ -156,6 +158,41 @@ def fix_data(import_id_, citizen_id_, request_json):
         citizen['relatives'].append(id)
         
     return {"data":citizen}
+
+def get_statistic_for_import_id(import_id_):
+    """
+        Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns for given import_id (particular import)
+        
+        Args:
+            import_id (int): import_id for which get such information
+        
+        Returns:
+            (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
+            
+        Raises:
+            Exception:  if set with import_id doesn't exist in db
+    """
+    citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()
+    if not citizens: 
+        raise Exception("import with import_id = {} does not exist".format(import_id))
+    
+    age_dict = dict()
+    for citizen in citizens:
+        key = citizen.town
+        
+        if key not in age_dict:
+            age_dict[key] = [help_data.get_age(citizen.birth_date)]
+        else:
+            age_dict[key].append(help_data.get_age(citizen.birth_date))
+        
+        
+    data = list()
+    for town in age_dict:
+        ages = age_dict[town]
+        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
+        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
+    
+    return {"data": data}
     
     
     
