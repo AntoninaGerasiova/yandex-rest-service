@@ -1,11 +1,17 @@
 from flask import Flask
 from flask import current_app
+from sqlalchemy import text
 
 from  numpy import percentile
 
 from .models import db, Citizens, Imports, Kinships
 from . import help_data
 
+"""
+TODO: Citizens.query vs Citizen.session.query
+TODO:undestand more about how to use session, when to commit, when start transaction manually
+TODO: mayby try to rif of plain sql completly but it's not requiered
+"""
 def trace():
     from inspect import currentframe, getframeinfo
     cf = currentframe()
@@ -158,6 +164,67 @@ def fix_data(import_id_, citizen_id_, request_json):
         citizen['relatives'].append(id)
         
     return {"data":citizen}
+
+def get_citizens_birthdays_for_import_id(import_id_):
+    """
+    Get information about relatives' birthdays grouped by mothes
+    
+    Args:
+        import_id (int): import_id for which get such information
+    
+    Returns:
+        (dict):    information about relatives' birthdays grouped by monthes
+        
+    Raises:
+        Exception:  if set with import_id doesn't exist in db
+    """
+    
+    #may be not to keep mutuall connection in bas was not such a good idea
+    #get information for birthdays two times
+    #first get information for citizens with citizen_id in kinships table
+    #second get informtion for citizens with relative_id in kinships table
+    sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
+    strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = relative_id and citizens.import_id = :import_id_val)) as birth_month,
+    count(citizens.citizen_id) as presents
+    FROM citizens, kinships  
+    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = :import_id_val
+    GROUP BY citizens.citizen_id, birth_month
+    '''
+    sql = text(sql_get_kins_birtmonth)
+    
+    birthdays_1 = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
+    
+    sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
+    strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = kinships.citizen_id and citizens.import_id = :import_id_val)) as birth_month,
+    count(citizens.citizen_id) as presents
+    FROM citizens, kinships  
+    WHERE citizens.citizen_id = kinships.relative_id and kinships.relative_id <> kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = :import_id_val
+    GROUP BY citizens.citizen_id, birth_month
+    '''
+    sql = text(sql_get_kins_birtmonth)
+    birthdays_2 = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
+
+    if (not birthdays_1) and not(birthdays_2): 
+        raise Exception("import with import_id = {} does not exist".format(import_id_))
+    
+    #use both responces to gather information about birthdays together
+    print(birthdays_1)
+    print(birthdays_2)
+    birthdays_1.extend(birthdays_2)
+    result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
+    
+    for birthday_row in birthdays_1:
+        key = str(int(birthday_row["birth_month"]))
+        result_dict[key].append({
+            "citizen_id": birthday_row["citizen_id"],
+            "presents": birthday_row["presents"]
+            })
+        
+    return {"data":result_dict}
+    
+    
+        
+        
 
 def get_statistic_for_import_id(import_id_):
     """
