@@ -8,9 +8,9 @@ from .models import db, Citizens, Imports, Kinships
 from . import help_data
 
 """
-TODO: Citizens.query vs Citizen.session.query
+TODO: Citizens.query vs config.Session.query(Citizen)
 TODO:undestand more about how to use session, when to commit, when start transaction manually
-TODO: mayby try to rif of plain sql completly but it's not requiered
+TODO: mayby try to rid of plain sql completly but it's not requiered
 """
 def trace():
     from inspect import currentframe, getframeinfo
@@ -51,7 +51,7 @@ def insert_citizens_set(request_json):
         db.session.add(import_obj)
         db.session.commit()
     except Exception as e:
-        session.rollback()
+        db.session.rollback()
         raise
     current_app.logger.info(import_obj.import_id)
     
@@ -66,7 +66,7 @@ def insert_citizens_set(request_json):
         db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
         db.session.commit()
     except Exception as e:
-        session.rollback()
+        db.session.rollback()
         raise
     return import_obj.import_id
 
@@ -95,8 +95,6 @@ def get_citizens_set(import_id_):
             citizen_id = kinship.citizen_id
             relative_id = kinship.relative_id
             citizens_dict[citizen_id]["relatives"].append(relative_id)
-            if citizen_id != relative_id:
-                citizens_dict[relative_id]["relatives"].append(citizen_id)
     except Exception as e:
         raise
     return {"data":list(citizens_dict.values())}
@@ -127,7 +125,7 @@ def fix_data(import_id_, citizen_id_, request_json):
     # if we have to change realatives extract all new relative connections from request_json
     if "relatives" in request_json:
         update_relatives = True
-        #Get citizen_id-s of citizens that existant in set with import_id
+        #Get citizen_id-s of citizens that existant in set with import_id - to test if any relatives in patch data are non-existant
         citizen_ids = Citizens.query.with_entities(Citizens.citizen_id).filter_by(import_id=import_id_).all()
         citizen_ids = set(citizen_id for t in citizen_ids for citizen_id in t)
         kinships_data = help_data.get_new_relatives(import_id_, citizen_id_, request_json, citizen_ids)
@@ -136,7 +134,7 @@ def fix_data(import_id_, citizen_id_, request_json):
     request_json.pop("relatives", None)
 
     try:
-        #update relatives in necessary  - delete all relative pairs contains citizen_id_ boss as Kinships.citizen_id and as Kinships.relative_id and add new pairs of relative connections if there are any
+        #update relatives if necessary  - delete all relative pairs contains citizen_id_ boss as Kinships.citizen_id and as Kinships.relative_id and add new pairs of relative connections if there are any
         if update_relatives:
             Kinships.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).delete()
             Kinships.query.filter_by(import_id=import_id_, relative_id=citizen_id_).delete()
@@ -150,18 +148,16 @@ def fix_data(import_id_, citizen_id_, request_json):
         
         db.session.commit()
     except Exception as e:
-        session.rollback()
+        db.session.rollback()
         raise
     
     #get information that we have changed: it can be different from what we expected in case of parrallel work with db (if somebody managed to change the same data too before we get responce), but this information would reflect the newest state of the base and the base will be consistant anyway (patch is atomic)
     citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first().serialize()
     kinships_response = Kinships.query.with_entities(Kinships.relative_id).filter_by(import_id=import_id_, citizen_id=citizen_id_).all()
-    kinships_response_mutual = Kinships.query.with_entities(Kinships.citizen_id).filter_by(import_id=import_id_, relative_id=citizen_id_).all()
-    kinships_ids = set(id for t in kinships_response for id in t)
-    kinships_mutual_ids = set(id for t in kinships_response_mutual for id in t)
-    kinships_ids = kinships_ids.union(kinships_mutual_ids)
-    for id in kinships_ids:
-        citizen['relatives'].append(id)
+    kinships_ids = [relative_id for t in kinships_response for relative_id in t]
+    print(kinships_ids)
+    for relative_id in kinships_ids:
+        citizen['relatives'].append(relative_id)
         
     return {"data":citizen}
 
@@ -192,28 +188,15 @@ def get_citizens_birthdays_for_import_id(import_id_):
     '''
     sql = text(sql_get_kins_birtmonth)
     
-    birthdays_1 = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
+    birthdays = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
     
-    sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
-    strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = kinships.citizen_id and citizens.import_id = :import_id_val)) as birth_month,
-    count(citizens.citizen_id) as presents
-    FROM citizens, kinships  
-    WHERE citizens.citizen_id = kinships.relative_id and kinships.relative_id <> kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = :import_id_val
-    GROUP BY citizens.citizen_id, birth_month
-    '''
-    sql = text(sql_get_kins_birtmonth)
-    birthdays_2 = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
-
-    if (not birthdays_1) and not(birthdays_2): 
+    if not birthdays: 
         raise Exception("import with import_id = {} does not exist".format(import_id_))
     
     #use both responces to gather information about birthdays together
-    print(birthdays_1)
-    print(birthdays_2)
-    birthdays_1.extend(birthdays_2)
     result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     
-    for birthday_row in birthdays_1:
+    for birthday_row in birthdays:
         key = str(int(birthday_row["birth_month"]))
         result_dict[key].append({
             "citizen_id": birthday_row["citizen_id"],

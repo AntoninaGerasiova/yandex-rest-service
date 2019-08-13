@@ -157,9 +157,9 @@ def get_insert_data(request_json):
         #Generate pairs of relatives for this citizen
         #For now just eliminate duplicates, but maybe we'd better should reject the whole request
         for relative in set(relatives):
-            pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
-            kinships_data.add(pair_in_order)
+            kinships_data.add((citizen_id, relative))
             #keep track of pairs of relatives - every one should has pair
+            pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
             if citizen_id != relative:
                 if pair_in_order not in kinship_set:
                     kinship_set.add(pair_in_order)
@@ -205,68 +205,14 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     for relative in request_json['relatives']:
         if relative not in citizen_ids:
             raise Exception("Can't be relative to non-existant citizen")
-        pair_in_order = (import_id, citizen_id, relative) if citizen_id < relative else (import_id, relative, citizen_id)
-        kinships_data.add(pair_in_order)
+        kinships_data.add((import_id, citizen_id, relative))
+        if citizen_id != relative:
+            kinships_data.add((import_id, relative, citizen_id))
                 
     return list(kinships_data)
 
 
-def form_request(import_id, citizen_id, request_json):
-    """
-    Make update request to update information about citizen with distinct citizen_id and request_id (except relative field)
-    
-    Args:
-        import_id (int): import id were to find citizen
-        citizen_id (int):citizen id whose information to change
-        request_json (dict): data to change
-    
-    Returns: 
-        sql_update_citizen (str) :sql-request ready to use to update bd (may be not very safe??? but provided the json structure was checkced it will do)
-    
-    Raises:
-        ValueError: in case of wrong date 
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
-    """
-    
-    #check if there are keys except relatives and if there are no just return - nothing to patch in citizens table
-    key_list = list(request_json.keys())
-    key_list.remove('relatives')
-    if not key_list:
-        return
-    #make request to update information (except relative field)
-    sql_update_citizen = "UPDATE citizens SET "
-    
-    #go through keys explicitly
-    if "town" in request_json:
-        town = request_json['town']
-        sql_update_citizen += "town = '{}', ".format(town)
-        
-    if "street" in request_json:
-        street = request_json['street']
-        sql_update_citizen += "street = '{}', ".format(street)
-    
-    if "building" in request_json:
-        building = request_json['building']
-        sql_update_citizen += "building = '{}', ".format(building)
-        
-    if "apartment" in request_json:
-        apartment = request_json['apartment']
-        sql_update_citizen += "apartment = {}, ".format(apartment)
-        
-    if "name" in request_json:
-        name = request_json['name']
-        sql_update_citizen += "name = '{}', ".format(name)
-    
-    if "birth_date" in request_json:
-        birth_date = date_to_bd_format(request_json['birth_date'])
-        sql_update_citizen += "birth_date = {}, ".format(birth_date)
-        
-    if "gender" in request_json:
-        gender = request_json['gender']
-        sql_update_citizen += "gender = '{}', ".format(gender)
-        
-    sql_update_citizen = sql_update_citizen[:-2] + " WHERE import_id = {} and citizen_id = {}".format(import_id, citizen_id)
-    return sql_update_citizen
+
 
 
 
