@@ -1,8 +1,9 @@
 from flask import Flask
 from flask import current_app
-from sqlalchemy import text
-
+from sqlalchemy import text, extract
+ 
 from  numpy import percentile
+import datetime
 
 from .models import db, Citizens, Imports, Kinships
 from . import help_data
@@ -84,19 +85,17 @@ def get_citizens_set(import_id_):
     Raises:
         Exception: when there is no set with given import_id in db
     """
-    try:
-        citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
-        current_app.logger.info(citizens_responce)
-        if not citizens_responce:
-            raise Exception("import with import_id = {} does not exist".format(import_id_))
-        citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
-        kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
-        for kinship in kinships_responce:
-            citizen_id = kinship.citizen_id
-            relative_id = kinship.relative_id
-            citizens_dict[citizen_id]["relatives"].append(relative_id)
-    except Exception as e:
-        raise
+    citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
+    current_app.logger.info(citizens_responce)
+    if not citizens_responce:
+        raise Exception("import with import_id = {} does not exist".format(import_id_))
+    citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
+    kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
+    for kinship in kinships_responce:
+        citizen_id = kinship.citizen_id
+        relative_id = kinship.relative_id
+        citizens_dict[citizen_id]["relatives"].append(relative_id)
+
     return {"data":list(citizens_dict.values())}
 
 
@@ -174,41 +173,25 @@ def get_citizens_birthdays_for_import_id(import_id_):
     Raises:
         Exception:  if set with import_id doesn't exist in db
     """
-    
-    #may be not to keep mutuall connection in bas was not such a good idea
-    #get information for birthdays two times
-    #first get information for citizens with citizen_id in kinships table
-    #second get informtion for citizens with relative_id in kinships table
-    sql_get_kins_birtmonth = '''SELECT citizens.citizen_id as citizen_id,
-    strftime("%m", (SELECT  birth_date FROM citizens WHERE citizen_id = relative_id and citizens.import_id = :import_id_val)) as birth_month,
-    count(citizens.citizen_id) as presents
-    FROM citizens, kinships  
-    WHERE citizens.citizen_id = kinships.citizen_id and citizens.import_id = kinships.import_id and citizens.import_id = :import_id_val
-    GROUP BY citizens.citizen_id, birth_month
-    '''
-    sql = text(sql_get_kins_birtmonth)
-    
-    birthdays = db.session.execute(sql, {'import_id_val': import_id_}).fetchall()
-    
+    #get responce comosed of pairs (citizen, month) and number of presents he have to bay in this month
+    birthdays = db.session.query(Citizens).join(Kinships, (Kinships.relative_id == Citizens.citizen_id)).filter(Citizens.import_id == import_id_, Kinships.import_id == import_id_).with_entities(Kinships.citizen_id.label('giver'), extract('month', Citizens.birth_date).label('birth_month'), db.func.count(Citizens.citizen_id).label('presents')).group_by('giver','birth_month').all()
+   
+    #raise exeption if there are nothing to return? maybe it would better to return empty structure
     if not birthdays: 
         raise Exception("import with import_id = {} does not exist".format(import_id_))
     
-    #use both responces to gather information about birthdays together
+    #form a structure to return
     result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     
-    for birthday_row in birthdays:
-        key = str(int(birthday_row["birth_month"]))
+    for birthday in birthdays:
+        key = str(int(birthday.birth_month))
         result_dict[key].append({
-            "citizen_id": birthday_row["citizen_id"],
-            "presents": birthday_row["presents"]
+            "citizen_id": birthday.giver,
+            "presents": birthday.presents
             })
-        
     return {"data":result_dict}
     
     
-        
-        
-
 def get_statistic_for_import_id(import_id_):
     """
         Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns for given import_id (particular import)
