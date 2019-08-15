@@ -292,25 +292,30 @@ def test_input_with_non_unique_relatives():
     r = get_citizens_set(1)
     assert r.status_code == 404
     
-
-#This test is not passed anymore due to changes in process of insertion to db - now getting import_id and  actual insertion are performed in different transactions, so in case of rollback import_id stay in db forever
-#Not sure how to fix this and if it is even required - import_id are always unque for every insertion and why should anyone mind gaps between them
-"""
-def test_input_several_sets():
+    
+def test_input_with_null_citizen_id():
     init()
-    r = post_data_set('test_files/simple_good_data_set.test')
-    import_id1 = json.loads(r.text)["data"]["import_id"]
+    r = post_data_set('test_files/simple_set_with_null_citizen_id.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
-    r = post_data_set('test_files/simple_good_data_set.test')
-    import_id2 = json.loads(r.text)["data"]["import_id"]
+def test_input_with_null_town():
+    init()
+    r = post_data_set('test_files/simple_set_with_null_town.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
-    assert import_id1 + 1 == import_id2
-    #try to insert set for with insertion begins but should be rolled back
-    r = post_data_set('test_files/simple_set_with_non_unique_citizen_id.test')
-    r = post_data_set('test_files/simple_good_data_set.test')
-    import_id3 = json.loads(r.text)["data"]["import_id"]
-    assert import_id2 + 1 == import_id3
-"""
+def test_input_with_null_relatives():
+    init()
+    r = post_data_set('test_files//simple_set_with_null_relatives.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
 #bigger insert tests
 def test_good_bigger_input():
@@ -381,6 +386,12 @@ def test_patch_bad_import_id():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 3, 'test_files/good_patch.test')
     assert r.status_code == 404
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_bad_citizen_id():
     init()
@@ -398,30 +409,60 @@ def test_patch_bad_both_id():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 4, 'test_files/good_patch.test')
     assert r.status_code == 404
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_no_keys():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_no_keys.test')
     assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_extra_key():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_extra_key.test')
     assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_wrong_structure():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_structure.test')
     assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_with_non_unique_relatives():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_with_non_unique_relatives.test')
     assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
     
 def test_patch_relative_to_self():
     init()
@@ -433,17 +474,44 @@ def test_patch_relative_to_self():
     for key in data_for_patch:
         assert  got_data[key] == data_for_patch[key]
         
-    
 def test_patch_wrong_relative():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_relative.test')
     assert r.status_code == 400
+    #check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
     assert got_data == data_for_insertion
+    
+def test_patch_null_name():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_with_null_name.test')
+    assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
+    
+def test_patch_null_relatives():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_with_null_relatives.test')
+    assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
+    
+ 
+
 
 #================================
 def test_get_citizens_valid_import_id():
