@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 from .models import db
+from .exceptions import SetNotFoundError
 from . import db_helper
 
 def trace():
@@ -15,13 +16,14 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    if True: #True for sqlite, False for postgres
+    use_postgress = False
+    if use_postgress: 
+        #db path for postgres
+        app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
+    else:
         #db path for sqlite
         db_path  = os.path.join(app.instance_path, 'gifts.sqlite')
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(db_path)
-    else:
-        #db path for postgres
-        app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -68,22 +70,27 @@ def create_app(test_config=None):
             res = db_helper.get_citizens_set(import_id)
             res = jsonify(res)
             return res
+        except SetNotFoundError as exc:
+            return_str = "Not Found"
+            return return_str, 404
         except Exception as exc:
-                trace()
-                import traceback
-                traceback.print_exc()
-                return_str = "Get failed: {}".format(str(exc))
-                return return_str, 400
+            trace()
+            import traceback
+            traceback.print_exc()
+            return_str = "Get failed: {}".format(str(exc))
+            return return_str, 400
         
     @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>',methods=['PATCH'])
-    def change(import_id, citizen_id):
+    def patch(import_id, citizen_id):
         if request.method == 'PATCH':
             request_json = request.get_json()
             try:
                 res = db_helper.fix_data(import_id, citizen_id, request_json)
                 res = jsonify(res)
                 return res
-            
+            except SetNotFoundError as exc:
+                return_str = "Not Found"
+                return return_str, 404
             except Exception as exc:
                 trace()
                 import traceback
@@ -97,6 +104,9 @@ def create_app(test_config=None):
             res = db_helper.get_citizens_birthdays_for_import_id(import_id)
             res = jsonify(res)
             return res
+        except SetNotFoundError as exc:
+            return_str = "Not Found"
+            return return_str, 404
         except Exception as exc:
             trace()
             import traceback
@@ -110,6 +120,9 @@ def create_app(test_config=None):
             res = db_helper.get_statistic_for_import_id(import_id)
             res = jsonify(res)
             return res
+        except SetNotFoundError as exc:
+            return_str = "Not Found"
+            return return_str, 404
         except Exception as exc:
             trace()
             import traceback

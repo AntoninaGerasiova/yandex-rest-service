@@ -8,8 +8,8 @@ from sqlalchemy import exc
 from  numpy import percentile
 
 from .models import db, Citizens, Imports, Kinships
-from . import help_data
-
+from .exceptions import SetNotFoundError
+from . import help_data 
 
 def trace():
     from inspect import currentframe, getframeinfo
@@ -30,8 +30,8 @@ def insert_citizens_set(request_json):
         jsonschema.exceptions.ValidationError: if request_json is not valid json
         json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types
         ValueError: in case of wrong date 
+        exc.SQLAlchemyError: if something get wrong during work with db
         Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
-        db.Error: if something went wrong during insertion in db
         
     """
     
@@ -86,13 +86,15 @@ def get_citizens_set(import_id_):
         dict: information about citizens of set with import_id
         
     Raises:
-        Exception: when there is no set with given import_id in db
+        exc.SQLAlchemyError: if something get wrong during work with db
+        
+        SetNotFoundError:  if set with import_id doesn't exist in db
     """
     try:
         citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
         current_app.logger.info(citizens_responce)
         if not citizens_responce:
-            raise RuntimeError("import with import_id = {} does not exist".format(import_id_))
+            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
         citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
         kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
         for kinship in kinships_responce:
@@ -118,11 +120,22 @@ def fix_data(import_id_, citizen_id_, request_json):
     
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
+        
         json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+        
         ValueError: in case of wrong date 
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format or if citizen with  given import_id, citizen_id not in base or if somthing get wrong during work with bd
+        
+        SetNotFoundError: in case if there are no set with id import_id_ or there are no citizen with id citizen_id_ in it
+        
+        exc.SQLAlchemyError: if something get wrong during work with db 
+        
+        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format 
     """
-
+    #check if there are set import_id_ in db in there are citizen citizen_id_ in this set
+    citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first()
+    if not citizen:
+            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+    
     #validate request_json
     help_data.validate_patch_json(request_json)
     
@@ -181,7 +194,9 @@ def get_citizens_birthdays_for_import_id(import_id_):
         (dict):    information about relatives' birthdays grouped by monthes
         
     Raises:
-        Exception:  if set with import_id doesn't exist in db
+        SetNotFoundError: if set with import_id doesn't exist in db
+        
+        exc.SQLAlchemyError: if something get wrong during work with db
     """
     try:
         #get responce comosed of pairs (citizen, month) and number of presents he have to bay in this month
@@ -189,7 +204,7 @@ def get_citizens_birthdays_for_import_id(import_id_):
    
         #raise exeption if there are nothing to return? maybe it would better to return empty structure
         if not birthdays: 
-            raise RuntimeError("import with import_id = {} does not exist".format(import_id_))
+            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
     
         #form a structure to return
         result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
@@ -216,12 +231,14 @@ def get_statistic_for_import_id(import_id_):
             (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
             
         Raises:
-            Exception:  if set with import_id doesn't exist in db
+            SetNotFoundError:  if set with import_id doesn't exist in db
+            
+            exc.SQLAlchemyError: if something get wrong during work with db
     """
     try:
         citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()
-        if not citizens: 
-            raise RuntimeError("import with import_id = {} does not exist".format(import_id))
+        if not citizens:
+            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
         
         age_dict = dict()
         for citizen in citizens:
