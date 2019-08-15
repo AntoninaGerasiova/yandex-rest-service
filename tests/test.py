@@ -201,6 +201,14 @@ def test_input_with_wrong_date_format():
     #Test that nothing was inserted
     r = get_citizens_set(1)
     assert r.status_code == 404
+
+def test_input_date_with_whitespaces():
+    init()
+    r = post_data_set('test_files/simple_set_date_with_whitespaces.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
 def test_input_with_tricky_wrong_date_format1():
     init()
@@ -276,6 +284,13 @@ def test_input_with_non_unique_citizen_id():
     r = get_citizens_set(1)
     assert r.status_code == 404
 
+def test_input_with_non_unique_relatives():
+    init()
+    r = post_data_set('test_files/simple_set_with_non_unique_relatives.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
 
 #This test is not passed anymore due to changes in process of insertion to db - now getting import_id and  actual insertion are performed in different transactions, so in case of rollback import_id stay in db forever
@@ -400,6 +415,12 @@ def test_patch_wrong_structure():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_structure.test')
+    assert r.status_code == 400
+    
+def test_patch_with_non_unique_relatives():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_with_non_unique_relatives.test')
     assert r.status_code == 400
     
 def test_patch_relative_to_self():
@@ -550,7 +571,7 @@ def test_statistic_invalid_import_id():
  
  
 if __name__ == '__main__':
-    test_patch_bad_import_id()
+    test_input_with_non_unique_relatives()
     
 
 

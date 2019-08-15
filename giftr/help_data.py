@@ -6,6 +6,7 @@ Help functions that perform data processing such as
     -   create handy structures to work with bd 
 
 """
+from flask import current_app
 import jsonschema
 from dateutil.parser import parse
 import datetime
@@ -73,13 +74,17 @@ def date_to_bd_format(date):
         date(str): date suitable for db "YYYY-MM-DD"
         
     Raises:
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string
         ValueError: in case of wrong date 
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
     """
     #Validate date format
-    d,m,y = date.strip().split(".")
+    if(len(date) != 10):
+        current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
+        raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
+    d,m,y = date.split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
-        raise RuntimeError("Bad date format")
+        current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
+        raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
     bd_date = "-".join((y, m, d))
     parse(bd_date)
     return  datetime.datetime(int(y), int(m), int(d))
@@ -136,16 +141,22 @@ def get_insert_data(request_json):
     
     Returns:
         citizens_data (list) : data about citizens formed for inserting in db (without information about kinship)
+        
         kinships_data (list) : data about kinshps formed for inserting in db
         
     Raises:
         ValueError: in case of wrong date 
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
+        
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string 
+        
+        NonUniqueRelativeError: if relatives ids not unique for one citizen
+        
+        InconsistentRelativesError: if relatives links are inconsistant 
     """
    
     citizens = request_json["citizens"]
     citizens_data = list()
-    kinships_data = set()
+    kinships_data = list()
     kinship_set = set()
     for citizen in citizens:
         citizen_id = citizen['citizen_id']
@@ -156,12 +167,15 @@ def get_insert_data(request_json):
         name = citizen['name']
         birth_date = date_to_bd_format(citizen['birth_date'])
         gender = citizen['gender']
-        relatives = citizen['relatives']
         citizens_data.append([citizen_id, town, street, building, apartment, name, birth_date, gender])
+        relatives = citizen['relatives']
+        if len(relatives) != len(set(relatives)):
+            current_app.logger.info("More then one relative with the same id for one citizen")
+            raise(NonUniqueRelativeError("More then one relative with the same id for one citizen"))
+        
         #Generate pairs of relatives for this citizen
-        #For now just eliminate duplicates, but maybe we'd better should reject the whole request
-        for relative in set(relatives):
-            kinships_data.add((citizen_id, relative))
+        for relative in relatives:
+            kinships_data.append([citizen_id, relative])
             #keep track of pairs of relatives - every one should has pair
             pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
             if citizen_id != relative:
@@ -170,9 +184,9 @@ def get_insert_data(request_json):
                 else: 
                     kinship_set.remove(pair_in_order)
     if  len(kinship_set) != 0:
-        print ("Informationt about relatives inconsistant")
-        raise RuntimeError("Inconsistant relatives data")
-    return citizens_data, list(map(list, kinships_data))
+        current_app.logger.info("Information about relatives inconsistent")
+        raise(InconsistentRelativesError("Inconsistent relatives data"))
+    return citizens_data, kinships_data
 
 
 
@@ -202,18 +216,27 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     
     Returns: 
         kinships_data (list): pairs of citizens' kinships to insert into table
+        
+    Raises:
+        NonUniqueRelativeError: if relatives ids not unique for one citizen
+        RelativesToNonexistentCitizenError: if there are no citizen with given id to be relative
+        
     """
 
-    kinships_data = set()
-    
+    kinships_data = list()
+    relatives = request_json['relatives']
+    if len(relatives) != len(set(relatives)):
+        current_app.logger.info("More then one relative with the same id for one citizen")
+        raise(NonUniqueRelativeError("More then one relative with the same id for one citizen"))
     for relative in request_json['relatives']:
         if relative not in citizen_ids:
-            raise RuntimeError("Can't be relative to non-existant citizen")
-        kinships_data.add((import_id, citizen_id, relative))
+            current_app.logger.info("Can't be relative to non-existent citizen")
+            raise(RelativesToNonexistentCitizenError("Can't be relative to non-existent citizen"))
+        kinships_data.append((import_id, citizen_id, relative))
         if citizen_id != relative:
-            kinships_data.add((import_id, relative, citizen_id))
+            kinships_data.append((import_id, relative, citizen_id))
                 
-    return list(kinships_data)
+    return kinships_data
 
 
 

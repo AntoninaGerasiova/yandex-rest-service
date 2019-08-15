@@ -56,7 +56,6 @@ def insert_citizens_set(request_json):
     finally: 
         db.session.close()
         
-    current_app.logger.info(import_id)
     #add import_id to inserted data
     citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
     kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
@@ -94,6 +93,7 @@ def get_citizens_set(import_id_):
         citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
         current_app.logger.info(citizens_responce)
         if not citizens_responce:
+            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
             raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
         citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
         kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
@@ -134,7 +134,8 @@ def fix_data(import_id_, citizen_id_, request_json):
     #check if there are set import_id_ in db in there are citizen citizen_id_ in this set
     citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first()
     if not citizen:
-            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+        current_app.logger.info("citizen with import_id = {} and citizen_id = {} does not exist".format(import_id_, citizen_id_))
+        raise(SetNotFoundError("citizen with import_id = {} and citizen_id = {} does not exist".format(import_id_, citizen_id_)))
     
     #validate request_json
     help_data.validate_patch_json(request_json)
@@ -204,6 +205,7 @@ def get_citizens_birthdays_for_import_id(import_id_):
    
         #raise exeption if there are nothing to return? maybe it would better to return empty structure
         if not birthdays: 
+            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
             raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
     
         #form a structure to return
@@ -238,6 +240,7 @@ def get_statistic_for_import_id(import_id_):
     try:
         citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()
         if not citizens:
+            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
             raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
         
         age_dict = dict()

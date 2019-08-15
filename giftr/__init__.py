@@ -71,7 +71,7 @@ def create_app(test_config=None):
             res = jsonify(res)
             return res
         except SetNotFoundError as exc:
-            return_str = "Not Found"
+            return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         except Exception as exc:
             trace()
@@ -89,7 +89,7 @@ def create_app(test_config=None):
                 res = jsonify(res)
                 return res
             except SetNotFoundError as exc:
-                return_str = "Not Found"
+                return_str = "Patch failed: {}".format(str(exc))
                 return return_str, 404
             except Exception as exc:
                 trace()
@@ -105,7 +105,7 @@ def create_app(test_config=None):
             res = jsonify(res)
             return res
         except SetNotFoundError as exc:
-            return_str = "Not Found"
+            return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         except Exception as exc:
             trace()
@@ -121,7 +121,7 @@ def create_app(test_config=None):
             res = jsonify(res)
             return res
         except SetNotFoundError as exc:
-            return_str = "Not Found"
+            return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         except Exception as exc:
             trace()
