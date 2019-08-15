@@ -1,5 +1,9 @@
 """
-Help functions to work with data, convert formats, parsing json, validation
+Help functions that perform data processing such as
+    -   converting formats
+    -   parsing jsons 
+    -   validation jsons
+    -   create handy structures to work with bd 
 
 """
 import jsonschema
@@ -75,7 +79,7 @@ def date_to_bd_format(date):
     #Validate date format
     d,m,y = date.strip().split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
-        raise Exception("Bad date format")
+        raise RuntimeError("Bad date format")
     bd_date = "-".join((y, m, d))
     parse(bd_date)
     return  datetime.datetime(int(y), int(m), int(d))
@@ -167,7 +171,7 @@ def get_insert_data(request_json):
                     kinship_set.remove(pair_in_order)
     if  len(kinship_set) != 0:
         print ("Informationt about relatives inconsistant")
-        raise Exception("Inconsistant relatives data")
+        raise RuntimeError("Inconsistant relatives data")
     return citizens_data, list(map(list, kinships_data))
 
 
@@ -204,7 +208,7 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     
     for relative in request_json['relatives']:
         if relative not in citizen_ids:
-            raise Exception("Can't be relative to non-existant citizen")
+            raise RuntimeError("Can't be relative to non-existant citizen")
         kinships_data.add((import_id, citizen_id, relative))
         if citizen_id != relative:
             kinships_data.add((import_id, relative, citizen_id))
