@@ -8,7 +8,11 @@ TODO: test with really big set (abou 10000) - can we insert data in one transact
 TODO: bad patch - test that nothing have been done
 TODO: test more extensively situation with relative connection to themself
 TODO: get import_id after insert from responese not from the head!!!!!!
-TODO: test ptch for severel imports
+
+
+TODO: make test with duplicate relatives
+TODO:make test with citizen without relative and presents to buy
+
 """
 def full_addr(path):
     addr = "http://127.0.0.1:5000"
@@ -170,6 +174,9 @@ def test_input_with_inconsistant_relatives():
     init()
     r = post_data_set('test_files/simple_inconsistant_relatives_set.test')
     assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
     
 def test_input_with_absent_relatives():
     init()
@@ -177,7 +184,7 @@ def test_input_with_absent_relatives():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_rubbish_in_place_of_date():
     init()
@@ -185,7 +192,7 @@ def test_input_with_rubbish_in_place_of_date():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_wrong_date_format():
     init()
@@ -193,7 +200,7 @@ def test_input_with_wrong_date_format():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_tricky_wrong_date_format1():
     init()
@@ -201,7 +208,7 @@ def test_input_with_tricky_wrong_date_format1():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_tricky_wrong_date_format2():
     init()
@@ -209,7 +216,7 @@ def test_input_with_tricky_wrong_date_format2():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_trickier_wrong_date_format():
     init()
@@ -217,7 +224,7 @@ def test_input_with_trickier_wrong_date_format():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
 
 def test_input_with_the_trickiest_wrong_date_format(): #it's not actually wrong, just 29.02 of some leap year
     init()
@@ -228,17 +235,17 @@ def test_input_with_wrong_geneder_format():
     init()
     r = post_data_set('test_files/simple_set_with_wrong_geneder_format.test')
     assert r.status_code == 400
-        #Test that nothing was inserted
+    #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_with_absent_key():
     init()
     r = post_data_set('test_files/simple_set_with_absent_key.test')
     assert r.status_code == 400
-        #Test that nothing was inserted
+    #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
 
 def test_input_with_extra_key():
     init()
@@ -246,15 +253,15 @@ def test_input_with_extra_key():
     assert r.status_code == 400
         #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_wrong_structure():
     init()
     r = post_data_set( 'test_files/simple_set_wrong_structure.test')
     assert r.status_code == 400
-        #Test that nothing was inserted
+    #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_input_without_json_structure():
     init()
@@ -267,7 +274,7 @@ def test_input_with_non_unique_citizen_id():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
 
     
 
@@ -302,7 +309,7 @@ def test_good_bigger_input():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_good_bigger_input():
     init()
@@ -310,7 +317,7 @@ def test_good_bigger_input():
     assert r.status_code == 400
     #Test that nothing was inserted
     r = get_citizens_set(1)
-    assert r.status_code == 400
+    assert r.status_code == 404
 
 #try to insert the bigest set for this time    
 def test_good_and_big_input():
@@ -358,7 +365,7 @@ def test_patch_bad_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 3, 'test_files/good_patch.test')
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_patch_bad_citizen_id():
     init()
@@ -366,16 +373,16 @@ def test_patch_bad_citizen_id():
     r = get_citizens_set(1)
     got_data1 = json.loads(r.text)["data"]
     r = patch(1, 4, 'test_files/good_patch.test')
-    assert r.status_code == 400
+    assert r.status_code == 404
     r = get_citizens_set(1)
     got_data2 = json.loads(r.text)["data"]
-    assert got_data1 == got_data2 #data set sould stay the same
+    assert got_data1 == got_data2 #data set should stay the same
     
 def test_patch_bad_both_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(2, 4, 'test_files/good_patch.test')
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 def test_patch_no_keys():
     init()
@@ -433,7 +440,7 @@ def test_get_citizens_invalid_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
     r = get_citizens_set(2)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
     
 #====================================
@@ -470,11 +477,6 @@ def test_get_birthdays_valid_import_id():
     got_data = json.loads(r.text)["data"]
     assert len(got_data) == 12
     expected_data = get_test_file_as_structure('test_files/birthdays_answer.test')["data"]
-    for key in got_data:
-        print(key)
-        print(got_data[key])
-        print(expected_data[key])
-        print()
     assert got_data == expected_data
 
 def test_get_birthdays_valid_import_id_several_imports():
@@ -500,7 +502,6 @@ def test_multiple_birtdays_in_one_month():
     assert got_data == expected_data
     
     
-    
 def test_get_birthdays_present_to_self():
     init()
     post_data_set('test_files/simple_good_data_set_with_relative_connection_to_self.test')
@@ -515,7 +516,7 @@ def test_birtdays_invalid_import_id():
     init()
     post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
     r = get_citizens_birthdays(2)
-    assert r.status_code == 400
+    assert r.status_code == 404
     
 #================================================
 #test percentile requests
@@ -545,12 +546,11 @@ def test_statistic_invalid_import_id():
     init()
     post_data_set('test_files/data_set_for_percentile1.test')
     r = get_statistic(2)
-    assert r.status_code == 400
+    assert r.status_code == 404
  
  
 if __name__ == '__main__':
-    
-    test_get_birthdays_present_to_self()
+    test_patch_bad_import_id()
     
 
 
