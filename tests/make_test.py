@@ -304,7 +304,11 @@ write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': None, 'street': '
 
 write_data_set_to_file({'citizens': [{'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': None }, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'test_files//simple_set_with_null_relatives.test')
 
+write_data_set_to_file({'citizens': [{'citizen_id': 5, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}, {'citizen_id': 1, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [5]}]}, 'test_files/simple_good_data_set_ids_not_in_order.test')
 
+write_data_set_to_file({'citizens': [{'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2], 'citizen_id': 1,}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'name': 'Иванов Иван Петрович', 'apartment': 7, 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'test_files/simple_good_data_set_swapped_keys.test')
+
+write_data_set_to_file({'citizens': [{'citizen_id': "one", 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Иванович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [2]}, {'citizen_id': 2, 'town': 'Москва', 'street': 'Льва Толстого', 'building': '16к7стр5', 'apartment': 7, 'name': 'Иванов Иван Петрович', 'birth_date': '01.02.2000', 'gender': 'male', 'relatives': [1]}]}, 'test_files/simple_data_set_wrong_citizen_id_type.test')
 #======================================================
 #patch tests
 
@@ -314,7 +318,15 @@ test_insert_for_patch = {"citizens": [
     {"citizen_id": 3, "town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": []}]
 }
 
+test_insert_for_patch_swapped = {"citizens": [
+    {"town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": [], "citizen_id": 3},
+    {"citizen_id": 1, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Иван Иванович", "birth_date": "26.12.1986", "gender": "male", "relatives": [2] },
+    {"citizen_id": 2,"town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Сергей Иванович", "birth_date": "17.04.1997","gender": "male","relatives": [1]}
+    ]
+}
+
 write_data_set_to_file(test_insert_for_patch, 'test_files/data_set_to_patch_it.test')
+write_data_set_to_file(test_insert_for_patch_swapped, 'test_files/data_set_to_patch_it_swapped.test')
 
 write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": [1]}, 'test_files/good_patch.test')
 
@@ -338,6 +350,13 @@ write_data_set_to_file({ "birth_date": "31.02.2000"}, 'test_files/patch_bad_date
 
 write_data_set_to_file({"relatives": [1]}, 'test_files/patch_add_relative.test')
 write_data_set_to_file({"relatives": []}, 'test_files/patch_remove_relative.test')
+
+write_data_set_to_file({ "name": 20, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": "8бис", "relatives": [1]}, 'test_files/patch_wrong_name_type.test')
+
+write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": "8бис", "relatives": [1]}, 'test_files/patch_wrong_apartment_type.test')
+
+write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "apartment": 7, "relatives": [1], "building": "16к7стр5"}, 'test_files/good_patch_swapped_keys.test')
+
 
 #======================================================
 #tests for birtdays request
@@ -451,6 +470,13 @@ birthdays_answer_multiple  = {
                 
 write_data_set_to_file(birthdays_answer_multiple, "test_files/birthdays_answer_multiple.test")
 
+test_birthdays_without_relatives = {"citizens": [
+    {"citizen_id": 1, "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Иван Иванович", "birth_date": "26.12.1986", "gender": "male", "relatives": [] },
+    {"citizen_id": 2,"town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "name": "Иванов Сергей Иванович", "birth_date": "17.04.1997","gender": "male","relatives": [] },
+    {"citizen_id": 3, "town": "Керчь", "street": "Иосифа Бродского", "building": "2", "apartment": 11, "name": "Романова Мария Леонидовна", "birth_date": "23.11.1986", "gender": "female", "relatives": []}]
+}
+
+write_data_set_to_file(test_birthdays_without_relatives, "test_files/data_set_without_relatives.test")
 #============================================================
 #percentile tests
 write_data_set_to_file(test_insert_multiple_birthdays, 'test_files/data_set_for_percentile1.test')

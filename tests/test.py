@@ -5,13 +5,7 @@ from  numpy import percentile
 
 """
 TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
-TODO: bad patch - test that nothing have been done
-TODO: test more extensively situation with relative connection to themself
-TODO: get import_id after insert from responese not from the head!!!!!!
-
-
-TODO: make test with duplicate relatives
-TODO:make test with citizen without relative and presents to buy
+TODO: what if send post to get get to post  
 
 """
 def full_addr(path):
@@ -150,6 +144,22 @@ def get_statistic(import_id):
     path  = "/imports/{}/towns/stat/percentile/age".format(import_id)
     addr = full_addr(path)
     return requests.get(addr)
+
+def key_func(d):
+    """
+    Used as key-function to sort lists of dictionaries to compare responces
+    """
+    items = ((k, v if v is not None else '') for k, v in d.items())
+    return sorted(items)
+
+def sort_relatives(data):
+    """
+    Sort lists of relatives in every dictionary of respoce - to compare respoces
+    """
+    for d in data:
+        if "relatives" in d:
+            d["relatives"].sort()
+        
 #=================================================================================================
 #insertion tests
 def test_good_input():
@@ -161,14 +171,23 @@ def test_good_input():
     r = get_citizens_set(import_id)
     data_for_insertion = get_test_file_as_structure('test_files/simple_good_data_set.test')["citizens"]
     got_data = json.loads(r.text)["data"]
-    assert len(data_for_insertion) == len(got_data)
-    for i in range(len(data_for_insertion)):
-        assert data_for_insertion[i] == got_data[i]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
 
 def test_good_input_with_connection_to_self():
     init()
     r = post_data_set('test_files/simple_good_data_set_with_relative_connection_to_self.test')
     assert r.status_code == 201
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure('test_files/simple_good_data_set_with_relative_connection_to_self.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
+    
     
 def test_input_with_inconsistant_relatives():
     init()
@@ -292,7 +311,6 @@ def test_input_with_non_unique_relatives():
     r = get_citizens_set(1)
     assert r.status_code == 404
     
-    
 def test_input_with_null_citizen_id():
     init()
     r = post_data_set('test_files/simple_set_with_null_citizen_id.test')
@@ -322,8 +340,16 @@ def test_good_bigger_input():
     init()
     r = post_data_set('test_files/good_data_set1.test')
     assert r.status_code == 201
-    
-def test_good_bigger_input():
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure('test_files/good_data_set1.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
+
+def test_input_bigger_with_inconsistent_relatives():
     init()
     r = post_data_set('test_files/data_set_with_inconsistant_relatives1.test')
     assert r.status_code == 400
@@ -331,7 +357,7 @@ def test_good_bigger_input():
     r = get_citizens_set(1)
     assert r.status_code == 404
     
-def test_good_bigger_input():
+def test_input_bigger_with_absent_relatives_input():
     init()
     r = post_data_set('test_files/data_set_with_absent_realtives1.test')
     assert r.status_code == 400
@@ -339,15 +365,57 @@ def test_good_bigger_input():
     r = get_citizens_set(1)
     assert r.status_code == 404
 
-#try to insert the bigest set for this time    
+# try to insert the bigest set for this time    
 def test_good_and_big_input():
     init()
     r = post_data_set('test_files/good_and_big_set.test')
     assert r.status_code == 201
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure('test_files/good_and_big_set.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
 
+    
+def test_input_good_ids_not_in_order():
+    init()
+    r = post_data_set('test_files/simple_good_data_set_ids_not_in_order.test')
+    assert r.status_code == 201
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure('test_files/simple_good_data_set_ids_not_in_order.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
+    
+def test_input_good_swapped_keys():
+    init()
+    r = post_data_set('test_files/simple_good_data_set_swapped_keys.test')
+    assert r.status_code == 201
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure('test_files/simple_good_data_set.test')["citizens"]
+    got_data = json.loads(r.text)["data"]
+    sort_relatives(data_for_insertion)
+    sort_relatives(got_data)
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
 
-#=========================================================    
-#tests for patch
+    
+def test_input_wrong_citizen_id_type():
+    init()
+    r = post_data_set('test_files/simple_data_set_wrong_citizen_id_type.test')
+    assert r.status_code == 400
+    #Test that nothing was inserted
+    r = get_citizens_set(1)
+    assert r.status_code == 404
+# =========================================================    
+# tests for patch
 def test_good_patch():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -433,7 +501,7 @@ def test_patch_extra_key():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_extra_key.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -445,7 +513,7 @@ def test_patch_wrong_structure():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_structure.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -457,7 +525,7 @@ def test_patch_with_non_unique_relatives():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_with_non_unique_relatives.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -479,7 +547,7 @@ def test_patch_wrong_relative():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_wrong_relative.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -491,7 +559,7 @@ def test_patch_null_name():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_with_null_name.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -503,7 +571,7 @@ def test_patch_null_relatives():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_with_null_relatives.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
@@ -515,14 +583,82 @@ def test_patch_bad_date():
     post_data_set('test_files/data_set_to_patch_it.test')
     r = patch(1, 3, 'test_files/patch_bad_date.test')
     assert r.status_code == 400
-    #check that nothing has changed
+    # check that nothing has changed
     r = get_citizens_set(1)
     assert r.status_code == 200
     got_data = json.loads(r.text)["data"]
     data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
     assert got_data == data_for_insertion
 
+
+def test_patch_wrong_name_type():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_wrong_name_type.test')
+    assert r.status_code == 400
+    # check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
+
+# the error occures normaly during json-validation
+# to use this test to validate how bd checked types and test rollback it's nessecary to swich off type validation 
+# more specifically, comment out "help_data.validate_patch_json(request_json)" line
+# Note: both sqlite and postgres do their best to convert data types, so they almost don't check types at all
+# so this test with switched off validation passes only for postgress caouse it fails to convert "8бис" to integer
+# sqlite somehow manages to conver this string to integer and insert result to bd without throwing any error
+# Both sqlite and postgres converts integers to string without any error
+# they also both converts string to integer if string contains integer
+def test_patch_wrong_apartment_type():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_wrong_apartment_type.test')
+    assert r.status_code == 400
+    # check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
+    
+    
+def test_good_patch_swapped_keys():
+    init()
+    post_data_set('test_files/data_set_to_patch_it_swapped.test')
+    r = patch(1, 3, 'test_files/good_patch_swapped_keys.test')
+    assert r.status_code == 200
+    patch_data = get_test_file_as_structure('test_files/good_patch.test')
+    got_data = json.loads(r.text)["data"]
+    #test that data for citizen was updated
+    for key in patch_data:
+        assert patch_data[key] == got_data[key]   
+
+#patch addition and removal relatives
+def test_patch_add_remove_relative():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    # add relative 1 for 3-d citizen
+    r = patch(1, 3, 'test_files/patch_add_relative.test')
+    assert r.status_code == 200
+    # get data from bd for 3-d citizen and check thst she has 1-relative
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert got_data[2]['relatives'] == [1]
+    # also check that first relative has new realtive 3
+    assert sorted(got_data[0]['relatives']) == [2, 3]
+    # remove relative 1 for 3-d citizen
+    r = patch(1, 3, 'test_files/patch_remove_relative.test')
+    assert r.status_code == 200
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert got_data[2]['relatives'] == []
+    assert sorted(got_data[0]['relatives']) == [2]
 #================================
+# get tests
 def test_get_citizens_valid_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -540,32 +676,8 @@ def test_get_citizens_invalid_import_id():
     r = get_citizens_set(2)
     assert r.status_code == 404
     
-    
-#====================================
-#patch and get test
-def test_patch_add_remove_relative():
-    init()
-    post_data_set('test_files/data_set_to_patch_it.test')
-    #add relative 1 for 3-d citizen
-    r = patch(1, 3, 'test_files/patch_add_relative.test')
-    assert r.status_code == 200
-    #get data from bd for 3-d citizen and check thst she has 1-relative
-    r = get_citizens_set(1)
-    assert r.status_code == 200
-    got_data = json.loads(r.text)["data"]
-    assert got_data[2]['relatives'] == [1]
-    #also check that first relative has new realtive 3
-    assert sorted(got_data[0]['relatives']) == [2, 3]
-    #remove relative 1 for 3-d citizen
-    r = patch(1, 3, 'test_files/patch_remove_relative.test')
-    assert r.status_code == 200
-    r = get_citizens_set(1)
-    assert r.status_code == 200
-    got_data = json.loads(r.text)["data"]
-    assert got_data[2]['relatives'] == []
-    assert sorted(got_data[0]['relatives']) == [2]
 #=======================================
-#birthdays (presents) test
+# birthdays (presents) tests
 def test_get_birthdays_valid_import_id():
     init()
     post_data_set('test_files/data_set_to_patch_it.test')
@@ -615,9 +727,17 @@ def test_birtdays_invalid_import_id():
     post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
     r = get_citizens_birthdays(2)
     assert r.status_code == 404
+
+def test_get_birthdays_without_relatives():
+    init()
+    post_data_set("test_files/data_set_without_relatives.test")    
+    r = get_citizens_birthdays(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    assert got_data == {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     
 #================================================
-#test percentile requests
+# test percentile requests
 def test_statistic_valid_import_id1():
     init()
     post_data_set('test_files/data_set_for_percentile1.test')
@@ -648,7 +768,8 @@ def test_statistic_invalid_import_id():
  
  
 if __name__ == '__main__':
-    test_good_input()
+    test_get_birthdays_without_relatives()
+    
     
 
 
