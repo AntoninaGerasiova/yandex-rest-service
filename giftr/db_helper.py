@@ -8,7 +8,7 @@ from sqlalchemy import exc
 from  numpy import percentile
 
 from .models import db, Citizens, Imports, Kinships
-from .exceptions import SetNotFoundError
+from .exceptions import SetNotFoundError, DBError
 from . import help_data 
 
 def trace():
@@ -51,18 +51,20 @@ def insert_citizens_set(request_json):
         db.session.flush()
         current_app.logger.info(import_obj.import_id)
         import_id = import_obj.import_id
-        # add import_id to insert data
+        # add import_id to citizens data and insert citizens' data to db
         citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
-        kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
         citizens_dicts = [dict(zip(Citizens.get_keys(), sublist)) for sublist in citizen_data_with_import_id]
-        kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
-        # insert data to db
         db.session.execute(Citizens.__table__.insert(), citizens_dicts)
-        db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
+        #do the same with kinships' data if there is at least one relativw connection for set
+        if kinship_len > 0:
+            kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
+            kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
+            db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
         db.session.commit()
     except exc.SQLAlchemyError:
         db.session.rollback()
-        raise
+        current_app.logger.info("Error during insertion")
+        raise(DBError("Error during insertion"))
     
     return import_id
 
@@ -175,7 +177,8 @@ def fix_data(import_id_, citizen_id_, request_json):
         db.session.commit()
     except exc.SQLAlchemyError:
         db.session.rollback()
-        raise
+        current_app.logger.info("Error during patch citizen with import_id = {} and citizen_id = {}".format(import_id_, citizen_id_))
+        raise(DBError("Error during patch citizen with import_id = {} and citizen_id = {}".format(import_id_, citizen_id_)))
     return {"data": citizen}
 
 def get_citizens_birthdays_for_import_id(import_id_):
@@ -193,6 +196,13 @@ def get_citizens_birthdays_for_import_id(import_id_):
         
         exc.SQLAlchemyError: if something get wrong during work with db
     """
+    # test that citizens' set with id import_id_ exists
+    citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
+    # responce souldn't be empty - raise exception
+    if not citizens_responce:
+        current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
+        raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+    
     # get responce comosed of pairs (citizen, month) and number of presents he have to bay in this month
     birthdays = (db.session.query(Citizens)
                  .join(Kinships, (Kinships.relative_id == Citizens.citizen_id))
@@ -200,10 +210,6 @@ def get_citizens_birthdays_for_import_id(import_id_):
                  .with_entities(Kinships.citizen_id.label('giver'), extract('month', Citizens.birth_date).label('birth_month'), db.func.count(Citizens.citizen_id).label('presents'))
                  .group_by('giver','birth_month').all())
    
-    # raise exeption if there are nothing to return
-    if not birthdays: 
-        current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
-        raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
     
     #form a structure to return
     result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}

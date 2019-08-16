@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc as sqlalchemy_exc
 
 from .models import db
-from .exceptions import SetNotFoundError, BadFormatError
+from .exceptions import SetNotFoundError, BadFormatError, DBError
 from . import db_helper
 
 def trace():
@@ -17,7 +17,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    use_postgress = True
+    use_postgress = False
     if use_postgress: 
         #db path for postgres
         app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
@@ -57,7 +57,7 @@ def create_app(test_config=None):
                 import_id = db_helper.insert_citizens_set(request_json)
                 response = jsonify({"data": {"import_id": import_id}})
                 return response , 201
-            except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+            except (BadFormatError, DBError) as exc:
                 trace()
                 import traceback
                 traceback.print_exc()
@@ -80,7 +80,7 @@ def create_app(test_config=None):
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         
-        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+        except BadFormatError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
         
@@ -104,7 +104,7 @@ def create_app(test_config=None):
                 return_str = "Patch failed: {}".format(str(exc))
                 return return_str, 404
             
-            except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+            except (BadFormatError,  DBError) as exc:
                 return_str = "Patch failed: {}".format(str(exc))
                 return return_str, 400
             #non-expected exception
@@ -126,7 +126,7 @@ def create_app(test_config=None):
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         
-        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+        except BadFormatError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
         #non-expected exception
@@ -148,7 +148,7 @@ def create_app(test_config=None):
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
         
-        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+        except BadFormatError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
         
