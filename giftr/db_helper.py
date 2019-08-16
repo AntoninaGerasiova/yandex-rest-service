@@ -35,45 +35,34 @@ def insert_citizens_set(request_json):
         BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
     """
     
-    #validate json before parse it
+    # validate json before parse it
     help_data.validate_insert_json(request_json)
     
-    #parse json and get data to insert to db
+    # parse json and get data to insert to db
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
     
     citizen_len = len(citizens_data)
     kinship_len = len(kinships_data)
     
     import_obj = Imports()
-    #get unique import number import_id
     try:
+        # get unique import number import_id
         db.session.add(import_obj)
-        current_app.logger.info(import_obj.import_id)
         db.session.flush()
         current_app.logger.info(import_obj.import_id)
-        db.session.commit()
-        current_app.logger.info(import_obj.import_id)
         import_id = import_obj.import_id
-    except exc.SQLAlchemyError:
-        db.session.rollback()
-        raise
-    finally: 
-        db.session.close()
-        
-    #add import_id to inserted data
-    citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
-    kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
-    citizens_dicts = [dict(zip(Citizens.get_keys(), sublist)) for sublist in citizen_data_with_import_id]
-    kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
-    try:
+        # add import_id to insert data
+        citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
+        kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
+        citizens_dicts = [dict(zip(Citizens.get_keys(), sublist)) for sublist in citizen_data_with_import_id]
+        kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
+        # insert data to db
         db.session.execute(Citizens.__table__.insert(), citizens_dicts)
         db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
         db.session.commit()
     except exc.SQLAlchemyError:
         db.session.rollback()
         raise
-    finally: 
-        db.session.close()
     
     return import_id
 
@@ -93,21 +82,24 @@ def get_citizens_set(import_id_):
         
         SetNotFoundError:  if set with import_id doesn't exist in db
     """
-    try:
-        citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
-        current_app.logger.info(citizens_responce)
-        if not citizens_responce:
-            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
-            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
-        citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
-        kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
-        for kinship in kinships_responce:
-            citizen_id = kinship.citizen_id
-            relative_id = kinship.relative_id
-            citizens_dict[citizen_id]["relatives"].append(relative_id)
-    finally:
-       db.session.close() 
-    return {"data":list(citizens_dict.values())}
+    # get citizens' set with id import_id_ info
+    citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
+    current_app.logger.info(citizens_responce)
+    # responce souldn't be empty - raise exception
+    if not citizens_responce:
+        current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
+        raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+    
+    # create responce for client without relative connections
+    citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
+    # get informatin  about relatives
+    kinships_responce =  Kinships.query.filter_by(import_id=import_id_).all()
+    # add relative connections to responce
+    for kinship in kinships_responce:
+        citizen_id = kinship.citizen_id
+        relative_id = kinship.relative_id
+        citizens_dict[citizen_id]["relatives"].append(relative_id)
+    return {"data": list(citizens_dict.values())}
 
 
 def fix_data(import_id_, citizen_id_, request_json):
@@ -135,64 +127,56 @@ def fix_data(import_id_, citizen_id_, request_json):
         
         Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format 
     """
-    #check if there are set import_id_ in db in there are citizen citizen_id_ in this set
+    # check if there are set import_id_ in db in there are citizen citizen_id_ in this set
     citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first()
     if not citizen:
         current_app.logger.info("citizen with import_id = {} and citizen_id = {} does not exist".format(import_id_, citizen_id_))
         raise(SetNotFoundError("citizen with import_id = {} and citizen_id = {} does not exist".format(import_id_, citizen_id_)))
     
-    #validate request_json
+    # validate request_json
     help_data.validate_patch_json(request_json)
     
     # if we have to change realatives extract all new relative connections from request_json
     update_relatives = False
     if "relatives" in request_json:
         update_relatives = True
-        #Get citizen_id-s of citizens that existant in set with import_id - to test if any relatives in patch data are non-existant
+        # Get citizen_id-s of citizens that existant in set with import_id - to test if any relatives in patch data are non-existant
         citizen_ids = Citizens.query.with_entities(Citizens.citizen_id).filter_by(import_id=import_id_).all()
         citizen_ids = set(citizen_id for t in citizen_ids for citizen_id in t)
+        #for new relative pairs
         kinships_data = help_data.get_new_relatives(import_id_, citizen_id_, request_json, citizen_ids)
     
-    #we need not information about relatives anynore - get rid of it 
+    # we don't need  information about relatives anymore - get rid of it 
     request_json.pop("relatives", None)
     
-    #change date format and check it
+    # check data format and change it to db format
     if "birth_date" in request_json:
         request_json["birth_date"] = help_data.date_to_bd_format(request_json["birth_date"])
     
-    #update citizen info
+    # update citizen info
     try:
-        #update relatives if necessary  - delete all relative pairs contains citizen_id_ boss as Kinships.citizen_id and as Kinships.relative_id and add new pairs of relative connections if there are any
+        # update relatives if necessary  - delete all relative pairs contains citizen_id_ both as Kinships.citizen_id and as Kinships.relative_id and add new pairs of relative connections if there are any
         if update_relatives:
             Kinships.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).delete()
             Kinships.query.filter_by(import_id=import_id_, relative_id=citizen_id_).delete()
             if kinships_data:
                 kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinships_data]
                 db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
-        #update all other data if it is necessary
+        # update other data if it is necessary
         if len(request_json):
             citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first()
             citizen.patch(**request_json)
-        
+        # get information that we have changed
+        citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first().serialize()
+        kinships_response = Kinships.query.with_entities(Kinships.relative_id).filter_by(import_id=import_id_, citizen_id=citizen_id_).all()
+        kinships_ids = [relative_id for t in kinships_response for relative_id in t]
+        for relative_id in kinships_ids:
+            citizen['relatives'].append(relative_id)
         db.session.commit()
     except exc.SQLAlchemyError:
         db.session.rollback()
         raise
-    finally:
-        db.session.close() 
-        
-    
-    #get information that we have changed: it can be different from what we expected in case of parrallel work with db (if somebody managed to change the same data too before we get responce), but this information would reflect the newest state of the base and the base will be consistant anyway (patch is atomic)
-    try:
-        citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first().serialize()
-        kinships_response = Kinships.query.with_entities(Kinships.relative_id).filter_by(import_id=import_id_, citizen_id=citizen_id_).all()
-        kinships_ids = [relative_id for t in kinships_response for relative_id in t]
-        print(kinships_ids)
-        for relative_id in kinships_ids:
-            citizen['relatives'].append(relative_id)
-    finally:
-        db.session.close() 
-    return {"data":citizen}
+    return {"data": citizen}
 
 def get_citizens_birthdays_for_import_id(import_id_):
     """
@@ -209,27 +193,29 @@ def get_citizens_birthdays_for_import_id(import_id_):
         
         exc.SQLAlchemyError: if something get wrong during work with db
     """
-    try:
-        #get responce comosed of pairs (citizen, month) and number of presents he have to bay in this month
-        birthdays = db.session.query(Citizens).join(Kinships, (Kinships.relative_id == Citizens.citizen_id)).filter(Citizens.import_id == import_id_, Kinships.import_id == import_id_).with_entities(Kinships.citizen_id.label('giver'), extract('month', Citizens.birth_date).label('birth_month'), db.func.count(Citizens.citizen_id).label('presents')).group_by('giver','birth_month').all()
+    # get responce comosed of pairs (citizen, month) and number of presents he have to bay in this month
+    birthdays = (db.session.query(Citizens)
+                 .join(Kinships, (Kinships.relative_id == Citizens.citizen_id))
+                 .filter(Citizens.import_id == import_id_, Kinships.import_id == import_id_)
+                 .with_entities(Kinships.citizen_id.label('giver'), extract('month', Citizens.birth_date).label('birth_month'), db.func.count(Citizens.citizen_id).label('presents'))
+                 .group_by('giver','birth_month').all())
    
-        #raise exeption if there are nothing to return? maybe it would better to return empty structure
-        if not birthdays: 
-            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
-            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+    # raise exeption if there are nothing to return
+    if not birthdays: 
+        current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
+        raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
     
-        #form a structure to return
-        result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
+    #form a structure to return
+    result_dict  = {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     
-        for birthday in birthdays:
-            key = str(int(birthday.birth_month))
-            result_dict[key].append({
-                "citizen_id": birthday.giver,
-                "presents": birthday.presents
-                })
-    finally:
-        db.session.close()
-    return {"data":result_dict}
+    for birthday in birthdays:
+        key = str(int(birthday.birth_month))
+        result_dict[key].append({
+            "citizen_id": birthday.giver,
+            "presents": birthday.presents
+            })
+    
+    return {"data": result_dict}
     
     
 def get_statistic_for_import_id(import_id_):
@@ -247,29 +233,28 @@ def get_statistic_for_import_id(import_id_):
             
             exc.SQLAlchemyError: if something get wrong during work with db
     """
-    try:
-        citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()
-        if not citizens:
-            current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
-            raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
+    # get town and birth_date about every citizen in set
+    citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()
+    # shouldn't be empty
+    if not citizens:
+        current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
+        raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
         
-        age_dict = dict()
-        for citizen in citizens:
-            key = citizen.town
+    # form responce
+    age_dict = dict()
+    for citizen in citizens:
+        key = citizen.town
+        if key not in age_dict:
+            age_dict[key] = [help_data.get_age(citizen.birth_date)]
+        else:
+            age_dict[key].append(help_data.get_age(citizen.birth_date))
             
-            if key not in age_dict:
-                age_dict[key] = [help_data.get_age(citizen.birth_date)]
-            else:
-                age_dict[key].append(help_data.get_age(citizen.birth_date))
-            
-            
-        data = list()
-        for town in age_dict:
-            ages = age_dict[town]
-            perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
-            data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
-    finally:
-        db.session.close()
+    data = list()
+    for town in age_dict:
+        ages = age_dict[town]
+        perc_list = percentile(ages, [50, 75, 99], interpolation='linear')
+        data.append({"town": town, "p50": perc_list[0], "p75": perc_list[1], "p99": perc_list[2]})
+    
     return {"data": data}
     
     
