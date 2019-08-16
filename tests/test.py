@@ -2,11 +2,12 @@ import json
 import requests
 import datetime
 from  numpy import percentile
+import time
 
 """
 TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
 TODO: what if send post to get get to post 
-TODO: patch tessts wjon't work for notsorted structures
+
 
 """
 def full_addr(path):
@@ -777,9 +778,40 @@ def test_statistic_invalid_import_id():
     r = get_statistic(2)
     assert r.status_code == 404
  
- 
+
+# ============================================================
+# time tests 
+# rathe long - do not launch for ordinary test
+def test_good_and_very_big_input():
+    init()
+    start = time.time()
+    r = post_data_set('test_files/good_and_very_big_set.test')
+    assert r.status_code == 201
+    elapsed_time = time.time() - start
+    print(elapsed_time)
+    assert elapsed_time < 10
+    
+    start = time.time()
+    r = get_citizens_set(1)
+    elapsed_time = time.time() - start
+    print(elapsed_time)
+    assert elapsed_time < 10
+    
+    start = time.time()
+    r = get_citizens_birthdays(1)
+    elapsed_time = time.time() - start
+    print(elapsed_time)
+    assert elapsed_time < 10
+    
+    start = time.time()
+    r = get_statistic(1)
+    elapsed_time = time.time() - start
+    print(elapsed_time)
+    assert elapsed_time < 10
+    
+    
 if __name__ == '__main__':
-    test_get_birthdays_without_relatives()
+    test_good_and_very_big_input()
     
     
 

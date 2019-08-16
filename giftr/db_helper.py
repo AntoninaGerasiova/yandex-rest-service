@@ -11,6 +11,8 @@ from .models import db, Citizens, Imports, Kinships
 from .exceptions import SetNotFoundError, DBError
 from . import help_data 
 
+import time
+
 def trace():
     from inspect import currentframe, getframeinfo
     cf = currentframe()
@@ -33,13 +35,15 @@ def insert_citizens_set(request_json):
         NonUniqueRelativeError: if relatives for one citizens are not unique
         BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
     """
-    
+    start = time.time()
     # validate json before parse it
     help_data.validate_insert_json(request_json)
+    print("TIME VALIDATION: ",time.time() - start)
     
     # parse json and get data to insert to db
+    start = time.time()
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
-    
+    print("TIME CREATE DATA: ",time.time() - start)
     citizen_len = len(citizens_data)
     kinship_len = len(kinships_data)
     
@@ -48,18 +52,27 @@ def insert_citizens_set(request_json):
         # get unique import number import_id
         db.session.add(import_obj)
         db.session.flush()
-        current_app.logger.info(import_obj.import_id)
         import_id = import_obj.import_id
         # add import_id to citizens data and insert citizens' data to db
+        start = time.time()
         citizen_data_with_import_id = list(map(list.__add__, [[import_id]]*citizen_len, citizens_data))
         citizens_dicts = [dict(zip(Citizens.get_keys(), sublist)) for sublist in citizen_data_with_import_id]
+        print("TIME PREPARE DATA CITIZEN: ",time.time() - start)
+        start = time.time()
         db.session.execute(Citizens.__table__.insert(), citizens_dicts)
+        print("INSERT DATA CITIZEN: ",time.time() - start)
         #do the same with kinships' data if there is at least one relativw connection for set
         if kinship_len > 0:
+            start = time.time()
             kinship_data_with_import_id = list(map(list.__add__, [[import_id]]*kinship_len, kinships_data))
             kinsip_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
+            print("TIME PREPARE DATA RELATIVES: ",time.time() - start)
+            start = time.time()
             db.session.execute(Kinships.__table__.insert(), kinsip_dicts)
+            print("INSERT DATA RELATIVES: ",time.time() - start)
+        start = time.time()
         db.session.commit()
+        print("COMMIT: ",time.time() - start)
     except exc.SQLAlchemyError:
         db.session.rollback()
         current_app.logger.info("Error during insertion")
@@ -83,12 +96,10 @@ def get_citizens_set(import_id_):
     """
     # get citizens' set with id import_id_ info
     citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
-    current_app.logger.info(citizens_responce)
     # responce souldn't be empty - raise exception
     if not citizens_responce:
         current_app.logger.info("import with import_id = {} does not exist".format(import_id_))
         raise(SetNotFoundError("import with import_id = {} does not exist".format(import_id_)))
-    
     # create responce for client without relative connections
     citizens_dict = {citizen.citizen_id: citizen.serialize() for citizen in citizens_responce}
     # get informatin  about relatives

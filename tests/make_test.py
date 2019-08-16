@@ -229,8 +229,11 @@ data_set_with_inconsistant_relatives = make_set_with_inconsistant_relatives(99, 
 write_data_set_to_file(data_set_with_inconsistant_relatives, 'test_files/data_set_with_inconsistant_relatives1.test')
 data_set_with_absent_realtives = make_set_with_absent_realtives(99, 200)
 write_data_set_to_file(data_set_with_absent_realtives, 'test_files/data_set_with_absent_realtives1.test')"""
-"""good_and_big_data_set = make_good_set(4000, 8000)
+"""good_and_big_data_set = make_good_set(4000, 1000)
 write_data_set_to_file(good_and_big_data_set, 'test_files/good_and_big_set.test')"""
+"""good_and_very_big_data_set = make_good_set(10000, 1000)
+write_data_set_to_file(good_and_very_big_data_set, 'test_files/good_and_very_big_set.test')"""
+
 
 write_raw_to_file("It's not even json structure", "test_files/simple_set_without_json_structure.test")
 
