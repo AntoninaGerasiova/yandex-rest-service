@@ -27,8 +27,7 @@ def insert_citizens_set(request_json):
         import_id (int):  import_id if insert is succesively completed
     
     Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types        
+        InvalidJSONError: if request_json is not valid jsonor values of request_json are not of valid types        
         exc.SQLAlchemyError: if something get wrong during work with db
         InconsistentRelativesError: if relatives are inconsistant
         NonUniqueRelativeError: if relatives for one citizens are not unique
@@ -79,9 +78,7 @@ def get_citizens_set(import_id_):
     Returns:
         dict: information about citizens of set with import_id
         
-    Raises:
-        exc.SQLAlchemyError: if something get wrong during work with db
-        
+    Raises:       
         SetNotFoundError:  if set with import_id doesn't exist in db
     """
     # get citizens' set with id import_id_ info
@@ -117,17 +114,17 @@ def fix_data(import_id_, citizen_id_, request_json):
         res(dict):    Updated information about citizen
     
     Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        InvalidJSONError: if request_json is not valid json
         
-        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
         
-        ValueError: in case of wrong date 
+        NonUniqueRelativeError: if relatives ids not unique for one citizen
+        
+        RelativesToNonexistentCitizenError: if there are no citizen with given id to be relativ
         
         SetNotFoundError: in case if there are no set with id import_id_ or there are no citizen with id citizen_id_ in it
         
-        exc.SQLAlchemyError: if something get wrong during work with db 
-        
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format 
+        DBError: if something get wrong during work with db 
     """
     # check if there are set import_id_ in db in there are citizen citizen_id_ in this set
     citizen = Citizens.query.filter_by(import_id=import_id_, citizen_id=citizen_id_).first()
@@ -153,7 +150,7 @@ def fix_data(import_id_, citizen_id_, request_json):
     
     # check data format and change it to db format
     if "birth_date" in request_json:
-        request_json["birth_date"] = help_data.date_to_bd_format(request_json["birth_date"])
+        request_json["birth_date"] = help_data.date_to_db_format(request_json["birth_date"])
     
     # update citizen info
     try:
@@ -193,8 +190,6 @@ def get_citizens_birthdays_for_import_id(import_id_):
         
     Raises:
         SetNotFoundError: if set with import_id doesn't exist in db
-        
-        exc.SQLAlchemyError: if something get wrong during work with db
     """
     # test that citizens' set with id import_id_ exists
     citizens_responce = Citizens.query.filter_by(import_id=import_id_).all()
@@ -226,18 +221,16 @@ def get_citizens_birthdays_for_import_id(import_id_):
     
 def get_statistic_for_import_id(import_id_):
     """
-        Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns for given import_id (particular import)
+    Count percentiles for  50%, 75% and 99%  for age for citizens grouped by towns for given import_id (particular import)
         
-        Args:
-            import_id (int): import_id for which get such information
+    Args:
+        import_id (int): import_id for which get such information
         
-        Returns:
-            (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
+    Returns:
+        (dict):   percentiles for  50%, 75% and 99%  for age for citizens grouped by towns formed as requaired structure 
             
-        Raises:
-            SetNotFoundError:  if set with import_id doesn't exist in db
-            
-            exc.SQLAlchemyError: if something get wrong during work with db
+    Raises:
+        SetNotFoundError:  if set with import_id doesn't exist in db
     """
     # get town and birth_date about every citizen in set
     citizens = Citizens.query.with_entities(Citizens.town, Citizens.birth_date).filter_by(import_id=import_id_).all()

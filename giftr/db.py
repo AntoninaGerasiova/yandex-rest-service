@@ -318,6 +318,7 @@ def get_statistic_for_import_id(import_id):
     cur = db.execute(sql_get_citizens, (import_id,))
     #TODO: change this check when work with postgress
     rows = cur.fetchall()
+    
     if not rows: 
         raise Exception("import with import_id = {} does not exist".format(import_id))
     age_dict = dict()

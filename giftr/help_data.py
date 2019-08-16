@@ -3,7 +3,7 @@ Help functions that perform data processing such as
     -   converting formats
     -   parsing jsons 
     -   validation jsons
-    -   create handy structures to work with bd 
+    -   create handy structures to work with db
 
 """
 from flask import current_app
@@ -66,9 +66,9 @@ schema_patch = {"type": "object",
                               
 
 #help functions
-def date_to_bd_format(date):
+def date_to_db_format(date):
     """ 
-    Convert date format to suitable for bd one
+    Convert date format to suitable for db one
     
     Args: 
         date(str): date in original format that sould be "ДД.ММ.ГГГГ"
@@ -87,9 +87,9 @@ def date_to_bd_format(date):
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
         current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
         raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
-    bd_date = "-".join((y, m, d))
+    db_date = "-".join((y, m, d))
     try:
-        parse(bd_date)
+        parse(db_date)
     except ValueError:
         current_app.logger.info("String {} is not valid date".format(date))
         raise(BadDateFormatError("String {} is not valid date".format(date)))
@@ -132,15 +132,13 @@ def validate_insert_json(request_json):
         request_json (dict): citizens set in dict format
     
     Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types    
-    
+        InvalidJSONError: if request_json is not valid json    
     """
     try:
         jsonschema.validate(request_json, schema_input)
     except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
         current_app.logger.info("Invalid json:{}".format(str(e)))
-        raise(BadDateFormatError("Invalid json:{}".format(str(e))))
+        raise(InvalidJSONError("Invalid json:{}".format(str(e))))
     
     
 def validate_patch_json(request_json):
@@ -151,14 +149,13 @@ def validate_patch_json(request_json):
         request_json (dict): data to change
     
     Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+        InvalidJSONError: if request_json is not valid json
     """
     try:
         jsonschema.validate(request_json, schema_patch)
     except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
         current_app.logger.info("Invalid json:{}".format(str(e)))
-        raise(BadDateFormatError("Invalid json:{}".format(str(e))))
+        raise(InvalidJSONError("Invalid json:{}".format(str(e))))
     
 def get_insert_data(request_json):
     """
@@ -191,7 +188,7 @@ def get_insert_data(request_json):
         building = citizen['building']
         apartment = citizen['apartment']
         name = citizen['name']
-        birth_date = date_to_bd_format(citizen['birth_date'])
+        birth_date = date_to_db_format(citizen['birth_date'])
         gender = citizen['gender']
         citizens_data.append([citizen_id, town, street, building, apartment, name, birth_date, gender])
         relatives = citizen['relatives']
@@ -229,8 +226,8 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
         
     Raises:
         NonUniqueRelativeError: if relatives ids not unique for one citizen
-        RelativesToNonexistentCitizenError: if there are no citizen with given id to be relative
         
+        RelativesToNonexistentCitizenError: if there are no citizen with given id to be relative
     """
 
     kinships_data = list()

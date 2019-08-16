@@ -1,8 +1,13 @@
+"""
+    flask_sqlalchemy models for tables
+"""
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 class Citizens(db.Model):
-        
+    """
+    class-model for citizens table - table contains most of information about citizens (except relative relations)
+    """
     import_id = db.Column(db.Integer, primary_key=True, nullable=False)
     citizen_id = db.Column(db.Integer, primary_key=True, nullable=False)
     town = db.Column(db.String, nullable=False)
@@ -37,6 +42,9 @@ class Citizens(db.Model):
 
     
     def serialize(self):
+        """
+        Return object content as dict 
+        """
         return {
             'citizen_id': self.citizen_id,
             'town': self.town,
@@ -55,6 +63,9 @@ class Citizens(db.Model):
                  name=None, 
                  birth_date=None, 
                  gender=None):
+        """
+            Change fields for which args are not None
+        """
         if town is not None:
             self.town = town
         if street is not None:
@@ -72,18 +83,26 @@ class Citizens(db.Model):
     
     @staticmethod
     def get_output_date(date):
+        """
+        Change date format to  "ДД.ММ.ГГГГ"
+        """
         month = date.month if date.month >= 10 else "0" + str(date.month)
         day = date.day if date.day >= 10 else "0" + str(date.day)
         return "{}.{}.{}".format(day, month, date.year)
     
     @staticmethod
     def get_keys():
+        """
+        Returns keys that match class's fields
+        """
         return ("import_id", "citizen_id", "town", "street", "building", "apartment", "name", "birth_date", "gender")
         
 
 
 class Kinships(db.Model):
-    
+    """
+    class-model for kinships table - table contains information about relative relations
+    """
     import_id = db.Column(db.Integer, primary_key=True, nullable=False)
     citizen_id = db.Column(db.Integer, primary_key=True, nullable=False)
     relative_id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -100,7 +119,13 @@ class Kinships(db.Model):
     
     @staticmethod
     def get_keys():
+        """
+        Returns keys that match class's fields
+        """
         return ("import_id", "citizen_id", "relative_id")
 
 class Imports(db.Model):
+    """
+        class-model for imports table - table contains import id-s 
+    """
     import_id = db.Column(db.Integer, primary_key=True)
