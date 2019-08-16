@@ -2,9 +2,10 @@ import os
 
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exc as sqlalchemy_exc
 
 from .models import db
-from .exceptions import SetNotFoundError
+from .exceptions import SetNotFoundError, BadFormatError
 from . import db_helper
 
 def trace():
@@ -16,7 +17,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    use_postgress = False
+    use_postgress = True
     if use_postgress: 
         #db path for postgres
         app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///gifts"
@@ -56,13 +57,17 @@ def create_app(test_config=None):
                 import_id = db_helper.insert_citizens_set(request_json)
                 response = jsonify({"data": {"import_id": import_id}})
                 return response , 201
-            except Exception as exc:
+            except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
                 trace()
                 import traceback
                 traceback.print_exc()
                 return_str = "Insertion failed: {}".format(str(exc))
                 return return_str, 400
-                
+            #non-expected exception
+            except Exception as exc:
+                app.logger.info("NAME OF EXCEPTION:", type(exc).__name__)
+                return_str = "Insertion failed: {}".format(str(exc))
+                return return_str, 500
 
     @app.route('/imports/<int:import_id>/citizens')
     def get_citizens(import_id):
@@ -70,15 +75,21 @@ def create_app(test_config=None):
             res = db_helper.get_citizens_set(import_id)
             res = jsonify(res)
             return res
+        
         except SetNotFoundError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
-        except Exception as exc:
-            trace()
-            import traceback
-            traceback.print_exc()
+        
+        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
+        
+        #non-expected exception
+        except Exception as exc:
+            app.logger.info("NAME OF EXCEPTION:", type(exc).__name__)
+            return_str = "Insertion failed: {}".format(str(exc))
+            return return_str, 500
+        
         
     @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>',methods=['PATCH'])
     def patch(import_id, citizen_id):
@@ -88,15 +99,21 @@ def create_app(test_config=None):
                 res = db_helper.fix_data(import_id, citizen_id, request_json)
                 res = jsonify(res)
                 return res
+            
             except SetNotFoundError as exc:
                 return_str = "Patch failed: {}".format(str(exc))
                 return return_str, 404
+            
+            except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
+                return_str = "Patch failed: {}".format(str(exc))
+                return return_str, 400
+            #non-expected exception
             except Exception as exc:
                 trace()
                 import traceback
                 traceback.print_exc()
                 return_str = "Patch failed: {}".format(str(exc))
-                return return_str, 400
+                return return_str, 500
     
     @app.route('/imports/<int:import_id>/citizens/birthdays')
     def get_citizens_birthdays(import_id):
@@ -104,31 +121,42 @@ def create_app(test_config=None):
             res = db_helper.get_citizens_birthdays_for_import_id(import_id)
             res = jsonify(res)
             return res
+        
         except SetNotFoundError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
-        except Exception as exc:
-            trace()
-            import traceback
-            traceback.print_exc()
+        
+        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
+        #non-expected exception
+        except Exception as exc:
+            trace()
+            app.logger.info("NAME OF EXCEPTION:", type(exc).__name__)
+            return_str = "Get failed: {}".format(str(exc))
+            return return_str, 500
     
     @app.route('/imports/<import_id>/towns/stat/percentile/age')
     def get_statistic(import_id):
+        
         try:
             res = db_helper.get_statistic_for_import_id(import_id)
             res = jsonify(res)
             return res
+        
         except SetNotFoundError as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 404
-        except Exception as exc:
-            trace()
-            import traceback
-            traceback.print_exc()
+        
+        except (BadFormatError,  sqlalchemy_exc.SQLAlchemyError) as exc:
             return_str = "Get failed: {}".format(str(exc))
             return return_str, 400
+        
+        #non-expected exception
+        except Exception as exc:
+            app.logger.info("NAME OF EXCEPTION:", type(exc).__name__)
+            return_str = "Get failed: {}".format(str(exc))
+            return return_str, 500
 
     return app
 

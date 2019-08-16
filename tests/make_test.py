@@ -334,6 +334,8 @@ write_data_set_to_file({ "name": None, "town": "Москва", "street": "Льв
 
 write_data_set_to_file({ "name": "Иванова Мария Леонидовна", "town": "Москва", "street": "Льва Толстого", "building": "16к7стр5", "apartment": 7, "relatives": None }, 'test_files/patch_with_null_relatives.test')
 
+write_data_set_to_file({ "birth_date": "31.02.2000"}, 'test_files/patch_bad_date.test')
+
 write_data_set_to_file({"relatives": [1]}, 'test_files/patch_add_relative.test')
 write_data_set_to_file({"relatives": []}, 'test_files/patch_remove_relative.test')
 

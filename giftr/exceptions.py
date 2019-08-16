@@ -23,8 +23,14 @@ class NonUniqueRelativeError(BadFormatError):
     """More then one relative with the same id"""
     
 class InconsistentRelativesError(BadFormatError):
-    """Not all relative connections are mutual"""
+    """Not all relative connections are mutual"""    
     
-class RelativesToNonexistantCitizenError(BadFormatError):
-    """Can't be relative to non-existant citizen"""    
+class RelativesToNonexistentCitizenError(BadFormatError):
+    """Can't be relative to non-existent citizen"""
+    
+class InvalidJSONError(BadFormatError):
+    """
+        if request_json is not valid json 
+        if request_json is of not required structure or values of request_json are of not valid types
+    """
 

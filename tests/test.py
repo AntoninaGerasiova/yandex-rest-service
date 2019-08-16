@@ -509,9 +509,18 @@ def test_patch_null_relatives():
     got_data = json.loads(r.text)["data"]
     data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
     assert got_data == data_for_insertion
-    
  
-
+def test_patch_bad_date():
+    init()
+    post_data_set('test_files/data_set_to_patch_it.test')
+    r = patch(1, 3, 'test_files/patch_bad_date.test')
+    assert r.status_code == 400
+    #check that nothing has changed
+    r = get_citizens_set(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    data_for_insertion = get_test_file_as_structure('test_files/data_set_to_patch_it.test')["citizens"]
+    assert got_data == data_for_insertion
 
 #================================
 def test_get_citizens_valid_import_id():
@@ -639,7 +648,7 @@ def test_statistic_invalid_import_id():
  
  
 if __name__ == '__main__':
-    test_input_with_non_unique_relatives()
+    test_good_input()
     
 
 

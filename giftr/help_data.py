@@ -10,6 +10,9 @@ from flask import current_app
 import jsonschema
 from dateutil.parser import parse
 import datetime
+from json.decoder import JSONDecodeError
+from .exceptions import BadDateFormatError, NonUniqueRelativeError, InconsistentRelativesError, RelativesToNonexistentCitizenError, InvalidJSONError
+
 #Json schemas
 #json-schema to check input data json
 schema_input = {
@@ -74,8 +77,7 @@ def date_to_bd_format(date):
         date(str): date suitable for db "YYYY-MM-DD"
         
     Raises:
-        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string
-        ValueError: in case of wrong date 
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
     """
     #Validate date format
     if(len(date) != 10):
@@ -86,7 +88,11 @@ def date_to_bd_format(date):
         current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
         raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
     bd_date = "-".join((y, m, d))
-    parse(bd_date)
+    try:
+        parse(bd_date)
+    except ValueError:
+        current_app.logger.info("String {} is not valid date".format(date))
+        raise(BadDateFormatError("String {} is not valid date".format(date)))
     return  datetime.datetime(int(y), int(m), int(d))
     
     
@@ -130,7 +136,29 @@ def validate_insert_json(request_json):
         json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types    
     
     """
-    jsonschema.validate(request_json, schema_input)
+    try:
+        jsonschema.validate(request_json, schema_input)
+    except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
+        current_app.logger.info("Invalid json:{}".format(str(e)))
+        raise(BadDateFormatError("Invalid json:{}".format(str(e))))
+    
+    
+def validate_patch_json(request_json):
+    """
+    Validate patch data
+    
+    Args:
+        request_json (dict): data to change
+    
+    Raises:
+        jsonschema.exceptions.ValidationError: if request_json is not valid json
+        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
+    """
+    try:
+        jsonschema.validate(request_json, schema_patch)
+    except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
+        current_app.logger.info("Invalid json:{}".format(str(e)))
+        raise(BadDateFormatError("Invalid json:{}".format(str(e))))
     
 def get_insert_data(request_json):
     """
@@ -145,9 +173,7 @@ def get_insert_data(request_json):
         kinships_data (list) : data about kinshps formed for inserting in db
         
     Raises:
-        ValueError: in case of wrong date 
-        
-        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string 
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
         
         NonUniqueRelativeError: if relatives ids not unique for one citizen
         
@@ -185,25 +211,9 @@ def get_insert_data(request_json):
                     kinship_set.remove(pair_in_order)
     if  len(kinship_set) != 0:
         current_app.logger.info("Information about relatives inconsistent")
-        raise(InconsistentRelativesError("Inconsistent relatives data"))
+        raise(InconsistentRelativesError("Information about relatives inconsistent"))
     return citizens_data, kinships_data
 
-
-
-def validate_patch_json(request_json):
-    """
-    Validate patch data
-    
-    Args:
-        request_json (dict): data to change
-    
-    Raises:
-        jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is of not required structure or values of request_json are of not valid types
-    """
-    jsonschema.validate(request_json, schema_patch)
-    
-    
     
 def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     """

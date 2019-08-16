@@ -28,11 +28,11 @@ def insert_citizens_set(request_json):
     
     Raises:
         jsonschema.exceptions.ValidationError: if request_json is not valid json
-        json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types
-        ValueError: in case of wrong date 
+        json.decoder.JSONDecodeError: if request_json is not of required structure or values of request_json are not of valid types        
         exc.SQLAlchemyError: if something get wrong during work with db
-        Exception: if relatives links are inconsistant or if date string isn't of "ДД.ММ.ГГГГ" format
-        
+        InconsistentRelativesError: if relatives are inconsistant
+        NonUniqueRelativeError: if relatives for one citizens are not unique
+        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
     """
     
     #validate json before parse it
@@ -48,7 +48,11 @@ def insert_citizens_set(request_json):
     #get unique import number import_id
     try:
         db.session.add(import_obj)
+        current_app.logger.info(import_obj.import_id)
+        db.session.flush()
+        current_app.logger.info(import_obj.import_id)
         db.session.commit()
+        current_app.logger.info(import_obj.import_id)
         import_id = import_obj.import_id
     except exc.SQLAlchemyError:
         db.session.rollback()
@@ -141,6 +145,7 @@ def fix_data(import_id_, citizen_id_, request_json):
     help_data.validate_patch_json(request_json)
     
     # if we have to change realatives extract all new relative connections from request_json
+    update_relatives = False
     if "relatives" in request_json:
         update_relatives = True
         #Get citizen_id-s of citizens that existant in set with import_id - to test if any relatives in patch data are non-existant
@@ -150,7 +155,12 @@ def fix_data(import_id_, citizen_id_, request_json):
     
     #we need not information about relatives anynore - get rid of it 
     request_json.pop("relatives", None)
-
+    
+    #change date format and check it
+    if "birth_date" in request_json:
+        request_json["birth_date"] = help_data.date_to_bd_format(request_json["birth_date"])
+    
+    #update citizen info
     try:
         #update relatives if necessary  - delete all relative pairs contains citizen_id_ boss as Kinships.citizen_id and as Kinships.relative_id and add new pairs of relative connections if there are any
         if update_relatives:
