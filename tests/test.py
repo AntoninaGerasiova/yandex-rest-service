@@ -5,7 +5,8 @@ from  numpy import percentile
 
 """
 TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
-TODO: what if send post to get get to post  
+TODO: what if send post to get get to post 
+TODO: patch tessts wjon't work for notsorted structures
 
 """
 def full_addr(path):
@@ -188,6 +189,16 @@ def test_good_input_with_connection_to_self():
     sort_relatives(got_data)
     assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
     
+def test_good_input_witout_relatives():
+    init()
+    r = post_data_set("test_files/data_set_without_relatives.test")
+    assert r.status_code == 201
+    import_id = json.loads(r.text)['data']['import_id']
+    assert import_id is not None
+    r = get_citizens_set(import_id)
+    data_for_insertion = get_test_file_as_structure("test_files/data_set_without_relatives.test")["citizens"]
+    got_data = json.loads(r.text)["data"]
+    assert sorted(data_for_insertion, key=key_func) == sorted(got_data, key=key_func)
     
 def test_input_with_inconsistant_relatives():
     init()
@@ -365,7 +376,7 @@ def test_input_bigger_with_absent_relatives_input():
     r = get_citizens_set(1)
     assert r.status_code == 404
 
-# try to insert the bigest set for this time    
+# try to insert the bigest set for now
 def test_good_and_big_input():
     init()
     r = post_data_set('test_files/good_and_big_set.test')
