@@ -5,17 +5,21 @@ from  numpy import percentile
 import time
 
 """
-TODO: test with really big set (abou 10000) - can we insert data in one transaction - tested for 4000 for now
+File contains test for giftr application
 TODO: what if send post to get get to post 
-
-
 """
 def full_addr(path):
+    """
+    Create address off server to senf requests
+    """
     addr = "http://127.0.0.1:5000"
     return addr + path
 
-#tell server to initialise database
+# tell server to initialise database
 def post_init():
+    """
+    Initialisation through server-interface
+    """
     path  = "/test"
     addr = full_addr(path)
     #print(addr)
@@ -24,6 +28,9 @@ def post_init():
     #print(r.text)
     
 def init():
+    """
+    Сhange way of db initialisation gere  
+    """
     post_init()
     
 def get_test_file_as_structure(data_file):
@@ -161,6 +168,18 @@ def sort_relatives(data):
     for d in data:
         if "relatives" in d:
             d["relatives"].sort()
+            
+def get_birthday_structure_to_check(got_data):
+    """
+    Make structure from presents-answer to check it  
+    """
+    presents = dict()
+    for month in got_data:
+        for citizen in got_data[month]:
+            key = str((citizen['citizen_id'], month))
+            presents[key] = citizen['presents']
+    
+    return presents
         
 #=================================================================================================
 #insertion tests
@@ -733,7 +752,6 @@ def test_get_birthdays_present_to_self():
     expected_data = get_test_file_as_structure('test_files/birthdays_answer_to_self.test')["data"]
     assert got_data == expected_data
     
-    
 def test_birtdays_invalid_import_id():
     init()
     post_data_set("test_files/data_set_for_multiple_birtdays_in_one_month.test")
@@ -748,6 +766,17 @@ def test_get_birthdays_without_relatives():
     got_data = json.loads(r.text)["data"]
     assert got_data == {"1": [], "2": [], "3": [], "4": [],  "5": [], "6": [], "7":[],  "8": [], "9": [], "10": [], "11": [], "12": []}
     
+def test_get_birthdays_valid_big_set():
+    init()
+    post_data_set('test_files/data_set_for_percentile2.test')
+    r = get_citizens_birthdays(1)
+    assert r.status_code == 200
+    got_data = json.loads(r.text)["data"]
+    got_structure = get_birthday_structure_to_check(got_data)
+    expected_structure = get_test_file_as_structure('test_files/answer_for_presents.test')
+    assert got_structure == expected_structure
+    
+
 #================================================
 # test percentile requests
 def test_statistic_valid_import_id1():
@@ -811,7 +840,7 @@ def test_good_and_very_big_input():
     
     
 if __name__ == '__main__':
-    test_good_and_very_big_input()
+    test_get_birthdays_valid_big_set()
     
     
 

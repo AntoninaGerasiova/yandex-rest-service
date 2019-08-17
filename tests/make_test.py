@@ -219,6 +219,20 @@ def make_set_with_absent_realtives(citizens_num, relatives_pairs, seed=None):
         citizens_data.pop(relative - 1)
     return citizens_structure
         
+
+def make_answer_for_birhtday(citizen_structure):
+    """
+    Make structure of citizens' realtives' birthdays month to compare with structure recived from base
+    """
+    citizens_list = citizen_structure["citizens"]
+    citizen_relatives = {citizen['citizen_id']: citizen['relatives'] for citizen in citizens_list}
+    citizen_birth = {citizen['citizen_id']: str(int(citizen['birth_date'][3:5])) for citizen in citizens_list}
+    presents = dict()
+    for citizen in citizen_relatives:
+        for relative in citizen_relatives[citizen]:
+            key = str((citizen, citizen_birth[relative]))
+            presents[key] = presents.get(key, 0) + 1
+    return presents
     
 #=========================================================================================================
 #insertion tests
@@ -480,6 +494,13 @@ test_birthdays_without_relatives = {"citizens": [
 }
 
 write_data_set_to_file(test_birthdays_without_relatives, "test_files/data_set_without_relatives.test")
+
+# this stuctur we will use to test both birgthdays and percentile
+citizen_structure = make_good_set(99, 200, seed=3)
+write_data_set_to_file(citizen_structure, 'test_files/data_set_for_percentile2.test')
+
+presents_anser = make_answer_for_birhtday(citizen_structure)
+write_data_set_to_file(presents_anser, 'test_files/answer_for_presents.test')
 #============================================================
 #percentile tests
 write_data_set_to_file(test_insert_multiple_birthdays, 'test_files/data_set_for_percentile1.test')
@@ -504,10 +525,7 @@ percentile_answer = {
 }
 
 write_data_set_to_file(percentile_answer, 'test_files/answer_for_percentile1.test')
-
-citizen_structure = make_good_set(99, 200, seed=3)
-write_data_set_to_file(citizen_structure, 'test_files/data_set_for_percentile2.test')
-
+    
 
 
 
