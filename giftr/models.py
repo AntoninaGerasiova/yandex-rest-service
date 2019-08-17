@@ -4,6 +4,8 @@
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+
+
 class Citizens(db.Model):
     """
     class-model for citizens table - table contains most of information about citizens (except relative relations)
@@ -11,24 +13,24 @@ class Citizens(db.Model):
     import_id = db.Column(db.Integer, primary_key=True, nullable=False)
     citizen_id = db.Column(db.Integer, primary_key=True, nullable=False)
     town = db.Column(db.String, nullable=False)
-    street  = db.Column(db.String, nullable=False)
+    street = db.Column(db.String, nullable=False)
     building = db.Column(db.String, nullable=False)
     apartment = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String, nullable=False)
     birth_date = db.Column(db.DateTime, nullable=False)
-    gender  = db.Column(db.String, db.Enum('male', 'female', name='gender_types'), nullable=False)
-    
-    def __init__(self, 
-                 import_id =None, 
-                 citizen_id=None, 
-                 town=None, 
-                 street=None, 
-                 building=None, 
-                 apartment=None, 
-                 name=None, 
-                 birth_date=None, 
+    gender = db.Column(db.String, db.Enum('male', 'female', name='gender_types'), nullable=False)
+
+    def __init__(self,
+                 import_id=None,
+                 citizen_id=None,
+                 town=None,
+                 street=None,
+                 building=None,
+                 apartment=None,
+                 name=None,
+                 birth_date=None,
                  gender=None):
-        super(citizens, self).__init__(**kwargs)
+        super(Citizens, self).__init__()
         self.import_id = import_id
         self.citizen_id = citizen_id
         self.town = town
@@ -38,9 +40,7 @@ class Citizens(db.Model):
         self.name = name
         self.birth_date = birth_date
         self.gender = gender
-    
 
-    
     def serialize(self):
         """
         Return object content as dict 
@@ -48,21 +48,21 @@ class Citizens(db.Model):
         return {
             'citizen_id': self.citizen_id,
             'town': self.town,
-            'street':self.street,
-            'building': self.building, 
+            'street': self.street,
+            'building': self.building,
             'apartment': self.apartment,
             'name': self.name,
-            'birth_date':self.get_output_date(self.birth_date),
-            'gender':self.gender,
-            'relatives':list()}
-    
-    def patch(self, town=None, 
-                 street=None, 
-                 building=None, 
-                 apartment=None, 
-                 name=None, 
-                 birth_date=None, 
-                 gender=None):
+            'birth_date': self.get_output_date(self.birth_date),
+            'gender': self.gender,
+            'relatives': list()}
+
+    def patch(self, town=None,
+              street=None,
+              building=None,
+              apartment=None,
+              name=None,
+              birth_date=None,
+              gender=None):
         """
             Change fields for which args are not None
         """
@@ -80,7 +80,7 @@ class Citizens(db.Model):
             self.birth_date = birth_date
         if gender is not None:
             self.gender = gender
-    
+
     @staticmethod
     def get_output_date(date):
         """
@@ -89,14 +89,13 @@ class Citizens(db.Model):
         month = date.month if date.month >= 10 else "0" + str(date.month)
         day = date.day if date.day >= 10 else "0" + str(date.day)
         return "{}.{}.{}".format(day, month, date.year)
-    
+
     @staticmethod
     def get_keys():
         """
         Returns keys that match class's fields
         """
-        return ("import_id", "citizen_id", "town", "street", "building", "apartment", "name", "birth_date", "gender")
-        
+        return "import_id", "citizen_id", "town", "street", "building", "apartment", "name", "birth_date", "gender"
 
 
 class Kinships(db.Model):
@@ -106,23 +105,23 @@ class Kinships(db.Model):
     import_id = db.Column(db.Integer, primary_key=True, nullable=False)
     citizen_id = db.Column(db.Integer, primary_key=True, nullable=False)
     relative_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    
-    def __init__(self, 
-                 import_id=None, 
+
+    def __init__(self,
+                 import_id=None,
                  citizen_id=None,
                  relative_id=None):
-        
-        super(kinships, self).__init__(**kwargs)
+        super(Kinships, self).__init__()
         self.import_id = import_id
         self.citizen_id = citizen_id
         self.relative_id = relative_id
-    
+
     @staticmethod
     def get_keys():
         """
         Returns keys that match class's fields
         """
-        return ("import_id", "citizen_id", "relative_id")
+        return "import_id", "citizen_id", "relative_id"
+
 
 class Imports(db.Model):
     """

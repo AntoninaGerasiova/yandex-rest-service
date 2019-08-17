@@ -11,39 +11,41 @@ import jsonschema
 from dateutil.parser import parse
 import datetime
 from json.decoder import JSONDecodeError
-from .exceptions import BadDateFormatError, NonUniqueRelativeError, InconsistentRelativesError, RelativesToNonexistentCitizenError, InvalidJSONError
+from .exceptions import BadDateFormatError, NonUniqueRelativeError, InconsistentRelativesError, \
+    RelativesToNonexistentCitizenError, InvalidJSONError
 
-#Json schemas
-#json-schema to check input data json
+# Json schemas
+# json-schema to check input data json
 schema_input = {
     "type": "object",
-    "properties":{
+    "properties": {
         "citizens": {"type": "array",
-                    "items": {"type":"object",
-                              "required": ["citizen_id", "town", "street", "building", "apartment", "name", "birth_date", "gender", "relatives"],
-                              "properties":{
-                                  "citizen_id":{"type": "integer"},
-                                  "town":{"type": "string"},
-                                  "street":{"type": "string"},
-                                  "building":{"type": "string"},
-                                  "apartment":{"type": "integer"},
-                                  "name":{"type": "string"},
-                                  "birth_date":{"type": "string"},
-                                  "gender":{"type": "string", "enum": ["male", "female"]},
-                                  "relatives":{"type": "array", "items":{"type": "integer"}}
-                                  
-                                },
-                              "additionalProperties": False
-                              }
-                    
-                    }
-        },
+                     "items": {"type": "object",
+                               "required": ["citizen_id", "town", "street", "building", "apartment", "name",
+                                            "birth_date", "gender", "relatives"],
+                               "properties": {
+                                   "citizen_id": {"type": "integer"},
+                                   "town": {"type": "string"},
+                                   "street": {"type": "string"},
+                                   "building": {"type": "string"},
+                                   "apartment": {"type": "integer"},
+                                   "name": {"type": "string"},
+                                   "birth_date": {"type": "string"},
+                                   "gender": {"type": "string", "enum": ["male", "female"]},
+                                   "relatives": {"type": "array", "items": {"type": "integer"}}
+
+                               },
+                               "additionalProperties": False
+                               }
+
+                     }
+    },
     "required": ["citizens"],
     "additionalProperties": False
 }
-#json-schema to check patch data json                              
+# json-schema to check patch data json
 schema_patch = {"type": "object",
-                "anyOf":[
+                "anyOf": [
                     {"required": ["town"]},
                     {"required": ["street"]},
                     {"required": ["building"]},
@@ -52,20 +54,20 @@ schema_patch = {"type": "object",
                     {"required": ["birth_date"]},
                     {"required": ["gender"]},
                     {"required": ["relatives"]}],
-                "properties":{
-                    "town":{"type": "string"},
-                    "street":{"type": "string"},
-                    "building":{"type": "string"},
-                    "apartment":{"type": "integer"},
-                    "name":{"type": "string"},
-                    "birth_date":{"type": "string"},
-                    "gender":{"type": "string", "enum": ["male", "female"]},
-                    "relatives":{"type": "array", "items":{"type": "integer"}}
-                    },
+                "properties": {
+                    "town": {"type": "string"},
+                    "street": {"type": "string"},
+                    "building": {"type": "string"},
+                    "apartment": {"type": "integer"},
+                    "name": {"type": "string"},
+                    "birth_date": {"type": "string"},
+                    "gender": {"type": "string", "enum": ["male", "female"]},
+                    "relatives": {"type": "array", "items": {"type": "integer"}}
+                },
                 "additionalProperties": False}
-                              
 
-#help functions
+
+# help functions
 def date_to_db_format(date):
     """ 
     Convert date format to suitable for db one
@@ -76,26 +78,26 @@ def date_to_db_format(date):
     Returns: 
         date(str): date suitable for db "YYYY-MM-DD"
         
-    Raises:
-        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
+    Raises: BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the
+    beginning or the end of the string or if date is not valid
     """
-    #Validate date format
-    if(len(date) != 10):
+    # Validate date format
+    if len(date) != 10:
         current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
-        raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
-    d,m,y = date.split(".")
+        raise (BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
+    d, m, y = date.split(".")
     if len(d) != 2 or len(m) != 2 or len(y) != 4:
         current_app.logger.info("String {} is not of ДД.ММ.ГГГГ format".format(date))
-        raise(BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
+        raise (BadDateFormatError("String {} is not of ДД.ММ.ГГГГ format".format(date)))
     db_date = "-".join((y, m, d))
     try:
         parse(db_date)
     except ValueError:
         current_app.logger.info("String {} is not valid date".format(date))
-        raise(BadDateFormatError("String {} is not valid date".format(date)))
-    return  datetime.datetime(int(y), int(m), int(d))
-    
-    
+        raise (BadDateFormatError("String {} is not valid date".format(date)))
+    return datetime.datetime(int(y), int(m), int(d))
+
+
 def date_to_output_format(date):
     """
     Convert data in format suitable for output
@@ -123,7 +125,8 @@ def get_age(date):
     """
     today = datetime.date.today()
     return today.year - date.year - ((today.month, today.day) < (date.month, date.day))
-    
+
+
 def validate_insert_json(request_json):
     """
     Validate insert data format
@@ -138,9 +141,9 @@ def validate_insert_json(request_json):
         jsonschema.validate(request_json, schema_input)
     except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
         current_app.logger.info("Invalid json:{}".format(str(e)))
-        raise(InvalidJSONError("Invalid json:{}".format(str(e))))
-    
-    
+        raise (InvalidJSONError("Invalid json:{}".format(str(e))))
+
+
 def validate_patch_json(request_json):
     """
     Validate patch data
@@ -155,8 +158,9 @@ def validate_patch_json(request_json):
         jsonschema.validate(request_json, schema_patch)
     except (jsonschema.exceptions.ValidationError, jsonschema.exceptions.SchemaError, JSONDecodeError) as e:
         current_app.logger.info("Invalid json:{}".format(str(e)))
-        raise(InvalidJSONError("Invalid json:{}".format(str(e))))
-    
+        raise (InvalidJSONError("Invalid json:{}".format(str(e))))
+
+
 def get_insert_data(request_json):
     """
     Unpack data from request_json structure
@@ -169,14 +173,14 @@ def get_insert_data(request_json):
         
         kinships_data (list) : data about kinshps formed for inserting in db
         
-    Raises:
-        BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning or the end of the string or if date is not valid
+    Raises: BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the
+    beginning or the end of the string or if date is not valid
         
         NonUniqueRelativeError: if relatives ids not unique for one citizen
         
         InconsistentRelativesError: if relatives links are inconsistant 
     """
-   
+
     citizens = request_json["citizens"]
     citizens_data = list()
     kinships_data = list()
@@ -194,24 +198,24 @@ def get_insert_data(request_json):
         relatives = citizen['relatives']
         if len(relatives) != len(set(relatives)):
             current_app.logger.info("More then one relative with the same id for one citizen")
-            raise(NonUniqueRelativeError("More then one relative with the same id for one citizen"))
-        
-        #Generate pairs of relatives for this citizen
+            raise (NonUniqueRelativeError("More then one relative with the same id for one citizen"))
+
+        # Generate pairs of relatives for this citizen
         for relative in relatives:
             kinships_data.append([citizen_id, relative])
-            #keep track of pairs of relatives - every one should has pair
+            # keep track of pairs of relatives - every one should has pair
             pair_in_order = (citizen_id, relative) if citizen_id < relative else (relative, citizen_id)
             if citizen_id != relative:
                 if pair_in_order not in kinship_set:
                     kinship_set.add(pair_in_order)
-                else: 
+                else:
                     kinship_set.remove(pair_in_order)
-    if  len(kinship_set) != 0:
+    if len(kinship_set) != 0:
         current_app.logger.info("Information about relatives inconsistent")
-        raise(InconsistentRelativesError("Information about relatives inconsistent"))
+        raise (InconsistentRelativesError("Information about relatives inconsistent"))
     return citizens_data, kinships_data
 
-    
+
 def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     """
     Make pairs of relatives to add to kinships table
@@ -220,6 +224,7 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
         import_id (int): import id were to find citizen
         citizen_id (int):citizen id whose information to change
         request_json (dict): data to change
+        citizen_ids (set): set ov valid citizen_ids
     
     Returns: 
         kinships_data (list): pairs of citizens' kinships to insert into table
@@ -234,29 +239,13 @@ def get_new_relatives(import_id, citizen_id, request_json, citizen_ids):
     relatives = request_json['relatives']
     if len(relatives) != len(set(relatives)):
         current_app.logger.info("More then one relative with the same id for one citizen")
-        raise(NonUniqueRelativeError("More then one relative with the same id for one citizen"))
+        raise (NonUniqueRelativeError("More then one relative with the same id for one citizen"))
     for relative in request_json['relatives']:
         if relative not in citizen_ids:
             current_app.logger.info("Can't be relative to non-existent citizen")
-            raise(RelativesToNonexistentCitizenError("Can't be relative to non-existent citizen"))
+            raise (RelativesToNonexistentCitizenError("Can't be relative to non-existent citizen"))
         kinships_data.append((import_id, citizen_id, relative))
         if citizen_id != relative:
             kinships_data.append((import_id, relative, citizen_id))
-                
+
     return kinships_data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
