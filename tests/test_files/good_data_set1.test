@@ -1,0 +1,1592 @@
+{
+    "citizens": [
+        {
+            "citizen_id": 1,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "45\u043a4",
+            "apartment": 85,
+            "name": "\u041b\u0438\u043f\u043e\u0432\u0430 \u0415\u0432\u0434\u043e\u043a\u0438\u044f \u0415\u043c\u0435\u043b\u044c\u044f\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "08.10.1990",
+            "gender": "female",
+            "relatives": [
+                65,
+                24,
+                7,
+                11
+            ]
+        },
+        {
+            "citizen_id": 2,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0426\u0432\u0435\u0442\u043d\u0430\u044f",
+            "building": "10\u0441\u0442\u044010",
+            "apartment": 96,
+            "name": "\u0426\u0435\u0439\u0434\u043b\u0435\u0440\u0438\u043d\u0430 \u0412\u0435\u0440\u0430 \u0418\u043e\u0441\u0438\u0444\u043e\u0432\u043d\u0430",
+            "birth_date": "19.05.1968",
+            "gender": "female",
+            "relatives": [
+                80,
+                67
+            ]
+        },
+        {
+            "citizen_id": 3,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0411\u0430\u0442\u0430\u0439\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "36",
+            "apartment": 55,
+            "name": "\u0420\u0443\u0434\u043d\u0438\u043a\u043e\u0432\u0430 \u0421\u0442\u0435\u043b\u0430 \u0411\u043e\u0440\u0438\u0441\u043e\u0432\u043d\u0430",
+            "birth_date": "03.12.1979",
+            "gender": "female",
+            "relatives": [
+                21,
+                29,
+                26,
+                20,
+                75,
+                77
+            ]
+        },
+        {
+            "citizen_id": 4,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043c\u0438\u0441\u0442\u0430\u044f",
+            "building": "26",
+            "apartment": 2,
+            "name": "\u0411\u0430\u043b\u0438\u043d \u041f\u0438\u043c\u0435\u043d \u0418\u0433\u043e\u0440\u0435\u0432\u0438\u0447",
+            "birth_date": "30.08.2002",
+            "gender": "male",
+            "relatives": [
+                18,
+                36
+            ]
+        },
+        {
+            "citizen_id": 5,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "40\u043a9",
+            "apartment": 50,
+            "name": "\u042f\u0448\u0438\u043d \u0413\u0435\u0440\u0430\u0441\u0438\u043c \u0412\u0430\u0434\u0438\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "25.08.2003",
+            "gender": "male",
+            "relatives": [
+                42,
+                89,
+                76
+            ]
+        },
+        {
+            "citizen_id": 6,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041b\u044c\u0432\u0430 \u0422\u043e\u043b\u0441\u0442\u043e\u0433\u043e",
+            "building": "60\u043a6",
+            "apartment": 67,
+            "name": "\u0422\u0440\u0443\u0445\u0438\u043d\u0430 \u0416\u0430\u043d\u043d\u0430 \u0420\u043e\u0434\u0438\u043e\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "14.12.1974",
+            "gender": "female",
+            "relatives": [
+                79
+            ]
+        },
+        {
+            "citizen_id": 7,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "17\u0441\u0442\u04403",
+            "apartment": 127,
+            "name": "\u042e\u0433\u043e\u0432 \u042d\u0434\u0443\u0430\u0440\u0434 \u041c\u0430\u0440\u043a\u043e\u0432\u0438\u0447",
+            "birth_date": "13.05.1960",
+            "gender": "male",
+            "relatives": [
+                78,
+                1,
+                44,
+                93,
+                28,
+                77,
+                53
+            ]
+        },
+        {
+            "citizen_id": 8,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0430\u0440\u043e\u0433\u043e \u043b\u0435\u0441\u043e\u0440\u0443\u0431\u0430",
+            "building": "9",
+            "apartment": 94,
+            "name": "\u0428\u0435\u0432\u0435\u043b\u0451\u043a\u0430 \u041a\u0440\u0438\u0441\u0442\u0438\u043d\u0430 \u0422\u0440\u043e\u0444\u0438\u043c\u043e\u0432\u043d\u0430",
+            "birth_date": "20.08.1974",
+            "gender": "female",
+            "relatives": [
+                15,
+                66,
+                69,
+                23,
+                89
+            ]
+        },
+        {
+            "citizen_id": 9,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u0438\u043c\u0438\u043a\u043e\u0432",
+            "building": "2\u043a5",
+            "apartment": 65,
+            "name": "\u041c\u0443\u0445\u0430\u043c\u0435\u0442\u043e\u0432 \ufeff\u0410\u0432\u0433\u0443\u0441\u0442 \u0418\u043f\u0430\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "29.10.1999",
+            "gender": "male",
+            "relatives": [
+                82,
+                44,
+                95,
+                35,
+                54
+            ]
+        },
+        {
+            "citizen_id": 10,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0426\u0432\u0435\u0442\u043d\u0430\u044f",
+            "building": "25",
+            "apartment": 81,
+            "name": "\u0421\u043c\u043e\u0442\u0440\u043e\u0432\u0430 \u0416\u0430\u043d\u043d\u0430 \u0413\u0435\u043d\u043d\u0430\u0434\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "16.02.1958",
+            "gender": "female",
+            "relatives": [
+                47,
+                11,
+                64,
+                97,
+                89,
+                29
+            ]
+        },
+        {
+            "citizen_id": 11,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u0430\u0442\u0430\u0439\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "17\u043a5",
+            "apartment": 55,
+            "name": "\u0426\u0435\u0440\u0435\u0442\u0435\u043b\u0438 \u0412\u043b\u0430\u0434\u043b\u0435\u043d\u0430 \u041a\u0430\u0440\u043f\u043e\u0432\u043d\u0430",
+            "birth_date": "24.06.1981",
+            "gender": "female",
+            "relatives": [
+                49,
+                10,
+                1,
+                99
+            ]
+        },
+        {
+            "citizen_id": 12,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041a\u0443\u0442\u0443\u0437\u043e\u0432\u0430",
+            "building": "24",
+            "apartment": 59,
+            "name": "\u041b\u0430\u0447\u043a\u043e\u0432 \u0424\u043e\u043a\u0430 \u041a\u043b\u0438\u043c\u0435\u043d\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "13.12.1996",
+            "gender": "male",
+            "relatives": [
+                31,
+                35
+            ]
+        },
+        {
+            "citizen_id": 13,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0423\u0440\u0430\u043b\u044c\u0441\u043a\u0430\u044f",
+            "building": "48",
+            "apartment": 148,
+            "name": "\u0415\u0441\u0430\u0443\u043b\u043e\u0432\u0430 \u0410\u043b\u043b\u0430 \u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432\u043e\u0432\u043d\u0430",
+            "birth_date": "28.07.1984",
+            "gender": "female",
+            "relatives": [
+                78,
+                50,
+                40,
+                27
+            ]
+        },
+        {
+            "citizen_id": 14,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0423\u0440\u0430\u043b\u044c\u0441\u043a\u0430\u044f",
+            "building": "6",
+            "apartment": 64,
+            "name": "\u0422\u0440\u0443\u0448\u0435\u0432\u0441\u043a\u0438\u0439 \u0410\u0440\u0442\u0443\u0440 \u0410\u043d\u0434\u0440\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "07.02.1961",
+            "gender": "male",
+            "relatives": [
+                53,
+                94,
+                86,
+                54
+            ]
+        },
+        {
+            "citizen_id": 15,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043c\u0438\u0441\u0442\u0430\u044f",
+            "building": "52",
+            "apartment": 130,
+            "name": "\u0422\u0430\u043c\u0430\u0440\u043a\u0438\u043d \u0415\u0432\u0441\u0435\u0439 \u0421\u0430\u0432\u0435\u043b\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "10.09.1986",
+            "gender": "male",
+            "relatives": [
+                88,
+                8,
+                91,
+                72
+            ]
+        },
+        {
+            "citizen_id": 16,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "36",
+            "apartment": 73,
+            "name": "\u0413\u0440\u044f\u0434\u043a\u0438\u043d \u041a\u0430\u0440\u043b \u0415\u0444\u0440\u0435\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "04.05.1997",
+            "gender": "male",
+            "relatives": [
+                22,
+                96,
+                31,
+                97,
+                35,
+                82,
+                59
+            ]
+        },
+        {
+            "citizen_id": 17,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "54\u043a2",
+            "apartment": 74,
+            "name": "\u042f\u043d\u0441\u043e\u043d \u041f\u043e\u043b\u0438\u043a\u0430\u0440\u043f \u0421\u0438\u0433\u0438\u0437\u043c\u0443\u043d\u0434\u043e\u0432\u0438\u0447",
+            "birth_date": "05.12.1998",
+            "gender": "male",
+            "relatives": [
+                80,
+                56
+            ]
+        },
+        {
+            "citizen_id": 18,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041a\u043e\u043b\u0445\u043e\u0437\u043d\u0430\u044f",
+            "building": "40",
+            "apartment": 143,
+            "name": "\u041e\u0436\u0435\u0433\u043e\u0432\u0430 \u0412\u0435\u0440\u043e\u043d\u0438\u043a\u0430 \u041d\u0438\u043a\u043e\u043b\u0430\u0435\u0432\u043d\u0430",
+            "birth_date": "11.03.2004",
+            "gender": "female",
+            "relatives": [
+                50,
+                4,
+                46
+            ]
+        },
+        {
+            "citizen_id": 19,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "56",
+            "apartment": 146,
+            "name": "\u042d\u043d\u0442\u0438\u043d\u0430 \u0410\u043b\u043b\u0430 \u0418\u0433\u043e\u0440\u0435\u0432\u043d\u0430",
+            "birth_date": "20.02.1978",
+            "gender": "female",
+            "relatives": [
+                90,
+                30,
+                62,
+                53
+            ]
+        },
+        {
+            "citizen_id": 20,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u043e\u043b\u043e\u0432\u044c\u0438\u043d\u0430\u044f",
+            "building": "56\u0441\u0442\u04407",
+            "apartment": 129,
+            "name": "\u0424\u0435\u0434\u043e\u0440\u043e\u0432\u0430 \u0421\u0442\u0435\u043b\u0430 \u041a\u0443\u0437\u044c\u043c\u0435\u0432\u043d\u0430",
+            "birth_date": "23.03.2006",
+            "gender": "female",
+            "relatives": [
+                83,
+                66,
+                51,
+                3,
+                79
+            ]
+        },
+        {
+            "citizen_id": 21,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043e\u0434\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "21\u043a10",
+            "apartment": 77,
+            "name": "\u041b\u0443\u043a\u043e\u0432\u043d\u0438\u043a\u043e\u0432 \u0412\u0438\u043a\u0435\u043d\u0442\u0438\u0439 \u0410\u0440\u0442\u0435\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "07.12.1958",
+            "gender": "male",
+            "relatives": [
+                3,
+                87
+            ]
+        },
+        {
+            "citizen_id": 22,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u0438\u0442\u0432\u0438\u043d\u043e\u0432\u0430 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "18\u043a3",
+            "apartment": 70,
+            "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0445 \u0410\u0434\u0430\u043c \u041e\u043b\u0435\u0433\u043e\u0432\u0438\u0447",
+            "birth_date": "13.05.1978",
+            "gender": "male",
+            "relatives": [
+                16,
+                81,
+                69
+            ]
+        },
+        {
+            "citizen_id": 23,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "60",
+            "apartment": 78,
+            "name": "\u042f\u0449\u0435\u043d\u043a\u043e \u0418\u0440\u0430\u0438\u0434\u0430 \u042f\u043a\u043e\u0432\u043e\u0432\u043d\u0430",
+            "birth_date": "09.04.1988",
+            "gender": "female",
+            "relatives": [
+                42,
+                34,
+                68,
+                8,
+                38
+            ]
+        },
+        {
+            "citizen_id": 24,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0426\u0432\u0435\u0442\u043d\u0430\u044f",
+            "building": "7",
+            "apartment": 76,
+            "name": "\u041f\u0440\u0443\u0434\u043d\u0438\u043a\u043e\u0432\u0430 \u0421\u0442\u0435\u043b\u0430 \u0412\u0438\u0442\u0430\u043b\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "08.11.1999",
+            "gender": "female",
+            "relatives": [
+                78,
+                72,
+                1
+            ]
+        },
+        {
+            "citizen_id": 25,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041f\u0435\u0440\u0432\u043e\u043c\u0430\u0439\u0441\u043a\u0430\u044f",
+            "building": "4",
+            "apartment": 92,
+            "name": "\u042f\u043a\u043e\u0432\u0435\u0446\u0430 \u0412\u0435\u0440\u043e\u043d\u0438\u043a\u0430 \u0413\u0435\u043e\u0440\u0433\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "27.05.1956",
+            "gender": "female",
+            "relatives": [
+                82
+            ]
+        },
+        {
+            "citizen_id": 26,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u0430\u044f",
+            "building": "10",
+            "apartment": 141,
+            "name": "\u041b\u044b\u0442\u043a\u0438\u043d\u0430 \u0413\u0430\u043b\u0438\u043d\u0430 \u041d\u0438\u043a\u0438\u0442\u0435\u0432\u043d\u0430",
+            "birth_date": "28.04.1981",
+            "gender": "female",
+            "relatives": [
+                79,
+                3,
+                94
+            ]
+        },
+        {
+            "citizen_id": 27,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0413\u0432\u043e\u0437\u0434\u0438\u043a",
+            "building": "52",
+            "apartment": 30,
+            "name": "\u041d\u044f\u043c\u0438\u043d \u041b\u0443\u043a\u0430 \u0418\u043f\u043f\u043e\u043b\u0438\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "02.12.1964",
+            "gender": "male",
+            "relatives": [
+                69,
+                13
+            ]
+        },
+        {
+            "citizen_id": 28,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u0430\u044f",
+            "building": "27",
+            "apartment": 148,
+            "name": "\u0415\u0441\u0438\u043f\u043e\u0432 \u0412\u0435\u043d\u0435\u0434\u0438\u043a\u0442 \u0410\u043b\u0435\u043a\u0441\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "15.09.1957",
+            "gender": "male",
+            "relatives": [
+                61,
+                7,
+                78,
+                29
+            ]
+        },
+        {
+            "citizen_id": 29,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041c\u0430\u043b\u044b\u0433\u0438\u043d\u0430",
+            "building": "54\u043a10",
+            "apartment": 11,
+            "name": "\u0427\u0430\u043d \u0412\u0435\u043d\u0435\u0434\u0438\u043a\u0442 \u0422\u0438\u043c\u0443\u0440\u043e\u0432\u0438\u0447",
+            "birth_date": "09.07.1983",
+            "gender": "male",
+            "relatives": [
+                97,
+                3,
+                28,
+                10
+            ]
+        },
+        {
+            "citizen_id": 30,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u0430\u0442\u0430\u0439\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "3",
+            "apartment": 101,
+            "name": "\u041e\u0441\u0438\u043f\u043e\u0432\u0430 \u041e\u043a\u0441\u0430\u043d\u0430 \u041f\u0435\u0442\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "10.06.1981",
+            "gender": "female",
+            "relatives": [
+                98,
+                19,
+                64,
+                41
+            ]
+        },
+        {
+            "citizen_id": 31,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "10\u0441\u0442\u04401",
+            "apartment": 11,
+            "name": "\u041c\u0438\u043d\u0438\u043d \u0415\u0432\u0433\u0440\u0430\u0444 \u0410\u0444\u0430\u043d\u0430\u0441\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "11.08.1984",
+            "gender": "male",
+            "relatives": [
+                16,
+                12
+            ]
+        },
+        {
+            "citizen_id": 32,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u043e\u043b\u0445\u043e\u0437\u043d\u0430\u044f",
+            "building": "41",
+            "apartment": 112,
+            "name": "\u041a\u0430\u043f\u044b\u043b\u044e\u0448\u043d\u044b\u0439 \u042d\u043c\u0438\u043b\u0438\u044f \u0418\u043f\u043f\u043e\u043b\u0438\u0442\u043e\u0432\u043d\u0430",
+            "birth_date": "13.12.1957",
+            "gender": "female",
+            "relatives": [
+                68,
+                54,
+                45,
+                48
+            ]
+        },
+        {
+            "citizen_id": 33,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0421\u043e\u0441\u043d\u043e\u0432\u044b\u0439 2-\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "49",
+            "apartment": 80,
+            "name": "\u0418\u0432\u0430\u0448\u0435\u0432 \u0413\u0440\u0438\u0433\u043e\u0440\u0438\u0439 \u041c\u043e\u0434\u0435\u0441\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "11.02.1974",
+            "gender": "male",
+            "relatives": [
+                96,
+                95,
+                74,
+                72,
+                41
+            ]
+        },
+        {
+            "citizen_id": 34,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "5\u043a3",
+            "apartment": 49,
+            "name": "\u0420\u0430\u0431\u0438\u043d\u043e\u0432\u0438\u0447\u0430 \u0414\u0438\u0430\u043d\u0430 \u041f\u0435\u0442\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "15.09.2001",
+            "gender": "female",
+            "relatives": [
+                55,
+                41,
+                23,
+                50,
+                79,
+                67,
+                84
+            ]
+        },
+        {
+            "citizen_id": 35,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u043e\u043b\u0445\u043e\u0437\u043d\u0430\u044f",
+            "building": "19",
+            "apartment": 21,
+            "name": "\u0411\u0435\u043b\u043e\u043c\u0435\u0441\u0442\u043e\u0432 \u041a\u0430\u043f\u0438\u0442\u043e\u043d \u0418\u0440\u0430\u043a\u043b\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "05.04.1982",
+            "gender": "male",
+            "relatives": [
+                82,
+                61,
+                12,
+                16,
+                9
+            ]
+        },
+        {
+            "citizen_id": 36,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041b\u0435\u043d\u0438\u043d\u0433\u0440\u0430\u0434\u0441\u043a\u0430\u044f",
+            "building": "24",
+            "apartment": 100,
+            "name": "\u041b\u0435\u0442\u043e\u0432\u0430 \u0415\u043a\u0430\u0442\u0435\u0440\u0438\u043d\u0430 \u0422\u0438\u043c\u0443\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "10.07.1994",
+            "gender": "female",
+            "relatives": [
+                63,
+                55,
+                4
+            ]
+        },
+        {
+            "citizen_id": 37,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0423\u044e\u0442\u043d\u0430\u044f",
+            "building": "35",
+            "apartment": 57,
+            "name": "\u0421\u0430\u043b\u0442\u0430\u043d\u043e\u0432 \u0421\u0442\u0435\u043f\u0430\u043d \u041c\u043e\u0434\u0435\u0441\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "24.02.1967",
+            "gender": "male",
+            "relatives": [
+                81,
+                79,
+                47
+            ]
+        },
+        {
+            "citizen_id": 38,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "31",
+            "apartment": 43,
+            "name": "\u0413\u0440\u0438\u0433\u043e\u0440\u044c\u0435\u0432\u0430 \u0410\u043d\u0438\u0441\u044c\u044f \u0415\u043b\u0438\u0437\u0430\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "18.07.1970",
+            "gender": "female",
+            "relatives": [
+                71,
+                23
+            ]
+        },
+        {
+            "citizen_id": 39,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u0430\u044f",
+            "building": "24\u043a8",
+            "apartment": 55,
+            "name": "\u042d\u043a\u043e\u043d\u043e\u043c\u043e\u0432\u0430 \u042d\u043b\u0435\u043e\u043d\u043e\u0440\u0430 \u0418\u0440\u0430\u043a\u043b\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "17.04.2001",
+            "gender": "female",
+            "relatives": [
+                46,
+                77,
+                80
+            ]
+        },
+        {
+            "citizen_id": 40,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u0438\u0435\u0432\u0441\u043a\u0430\u044f",
+            "building": "30\u0441\u0442\u04405",
+            "apartment": 88,
+            "name": "\u041a\u043e\u0440\u043e\u043b\u0435\u0432\u0430 \u041f\u0435\u043b\u0430\u0433\u0435\u044f \u0421\u0432\u044f\u0442\u043e\u0441\u043b\u0430\u0432\u043e\u0432\u043d\u0430",
+            "birth_date": "29.06.1959",
+            "gender": "female",
+            "relatives": [
+                13,
+                49
+            ]
+        },
+        {
+            "citizen_id": 41,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043e\u0434\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "36",
+            "apartment": 15,
+            "name": "\u0426\u043e\u0440\u043d\u0430 \u042e\u043d\u043e\u043d\u0430 \u0412\u0438\u0442\u0430\u043b\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "15.08.1960",
+            "gender": "female",
+            "relatives": [
+                34,
+                33,
+                42,
+                30
+            ]
+        },
+        {
+            "citizen_id": 42,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041b\u0435\u043d\u0438\u043d\u0433\u0440\u0430\u0434\u0441\u043a\u0430\u044f",
+            "building": "9",
+            "apartment": 62,
+            "name": "\u041a\u0430\u0448\u0438\u0440\u0438\u043d\u0430 \u0412\u0430\u0440\u0432\u0430\u0440\u0430 \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "04.04.1987",
+            "gender": "female",
+            "relatives": [
+                46,
+                5,
+                23,
+                47,
+                96,
+                41
+            ]
+        },
+        {
+            "citizen_id": 43,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041b\u044c\u0433\u043e\u0432\u0441\u043a\u0430\u044f",
+            "building": "60",
+            "apartment": 34,
+            "name": "\u0417\u0443\u0431 \u041c\u0430\u0442\u0432\u0435\u0439 \u0415\u043b\u0438\u0441\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "26.11.1988",
+            "gender": "male",
+            "relatives": [
+                46,
+                70,
+                88,
+                47,
+                52,
+                61,
+                51,
+                94
+            ]
+        },
+        {
+            "citizen_id": 44,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0421\u043e\u0441\u043d\u043e\u0432\u044b\u0439 2-\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "16",
+            "apartment": 88,
+            "name": "\u041d\u043e\u0437\u0434\u0440\u0438\u043d \u0412\u0438\u043a\u0442\u043e\u0440 \u0412\u0430\u043b\u0435\u0440\u044c\u044f\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "22.01.2002",
+            "gender": "male",
+            "relatives": [
+                7,
+                9
+            ]
+        },
+        {
+            "citizen_id": 45,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043c\u0438\u0441\u0442\u0430\u044f",
+            "building": "19\u043a8",
+            "apartment": 49,
+            "name": "\u042f\u0433\u0443\u0434\u0438\u043d \u0412\u0435\u043d\u0438\u0430\u043c\u0438\u043d \u041a\u0443\u043f\u0440\u0438\u044f\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "08.06.1994",
+            "gender": "male",
+            "relatives": [
+                32
+            ]
+        },
+        {
+            "citizen_id": 46,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "50",
+            "apartment": 66,
+            "name": "\u0428\u0435\u043b\u044f\u043f\u0438\u043d \u0410\u043d\u0434\u0440\u043e\u043d \u0410\u0440\u0442\u0435\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "09.05.1972",
+            "gender": "male",
+            "relatives": [
+                43,
+                42,
+                39,
+                80,
+                18
+            ]
+        },
+        {
+            "citizen_id": 47,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043e\u0434\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "55",
+            "apartment": 87,
+            "name": "\u042f\u0433\u0435\u0448\u0435\u0432\u0430 \u041b\u044e\u0431\u0430\u0432\u0430 \u041a\u0430\u0437\u0438\u043c\u0438\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "08.08.1970",
+            "gender": "female",
+            "relatives": [
+                10,
+                43,
+                73,
+                42,
+                53,
+                37
+            ]
+        },
+        {
+            "citizen_id": 48,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0421\u0443\u0441\u0430\u043d\u0438\u043d\u0430 \u0418\u0432\u0430\u043d\u0430",
+            "building": "24",
+            "apartment": 35,
+            "name": "\u0427\u0443\u043a\u0440\u0435\u0435\u0432\u0430 \u0424\u0430\u0438\u043d\u0430 \u0420\u043e\u0434\u0438\u043e\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "30.04.2004",
+            "gender": "female",
+            "relatives": [
+                59,
+                86,
+                94,
+                53,
+                32
+            ]
+        },
+        {
+            "citizen_id": 49,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "3\u043a3\u0441\u0442\u04408",
+            "apartment": 134,
+            "name": "\u041a\u0430\u0434\u0446\u044b\u043d \u0411\u043e\u0440\u0438\u0441\u043b\u0430\u0432 \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440\u043e\u0432\u0438\u0447",
+            "birth_date": "08.07.1976",
+            "gender": "male",
+            "relatives": [
+                11,
+                64,
+                87,
+                78,
+                40,
+                55
+            ]
+        },
+        {
+            "citizen_id": 50,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u044c\u0432\u0430 \u0422\u043e\u043b\u0441\u0442\u043e\u0433\u043e",
+            "building": "21",
+            "apartment": 37,
+            "name": "\u041f\u0430\u0440\u0444\u0451\u043d\u043e\u0432\u0430 \u0415\u043b\u0435\u043d\u0430 \u0415\u0432\u0433\u0435\u043d\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "25.04.1953",
+            "gender": "female",
+            "relatives": [
+                18,
+                92,
+                13,
+                34
+            ]
+        },
+        {
+            "citizen_id": 51,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u043e\u0433\u0434\u0430\u043d\u0430 \u0425\u043c\u0435\u043b\u044c\u043d\u0438\u0446\u043a\u043e\u0433\u043e",
+            "building": "17",
+            "apartment": 108,
+            "name": "\u041d\u0435\u0433\u0438\u043d \u0410\u0433\u0430\u0444\u043e\u043d \u0421\u0430\u0432\u0432\u0435\u0432\u0438\u0447",
+            "birth_date": "28.12.2005",
+            "gender": "male",
+            "relatives": [
+                20,
+                66,
+                58,
+                43
+            ]
+        },
+        {
+            "citizen_id": 52,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "56\u043a4",
+            "apartment": 37,
+            "name": "\u041b\u0435\u0432\u0430\u043d\u043e\u0432 \u0427\u0435\u0441\u043b\u0430\u0432 \u0424\u043e\u043c\u0435\u0432\u0438\u0447",
+            "birth_date": "19.12.1980",
+            "gender": "male",
+            "relatives": [
+                67,
+                43
+            ]
+        },
+        {
+            "citizen_id": 53,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u044c\u0433\u043e\u0432\u0441\u043a\u0430\u044f",
+            "building": "26\u0441\u0442\u04403",
+            "apartment": 36,
+            "name": "\u0411\u043e\u0440\u0442\u043d\u0438\u043a \u0424\u0435\u0434\u043e\u0440 \u0418\u0440\u0430\u043a\u043b\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "28.03.1977",
+            "gender": "male",
+            "relatives": [
+                14,
+                47,
+                19,
+                48,
+                7
+            ]
+        },
+        {
+            "citizen_id": 54,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041c\u0430\u043b\u043e-\u0424\u043e\u043a\u0438\u043d\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "60\u043a3",
+            "apartment": 55,
+            "name": "\u0421\u0438\u0434\u043e\u0440\u043e\u0432 \u0410\u0440\u043a\u0430\u0434\u0438\u0439 \u0415\u0432\u043b\u0430\u043c\u043f\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "12.04.1969",
+            "gender": "male",
+            "relatives": [
+                65,
+                69,
+                14,
+                67,
+                32,
+                9
+            ]
+        },
+        {
+            "citizen_id": 55,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0413\u0430\u0441\u0442\u0435\u043b\u043b\u043e",
+            "building": "14",
+            "apartment": 111,
+            "name": "\u0412\u0438\u0445\u043e\u0440\u0435\u0432 \u0410\u0434\u0430\u043c \u0414\u0435\u043c\u044c\u044f\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "27.05.1978",
+            "gender": "male",
+            "relatives": [
+                99,
+                34,
+                76,
+                36,
+                68,
+                49
+            ]
+        },
+        {
+            "citizen_id": 56,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0425\u043e\u043b\u043e\u0434\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "34",
+            "apartment": 118,
+            "name": "\u041f\u0435\u0440\u0435\u0445\u0432\u0430\u0442\u043a\u0438\u043d\u0430 \u041a\u0440\u0438\u0441\u0442\u0438\u043d\u0430 \u0412\u0441\u0435\u0432\u043e\u043b\u043e\u0434\u043e\u0432\u043d\u0430",
+            "birth_date": "13.07.1956",
+            "gender": "female",
+            "relatives": [
+                69,
+                17,
+                89
+            ]
+        },
+        {
+            "citizen_id": 57,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0421\u0443\u0441\u0430\u043d\u0438\u043d\u0430 \u0418\u0432\u0430\u043d\u0430",
+            "building": "10",
+            "apartment": 44,
+            "name": "\u042f\u043d\u0435\u043d\u043a\u043e \u0410\u043d\u043d\u0430 \u0422\u0438\u0445\u043e\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "07.12.1974",
+            "gender": "female",
+            "relatives": [
+                79,
+                65
+            ]
+        },
+        {
+            "citizen_id": 58,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041a\u043b\u0443\u0431\u043d\u0438\u0447\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "29",
+            "apartment": 132,
+            "name": "\u041d\u0438\u043a\u0430\u0448\u0438\u043d \u0412\u0438\u0442\u0430\u043b\u0438\u0439 \u0412\u0430\u0434\u0438\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "24.06.1978",
+            "gender": "male",
+            "relatives": [
+                60,
+                84,
+                65,
+                71,
+                51
+            ]
+        },
+        {
+            "citizen_id": 59,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041b\u0438\u0442\u0432\u0438\u043d\u043e\u0432\u0430 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "46",
+            "apartment": 115,
+            "name": "\u041c\u043e\u043b\u043e\u0434\u0446\u043e\u0432\u0430 \u042d\u043b\u0435\u043e\u043d\u043e\u0440\u0430 \u041a\u0430\u0440\u043f\u043e\u0432\u043d\u0430",
+            "birth_date": "27.07.1983",
+            "gender": "female",
+            "relatives": [
+                48,
+                84,
+                16
+            ]
+        },
+        {
+            "citizen_id": 60,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0421\u043e\u0441\u043d\u043e\u0432\u044b\u0439 2-\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "57\u0441\u0442\u04408",
+            "apartment": 85,
+            "name": "\u041c\u0438\u0445\u0430\u043b\u0451\u0432 \u0417\u0430\u0445\u0430\u0440 \u0424\u0435\u0434\u043e\u0441\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "09.12.1996",
+            "gender": "male",
+            "relatives": [
+                58,
+                71,
+                64
+            ]
+        },
+        {
+            "citizen_id": 61,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u0435\u043d\u0438\u043d\u0433\u0440\u0430\u0434\u0441\u043a\u0430\u044f",
+            "building": "10",
+            "apartment": 32,
+            "name": "\u0426\u0430\u0440\u0451\u0432\u0430 \u041c\u0430\u0440\u0438\u044f \u0424\u043e\u043c\u0435\u0432\u043d\u0430",
+            "birth_date": "06.04.1998",
+            "gender": "female",
+            "relatives": [
+                91,
+                35,
+                80,
+                28,
+                43
+            ]
+        },
+        {
+            "citizen_id": 62,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0411\u0443\u043b\u044c\u0432\u0430\u0440\u043d\u0430\u044f",
+            "building": "6",
+            "apartment": 75,
+            "name": "\u0414\u043c\u0438\u0442\u0440\u0438\u0435\u0432\u0430 \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440\u0430 \u0411\u043e\u0440\u0438\u0441\u043e\u0432\u043d\u0430",
+            "birth_date": "13.02.1958",
+            "gender": "female",
+            "relatives": [
+                89,
+                19
+            ]
+        },
+        {
+            "citizen_id": 63,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "14",
+            "apartment": 97,
+            "name": "\u042f\u0441\u0435\u043d\u0435\u0432 \u041a\u043e\u043d\u0434\u0440\u0430\u0442 \u042e\u0440\u0438\u0435\u0432\u0438\u0447",
+            "birth_date": "07.06.1978",
+            "gender": "male",
+            "relatives": [
+                36,
+                76
+            ]
+        },
+        {
+            "citizen_id": 64,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0421\u043e\u0441\u043d\u043e\u0432\u044b\u0439 2-\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "4",
+            "apartment": 96,
+            "name": "\u0422\u043a\u0430\u0447 \u042d\u043c\u043c\u0430\u043d\u0443\u0438\u043b \u0410\u043d\u0434\u0440\u043e\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "27.08.1984",
+            "gender": "male",
+            "relatives": [
+                49,
+                10,
+                30,
+                97,
+                60
+            ]
+        },
+        {
+            "citizen_id": 65,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0413\u0430\u0441\u0442\u0435\u043b\u043b\u043e",
+            "building": "15",
+            "apartment": 8,
+            "name": "\u0410\u0433\u0430\u043f\u043e\u0432\u0430 \u041a\u043b\u0430\u0440\u0430 \u041c\u0438\u0440\u043e\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "19.11.1975",
+            "gender": "female",
+            "relatives": [
+                54,
+                1,
+                58,
+                57,
+                69
+            ]
+        },
+        {
+            "citizen_id": 66,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041b\u044c\u0433\u043e\u0432\u0441\u043a\u0430\u044f",
+            "building": "23",
+            "apartment": 54,
+            "name": "\u0415\u0440\u0445\u043e\u0432 \u0411\u0440\u043e\u043d\u0438\u0441\u043b\u0430\u0432 \u041f\u043e\u0442\u0430\u043f\u043e\u0432\u0438\u0447",
+            "birth_date": "05.01.2007",
+            "gender": "male",
+            "relatives": [
+                8,
+                20,
+                51,
+                82,
+                68
+            ]
+        },
+        {
+            "citizen_id": 67,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0425\u043e\u043b\u043e\u0434\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "44",
+            "apartment": 4,
+            "name": "\u041e\u0431\u043e\u0440\u0438\u043d \u0424\u0435\u0434\u043e\u0442 \u041a\u0430\u0441\u044c\u044f\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "03.12.1959",
+            "gender": "male",
+            "relatives": [
+                69,
+                70,
+                54,
+                2,
+                52,
+                34
+            ]
+        },
+        {
+            "citizen_id": 68,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u0430\u0437\u0430\u0440\u043d\u0430\u044f",
+            "building": "46",
+            "apartment": 11,
+            "name": "\u0415\u0440\u043e\u0444\u0435\u0435\u0432\u0430 \u0422\u0430\u043c\u0430\u0440\u0430 \u042f\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "20.11.1954",
+            "gender": "female",
+            "relatives": [
+                32,
+                55,
+                23,
+                66
+            ]
+        },
+        {
+            "citizen_id": 69,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041c\u0430\u043b\u044b\u0433\u0438\u043d\u0430",
+            "building": "11\u043a8",
+            "apartment": 96,
+            "name": "\u0420\u0435\u0439\u0441\u043b\u0435\u0440\u0430 \u0418\u043d\u0435\u0441\u0441\u0430 \u0418\u043f\u043f\u043e\u043b\u0438\u0442\u043e\u0432\u043d\u0430",
+            "birth_date": "09.06.1968",
+            "gender": "female",
+            "relatives": [
+                67,
+                27,
+                56,
+                8,
+                54,
+                65,
+                22
+            ]
+        },
+        {
+            "citizen_id": 70,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "4\u043a7",
+            "apartment": 11,
+            "name": "\u0411\u0435\u043b\u043e\u0443\u0441\u043e\u0432\u0430 \u041c\u0430\u0440\u0444\u0430 \u041a\u0443\u0437\u044c\u043c\u0435\u0432\u043d\u0430",
+            "birth_date": "11.07.1990",
+            "gender": "female",
+            "relatives": [
+                43,
+                73,
+                67,
+                83
+            ]
+        },
+        {
+            "citizen_id": 71,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "43",
+            "apartment": 21,
+            "name": "\u0428\u0438\u0445\u0438\u043d\u0430 \ufeff\u0410\u0433\u0430\u0442\u0430 \u0424\u0438\u043b\u0438\u043f\u043f\u043e\u0432\u043d\u0430",
+            "birth_date": "14.10.1967",
+            "gender": "female",
+            "relatives": [
+                83,
+                60,
+                58,
+                38
+            ]
+        },
+        {
+            "citizen_id": 72,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "14\u0441\u0442\u04406",
+            "apartment": 12,
+            "name": "\u041a\u0443\u043b\u0430\u043a\u0442\u0438\u043d\u0430 \u0410\u043d\u0438\u0441\u044c\u044f \u0418\u0432\u0430\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "09.04.1998",
+            "gender": "female",
+            "relatives": [
+                92,
+                24,
+                33,
+                15
+            ]
+        },
+        {
+            "citizen_id": 73,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0413\u0432\u043e\u0437\u0434\u0438\u043a",
+            "building": "20\u0441\u0442\u04406",
+            "apartment": 39,
+            "name": "\u0425\u0430\u043b\u0438\u043f\u043e\u0432\u0430 \u041c\u0430\u0440\u0444\u0430 \u0424\u0435\u0434\u043e\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "13.03.1975",
+            "gender": "female",
+            "relatives": [
+                82,
+                70,
+                47,
+                83
+            ]
+        },
+        {
+            "citizen_id": 74,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041a\u0438\u0435\u0432\u0441\u043a\u0430\u044f",
+            "building": "15",
+            "apartment": 60,
+            "name": "\u041a\u0443\u043c\u0438\u0440\u043e\u0432 \u0412\u0430\u0440\u0444\u043e\u043b\u043e\u043c\u0435\u0439 \u0420\u043e\u0441\u0442\u0438\u0441\u043b\u0430\u0432\u043e\u0432\u0438\u0447",
+            "birth_date": "01.12.2002",
+            "gender": "male",
+            "relatives": [
+                33,
+                95
+            ]
+        },
+        {
+            "citizen_id": 75,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0411\u0430\u0437\u0430\u0440\u043d\u0430\u044f",
+            "building": "1",
+            "apartment": 104,
+            "name": "\u0414\u043e\u0440\u043e\u0444\u0435\u0435\u0432\u0430 \u0414\u043e\u043c\u0438\u043d\u0438\u043a\u0430 \u0410\u0444\u0430\u043d\u0430\u0441\u0438\u0435\u0432\u043d\u0430",
+            "birth_date": "12.03.2000",
+            "gender": "female",
+            "relatives": [
+                98,
+                3
+            ]
+        },
+        {
+            "citizen_id": 76,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "5",
+            "apartment": 24,
+            "name": "\u041f\u0438\u0442\u043e\u0441\u0438\u043d \u041f\u043e\u043b\u0438\u043a\u0430\u0440\u043f \u041c\u0438\u0440\u043e\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "27.11.1978",
+            "gender": "male",
+            "relatives": [
+                55,
+                78,
+                63,
+                5
+            ]
+        },
+        {
+            "citizen_id": 77,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u0430\u0437\u0430\u0440\u043d\u0430\u044f",
+            "building": "57\u0441\u0442\u04403",
+            "apartment": 7,
+            "name": "\u0418\u0433\u043d\u0430\u0442\u0435\u043d\u043a\u043e \u0421\u0435\u043c\u0435\u043d \u0415\u0440\u043e\u0444\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "04.04.1979",
+            "gender": "male",
+            "relatives": [
+                80,
+                88,
+                39,
+                83,
+                3,
+                7
+            ]
+        },
+        {
+            "citizen_id": 78,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u0435\u043d\u0438\u043d\u0433\u0440\u0430\u0434\u0441\u043a\u0430\u044f",
+            "building": "28\u043a3\u0441\u0442\u04407",
+            "apartment": 144,
+            "name": "\u0425\u043e\u0434\u044f\u0435\u0432 \u0410\u043b\u0435\u043a\u0441\u0435\u0439 \u041d\u0438\u043a\u043e\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "08.08.1991",
+            "gender": "male",
+            "relatives": [
+                24,
+                93,
+                82,
+                13,
+                7,
+                49,
+                76,
+                28,
+                84
+            ]
+        },
+        {
+            "citizen_id": 79,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041b\u044c\u0433\u043e\u0432\u0441\u043a\u0430\u044f",
+            "building": "5",
+            "apartment": 52,
+            "name": "\u0410\u0440\u0442\u0430\u043c\u043e\u043d\u043e\u0432 \u0421\u0435\u0440\u0430\u0444\u0438\u043c \u0421\u0438\u0434\u043e\u0440\u043e\u0432\u0438\u0447",
+            "birth_date": "22.01.1970",
+            "gender": "male",
+            "relatives": [
+                26,
+                57,
+                37,
+                20,
+                34,
+                6
+            ]
+        },
+        {
+            "citizen_id": 80,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u044c\u0433\u043e\u0432\u0441\u043a\u0430\u044f",
+            "building": "11\u043a10",
+            "apartment": 99,
+            "name": "\u041a\u0430\u0440\u0430\u043d\u0442\u0438\u0440\u043e\u0432 \u0418\u0433\u043d\u0430\u0442\u0438\u0439 \u041f\u0440\u043e\u043a\u043b\u043e\u0432\u0438\u0447",
+            "birth_date": "23.06.1959",
+            "gender": "male",
+            "relatives": [
+                17,
+                86,
+                77,
+                85,
+                46,
+                2,
+                61,
+                84,
+                39
+            ]
+        },
+        {
+            "citizen_id": 81,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0423\u044e\u0442\u043d\u0430\u044f",
+            "building": "14",
+            "apartment": 144,
+            "name": "\u0411\u0430\u0431\u044b\u043a\u0438\u043d\u0430 \u042d\u043b\u044c\u0432\u0438\u0440\u0430 \u0418\u043b\u044c\u0435\u0432\u043d\u0430",
+            "birth_date": "02.05.2002",
+            "gender": "female",
+            "relatives": [
+                22,
+                37
+            ]
+        },
+        {
+            "citizen_id": 82,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0443\u0434\u0435\u043d\u0447\u0435\u0441\u043a\u0430\u044f",
+            "building": "3",
+            "apartment": 7,
+            "name": "\u041a\u0443\u043b\u0430\u0433\u0438\u043d\u0430 \u0416\u0430\u043d\u043d\u0430 \u041f\u0430\u0432\u0435\u043b\u043e\u0432\u043d\u0430",
+            "birth_date": "19.10.1978",
+            "gender": "female",
+            "relatives": [
+                73,
+                78,
+                9,
+                25,
+                35,
+                16,
+                66
+            ]
+        },
+        {
+            "citizen_id": 83,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u0430\u044f",
+            "building": "45",
+            "apartment": 1,
+            "name": "\u041d\u0438\u043b\u043e\u0432\u0430 \u0417\u043e\u044f \u0418\u0433\u043e\u0440\u0435\u0432\u043d\u0430",
+            "birth_date": "16.05.2006",
+            "gender": "female",
+            "relatives": [
+                20,
+                71,
+                77,
+                70,
+                73
+            ]
+        },
+        {
+            "citizen_id": 84,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u0411\u0430\u0442\u0430\u0439\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "60",
+            "apartment": 129,
+            "name": "\u0427\u0443\u0432\u0438\u043a\u043e\u0432\u0430 \u0413\u0430\u043b\u0438\u043d\u0430 \u041c\u0430\u0440\u043a\u043e\u0432\u043d\u0430",
+            "birth_date": "21.11.1981",
+            "gender": "female",
+            "relatives": [
+                97,
+                58,
+                59,
+                80,
+                34,
+                78
+            ]
+        },
+        {
+            "citizen_id": 85,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "4\u0441\u0442\u04403",
+            "apartment": 50,
+            "name": "\u041b\u044e\u0431\u0438\u043c\u043e\u0432\u0430 \u0414\u0438\u043d\u0430 \u0421\u0435\u043c\u0435\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "09.02.1958",
+            "gender": "female",
+            "relatives": [
+                80
+            ]
+        },
+        {
+            "citizen_id": 86,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041f\u043b\u0435\u0445\u0430\u043d\u043e\u0432\u0430",
+            "building": "54",
+            "apartment": 129,
+            "name": "\u041b\u043e\u043a\u0442\u0438\u043e\u043d\u043e\u0432 \u041a\u0438\u0440 \u0415\u043f\u0438\u0444\u0430\u043d\u043e\u0432\u0438\u0447",
+            "birth_date": "23.02.1978",
+            "gender": "male",
+            "relatives": [
+                80,
+                48,
+                14,
+                94
+            ]
+        },
+        {
+            "citizen_id": 87,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0423\u0440\u0430\u043b\u044c\u0441\u043a\u0430\u044f",
+            "building": "20\u0441\u0442\u04404",
+            "apartment": 67,
+            "name": "\u041f\u043e\u043b\u0443\u0445\u0438\u043d\u0430 \u0420\u0435\u0433\u0438\u043d\u0430 \u041c\u0430\u0440\u043a\u043e\u0432\u043d\u0430",
+            "birth_date": "11.03.2005",
+            "gender": "female",
+            "relatives": [
+                21,
+                49,
+                99
+            ]
+        },
+        {
+            "citizen_id": 88,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "28\u043a1",
+            "apartment": 52,
+            "name": "\u041c\u0430\u0439\u043e\u0440\u043e\u0432 \u0418\u0437\u044f\u0441\u043b\u0430\u0432 \u0421\u0435\u0440\u0430\u0444\u0438\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "10.10.1950",
+            "gender": "male",
+            "relatives": [
+                15,
+                89,
+                43,
+                77
+            ]
+        },
+        {
+            "citizen_id": 89,
+            "town": "\u042f\u043a\u0443\u0442\u0441\u043a",
+            "street": "\u041b\u0438\u0442\u0432\u0438\u043d\u043e\u0432\u0430 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "48",
+            "apartment": 83,
+            "name": "\u0428\u0443\u0440\u044c\u0435\u0432 \u041f\u043e\u0442\u0430\u043f \u0422\u0438\u043c\u0443\u0440\u043e\u0432\u0438\u0447",
+            "birth_date": "22.06.1967",
+            "gender": "male",
+            "relatives": [
+                88,
+                5,
+                10,
+                62,
+                56,
+                8,
+                90
+            ]
+        },
+        {
+            "citizen_id": 90,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "28\u0441\u0442\u04403",
+            "apartment": 7,
+            "name": "\u0410\u0440\u0441\u0435\u0438\u043d\u044c\u0435\u0432\u0430 \u0412\u043b\u0430\u0434\u043b\u0435\u043d\u0430 \u041d\u0435\u0441\u0442\u043e\u0440\u043e\u0432\u043d\u0430",
+            "birth_date": "12.03.1968",
+            "gender": "female",
+            "relatives": [
+                19,
+                89
+            ]
+        },
+        {
+            "citizen_id": 91,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0413\u0430\u0441\u0442\u0435\u043b\u043b\u043e",
+            "building": "38",
+            "apartment": 13,
+            "name": "\u041d\u043e\u0432\u0438\u0446\u043a\u0438\u0439 \u042d\u0440\u043d\u0441\u0442 \u0410\u043d\u0434\u0440\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "24.09.1997",
+            "gender": "male",
+            "relatives": [
+                15,
+                61,
+                96
+            ]
+        },
+        {
+            "citizen_id": 92,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0411\u0430\u0442\u0430\u0439\u0441\u043a\u0438\u0439 \u043f\u0435\u0440\u0435\u0443\u043b\u043e\u043a",
+            "building": "5\u043a5",
+            "apartment": 100,
+            "name": "\u041b\u0435\u043b\u0443\u0445 \u0410\u0440\u043a\u0430\u0434\u0438\u0439 \u0418\u043e\u0441\u0438\u0444\u043e\u0432\u0438\u0447",
+            "birth_date": "13.03.1974",
+            "gender": "male",
+            "relatives": [
+                72,
+                50
+            ]
+        },
+        {
+            "citizen_id": 93,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u0442\u0430\u0440\u043e\u0433\u043e \u043b\u0435\u0441\u043e\u0440\u0443\u0431\u0430",
+            "building": "53",
+            "apartment": 70,
+            "name": "\u041a\u0440\u0438\u0432\u043a\u043e\u0432 \u042d\u0440\u043d\u0435\u0441\u0442 \u0410\u0434\u0430\u043c\u043e\u0432\u0438\u0447",
+            "birth_date": "25.02.1960",
+            "gender": "male",
+            "relatives": [
+                78,
+                7
+            ]
+        },
+        {
+            "citizen_id": 94,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u0421\u043e\u043b\u043e\u0432\u044c\u0438\u043d\u0430\u044f",
+            "building": "11",
+            "apartment": 30,
+            "name": "\u0412\u044f\u0437\u044c\u043c\u0438\u0442\u0438\u043d\u0430 \u0418\u043d\u0435\u0441\u0441\u0430 \u041e\u043b\u0435\u0433\u043e\u0432\u043d\u0430",
+            "birth_date": "11.11.1990",
+            "gender": "female",
+            "relatives": [
+                14,
+                48,
+                86,
+                26,
+                43
+            ]
+        },
+        {
+            "citizen_id": 95,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0421\u043e\u0441\u043d\u043e\u0432\u044b\u0439 2-\u0439 \u043f\u0440\u043e\u0435\u0437\u0434",
+            "building": "4",
+            "apartment": 114,
+            "name": "\u0413\u0440\u0438\u0431\u043a\u043e\u0432\u0430 \u0414\u0438\u0430\u043d\u0430 \u041c\u0438\u0440\u043e\u043d\u043e\u0432\u043d\u0430",
+            "birth_date": "18.08.1990",
+            "gender": "female",
+            "relatives": [
+                33,
+                9,
+                74
+            ]
+        },
+        {
+            "citizen_id": 96,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0425\u0432\u043e\u0439\u043d\u0430\u044f",
+            "building": "40",
+            "apartment": 29,
+            "name": "\u0428\u0430\u0431\u0443\u043d\u0438\u043d \u041f\u043b\u0430\u0442\u043e\u043d \u041c\u043e\u0438\u0441\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "25.12.1972",
+            "gender": "male",
+            "relatives": [
+                16,
+                33,
+                42,
+                91
+            ]
+        },
+        {
+            "citizen_id": 97,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u0425\u0443\u0434\u043e\u0436\u043d\u0438\u043a\u043e\u0432",
+            "building": "39\u043a7\u0441\u0442\u04404",
+            "apartment": 25,
+            "name": "\u0421\u0438\u043b\u044c\u0432\u0435\u0441\u0442\u0440\u043e\u0432\u0430 \u0412\u0430\u0440\u0432\u0430\u0440\u0430 \u0421\u0442\u0430\u043d\u0438\u0441\u043b\u0430\u0432\u043e\u0432\u043d\u0430",
+            "birth_date": "29.06.1981",
+            "gender": "female",
+            "relatives": [
+                29,
+                84,
+                98,
+                16,
+                10,
+                64
+            ]
+        },
+        {
+            "citizen_id": 98,
+            "town": "\u041a\u043b\u0438\u043d",
+            "street": "\u041b\u044c\u0432\u0430 \u0422\u043e\u043b\u0441\u0442\u043e\u0433\u043e",
+            "building": "4\u043a9\u0441\u0442\u04403",
+            "apartment": 9,
+            "name": "\u042f\u043d\u0438\u0448\u0435\u0432\u0441\u043a\u0438\u0439 \u0420\u0443\u0431\u0435\u043d \u041a\u043b\u0438\u043c\u0435\u043d\u0442\u043e\u0432\u0438\u0447",
+            "birth_date": "24.09.1981",
+            "gender": "male",
+            "relatives": [
+                30,
+                75,
+                97
+            ]
+        },
+        {
+            "citizen_id": 99,
+            "town": "\u0410\u0440\u0445\u0430\u043d\u0433\u0435\u043b\u044c\u0441\u043a",
+            "street": "\u041a\u0430\u0440\u044c\u0435\u0440\u043d\u0430\u044f",
+            "building": "39",
+            "apartment": 49,
+            "name": "\u0412\u043b\u0430\u0441\u044c\u0435\u0432 \u0424\u0435\u043b\u0438\u043a\u0441 \u0415\u043b\u0438\u0441\u0435\u0435\u0432\u0438\u0447",
+            "birth_date": "29.09.1987",
+            "gender": "male",
+            "relatives": [
+                55,
+                87,
+                11
+            ]
+        }
+    ]
+}
