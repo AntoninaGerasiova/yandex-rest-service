@@ -6,7 +6,6 @@ import time
 
 """
 File contains test for giftr application
-TODO: what if send post to get get to post 
 """
 def full_addr(path):
     """
@@ -63,6 +62,16 @@ def post_data_set(data_set_file):
     path = "/imports"
     addr = full_addr(path)
     return requests.post(addr, data=citizens_structure, headers={'content-type': 'application/json'})
+
+
+def get_to_patch():
+    """
+    Get request to interface that takes only patch
+    """
+    path = "/imports"
+    addr = full_addr(path)
+    return requests.get(addr)
+
 
 def patch(import_id, citizen_id, data_file):
     """
@@ -811,6 +820,7 @@ def test_statistic_invalid_import_id():
 # ============================================================
 # time tests 
 # rathe long - do not launch for ordinary test
+"""
 def test_good_and_very_big_input():
     init()
     start = time.time()
@@ -837,10 +847,14 @@ def test_good_and_very_big_input():
     elapsed_time = time.time() - start
     print(elapsed_time)
     assert elapsed_time < 10
-    
+    """
+# ========================================================    
+def test_get_to_patch():    
+    r = get_to_patch()
+    assert r.status_code == 405
     
 if __name__ == '__main__':
-    test_get_birthdays_valid_big_set()
+    get_to_patch()
     
     
 
