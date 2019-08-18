@@ -11,8 +11,6 @@ from .models import db, Citizens, Imports, Kinships
 from .exceptions import SetNotFoundError, DBError
 from . import help_data
 
-import time
-
 
 def trace():
     from inspect import currentframe, getframeinfo
@@ -38,15 +36,11 @@ def insert_citizens_set(request_json):
         BadDateFormatError: if date string isn't of "ДД.ММ.ГГГГ" format or have whitespace characters in the beginning
         or the end of the string or if date is not valid
     """
-    start = time.time()
     # validate json before parse it
     help_data.validate_insert_json(request_json)
-    print("TIME VALIDATION: ", time.time() - start)
 
     # parse json and get data to insert to db
-    start = time.time()
     citizens_data, kinships_data = help_data.get_insert_data(request_json)
-    print("TIME CREATE DATA: ", time.time() - start)
     citizen_len = len(citizens_data)
     kinship_len = len(kinships_data)
 
@@ -57,25 +51,16 @@ def insert_citizens_set(request_json):
         db.session.flush()
         import_id = import_obj.import_id
         # add import_id to citizens data and insert citizens' data to db
-        start = time.time()
         citizen_data_with_import_id = list(map(list.__add__, [[import_id]] * citizen_len, citizens_data))
         citizens_dicts = [dict(zip(Citizens.get_keys(), sublist)) for sublist in citizen_data_with_import_id]
-        print("TIME PREPARE DATA CITIZEN: ", time.time() - start)
-        start = time.time()
         db.session.execute(Citizens.__table__.insert(), citizens_dicts)
-        print("INSERT DATA CITIZEN: ", time.time() - start)
+
         # do the same with kinships' data if there is at least one relativw connection for set
         if kinship_len > 0:
-            start = time.time()
             kinship_data_with_import_id = list(map(list.__add__, [[import_id]] * kinship_len, kinships_data))
             kinship_dicts = [dict(zip(Kinships.get_keys(), sublist)) for sublist in kinship_data_with_import_id]
-            print("TIME PREPARE DATA RELATIVES: ", time.time() - start)
-            start = time.time()
             db.session.execute(Kinships.__table__.insert(), kinship_dicts)
-            print("INSERT DATA RELATIVES: ", time.time() - start)
-        start = time.time()
         db.session.commit()
-        print("COMMIT: ", time.time() - start)
     except exc.SQLAlchemyError:
         db.session.rollback()
         current_app.logger.info("Error during insertion")

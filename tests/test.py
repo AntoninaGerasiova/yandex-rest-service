@@ -895,25 +895,25 @@ def test_good_and_very_big_input():
     r = post_data_set('test_files/good_and_very_big_set.test')
     assert r.status_code == 201
     elapsed_time = time.time() - start
-    print(elapsed_time)
+    # print(elapsed_time)
     assert elapsed_time < 10
 
     start = time.time()
     get_citizens_set(1)
     elapsed_time = time.time() - start
-    print(elapsed_time)
+    # print(elapsed_time)
     assert elapsed_time < 10
 
     start = time.time()
     get_citizens_birthdays(1)
     elapsed_time = time.time() - start
-    print(elapsed_time)
+    # print(elapsed_time)
     assert elapsed_time < 10
 
     start = time.time()
     get_statistic(1)
     elapsed_time = time.time() - start
-    print(elapsed_time)
+    # print(elapsed_time)
     assert elapsed_time < 10
 
 
